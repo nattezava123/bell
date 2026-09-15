@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --primary-color: #2c3e50;
+    --secondary-color: #34495e;
+    --background-color: #f4f7f6;
+    --card-radius: 12px;
+}
+
+body {
+    background-color: var(--background-color);
+    font-family: 'Sarabun', sans-serif;
+    color: #333;
+}
+
+.card-custom {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: none;
+    border-radius: var(--card-radius);
+    margin-bottom: 20px;
+}
+
+.card-header-custom {
+    background-color: #fff;
+    border-bottom: 2px solid #f0f0f0;
+    padding: 15px 20px;
+    border-top-left-radius: var(--card-radius) !important;
+    border-top-right-radius: var(--card-radius) !important;
+}
+
+.navbar-custom {
+    background-color: var(--primary-color);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.table-custom thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    color: #495057;
+}
+
+.menu-title {
+    border-left: 4px solid #3498db;
+    padding-left: 10px;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+.form-label {
+    font-weight: 500;
+    color: #555;
+}

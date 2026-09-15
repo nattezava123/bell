@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ผู้ดูแลระบบ | HR System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold" href="#">HR Dashboard</a>
+            <div class="d-flex text-white align-items-center gap-3">
+                <span id="navUserInfo" class="fw-bold"></span>
+                <button class="btn btn-sm btn-danger rounded-pill px-3" onclick="logout()">ออกจากระบบ</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid mt-4 mb-5 px-4">
+        <h3 class="mb-4 fw-bold text-dark">ผู้ดูแลระบบ (Administrator)</h3>
+        
+        <!-- ระบบ Tabs เพื่อแบ่งหมวดหมู่การใช้งานให้ดูเป็นมืออาชีพ -->
+        <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold text-primary" data-bs-toggle="tab" data-bs-target="#tab-personal" type="button">
+                    🕒 1. ระบบลงเวลา & การลา (ส่วนตัว)
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold text-dark" data-bs-toggle="tab" data-bs-target="#tab-manage-emp" type="button">
+                    👥 2. จัดการข้อมูลพนักงาน (Admin)
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold text-dark" data-bs-toggle="tab" data-bs-target="#tab-manage-leave" type="button">
+                    📋 3. บริหารจัดการการลาทั้งหมด (Admin)
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- ========================================== -->
+            <!-- TAB 1: ระบบส่วนตัว (เหมือน Employee) -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade show active" id="tab-personal">
+                <div class="row">
+                    <!-- ระบบลงเวลา -->
+                    <div class="col-lg-7">
+                        <div class="card card-custom p-4 text-center">
+                            <h5 class="menu-title text-start">ระบบบันทึกเวลาการปฏิบัติงาน (ส่วนตัว)</h5>
+                            <h5 class="text-secondary mt-3" id="empCurrentDate"></h5>
+                            <h1 class="display-4 fw-bold text-dark my-4" id="empCurrentTime">00:00:00</h1>
+                            
+                            <div class="d-flex justify-content-center gap-3 mb-4">
+                                <button class="btn btn-success btn-lg px-4 fw-bold" onclick="clockIn()" id="btnClockIn">เข้างาน</button>
+                                <button class="btn btn-danger btn-lg px-4 fw-bold" onclick="clockOut()" id="btnClockOut" disabled>ออกงาน</button>
+                            </div>
+        
+                            <div class="text-start bg-light p-3 rounded-3 border">
+                                <h6 class="fw-bold mb-3">ประวัติการลงเวลาทำงาน</h6>
+                                <table class="table table-sm text-center align-middle small bg-white">
+                                    <thead><tr><th>วันที่</th><th>เวลาเข้า</th><th>เวลาออก</th><th>ชม.ปกติ</th><th class="text-danger">OT</th></tr></thead>
+                                    <tbody id="empWorkLogTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+        
+                    <!-- ระบบการลา -->
+                    <div class="col-lg-5">
+                        <div class="card card-custom p-4">
+                            <h5 class="menu-title">ยื่นขอการลาหยุด (ส่วนตัว)</h5>
+                            <div class="mb-3 d-flex justify-content-between text-center bg-light p-2 rounded">
+                                <div><small>ลาป่วย</small><br><strong id="empSickBal" class="text-danger fs-4"></strong><small> วัน</small></div>
+                                <div><small>ลากิจ</small><br><strong id="empPersBal" class="text-danger fs-4"></strong><small> วัน</small></div>
+                                <div><small>ลาพักร้อน</small><br><strong id="empAnnBal" class="text-danger fs-4"></strong><small> วัน</small></div>
+                            </div>
+                            
+                            <form onsubmit="submitLeaveEmployee(event)" class="mb-4 p-3 rounded-3 border">
+                                <h6 class="fw-bold">ยื่นฟอร์มคำขอการลาหยุด</h6>
+                                <select class="form-select mb-2" id="empLeaveType" required>
+                                    <option value="" disabled selected>เลือกประเภทการลา</option>
+                                    <option value="sick">ลาป่วย (Sick Leave)</option>
+                                    <option value="personal">ลากิจธุระอันจำเป็น (Personal Leave)</option>
+                                    <option value="annual">ลาหยุดพักผ่อนประจำปี (Annual Leave)</option>
+                                </select>
+                                <input type="date" class="form-control mb-2" id="empLeaveDate" required>
+                                <input type="text" class="form-control mb-3" id="empLeaveReason" placeholder="ระบุเหตุผล" required>
+                                <button type="submit" class="btn btn-primary w-100 py-2">ส่งคำขอ</button>
+                            </form>
+        
+                            <h6 class="fw-bold mb-3">สถานะการอนุมัติคำขอการลา (ส่วนตัว)</h6>
+                            <table class="table table-custom table-hover table-sm text-center align-middle small">
+                                <thead><tr><th>ประเภท</th><th>วันที่ขอลา</th><th>เหตุผล</th><th>สถานะ</th></tr></thead>
+                                <tbody id="empLeaveStatusTable"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 2: จัดการพนักงาน (Admin) -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="tab-manage-emp">
+                <div class="card card-custom p-4 mb-4">
+                    <h5 class="menu-title">เพิ่มข้อมูลพนักงานใหม่</h5>
+                    <form id="addEmployeeForm" onsubmit="handleAddEmployee(event)" class="row g-3 align-items-end">
+                        <div class="col-md-2"><label class="form-label small">รหัสพนักงาน</label><input type="text" class="form-control" id="regId" required></div>
+                        <div class="col-md-3"><label class="form-label small">เลขบัตรประชาชน (13 หลัก)</label><input type="text" class="form-control" id="regIdCard" maxlength="13" pattern="[0-9]{13}" required></div>
+                        <div class="col-md-3"><label class="form-label small">ชื่อ-นามสกุล</label><input type="text" class="form-control" id="regName" required></div>
+                        <div class="col-md-2">
+                            <label class="form-label small">ระดับสิทธิ์</label>
+                            <select class="form-select" id="regRole">
+                                <option value="employee">พนักงาน (Employee)</option>
+                                <option value="manager">ผู้จัดการ (Manager)</option>
+                                <option value="admin">ผู้ดูแลระบบ (Admin)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2"><button type="submit" class="btn btn-success w-100">เพิ่มพนักงาน</button></div>
+                    </form>
+                </div>
+
+                <div class="card card-custom p-4">
+                    <h5 class="menu-title">รายชื่อพนักงานทั้งหมด</h5>
+                    <table class="table table-custom table-hover text-center align-middle">
+                        <thead><tr><th>รหัส</th><th>เลขบัตรประชาชน</th><th>ชื่อ-นามสกุล</th><th>สิทธิ์</th><th>สิทธิการลาคงเหลือ</th><th>จัดการ</th></tr></thead>
+                        <tbody id="adminEmployeeTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ========================================== -->
+            <!-- TAB 3: บริหารจัดการการลา (Admin) -->
+            <!-- ========================================== -->
+            <div class="tab-pane fade" id="tab-manage-leave">
+                <div class="card card-custom p-4">
+                    <h5 class="menu-title">บริหารจัดการการลา (ของพนักงานทั้งหมด)</h5>
+                    <table class="table table-custom table-hover text-center align-middle">
+                        <thead><tr><th>ผู้ขอลา</th><th>ประเภท</th><th>วันที่ลา</th><th>เหตุผล</th><th>สถานะ</th><th>จัดการโดย Admin</th></tr></thead>
+                        <tbody id="adminLeaveTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- ========================================== -->
+    <!-- ส่วนเสริมความมืออาชีพด้วย Bootstrap 5 Modal & Toast -->
+    <!-- ========================================== -->
+
+    <!-- 1. แจ้งเตือน Toast (มุมขวาล่าง) -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+        <div id="liveToast" class="toast shadow-lg border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white" id="toastHeader">
+                <i class="bi bi-bell-fill me-2"></i>
+                <strong class="me-auto">การแจ้งเตือนจากระบบ</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
+            </div>
+            <div class="toast-body fw-medium" id="toastMessage" style="font-size: 1.05rem;">
+                <!-- ข้อความจะเปลี่ยนไปตามการทำงาน -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Modal สำหรับ Admin แก้ไขชื่อพนักงาน -->
+    <div class="modal fade" id="editEmpModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold">แก้ไขข้อมูลพนักงาน</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">ชื่อ-นามสกุลใหม่</label>
+                        <input type="text" class="form-control form-control-lg" id="editEmpNameInput">
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-primary px-4" onclick="saveEditEmployee()">บันทึกการเปลี่ยนแปลง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Modal สำหรับ Manager แก้ไขการลา -->
+    <div class="modal fade" id="editLeaveModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold">แก้ไขคำขอการลาหยุด (Manager)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">วันที่ลา</label>
+                        <input type="date" class="form-control" id="editLeaveDateInput">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">เหตุผลการลา</label>
+                        <input type="text" class="form-control" id="editLeaveReasonInput">
+                    </div>
+                </div>
+                <div class="modal-footer bg-light">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-warning px-4 fw-bold" onclick="saveEditLeave()">บันทึกการแก้ไข</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap Bundle with Popper (สำหรับใช้ระบบ Tabs) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="script.js"></script>
+    <script> 
+        checkAuth('admin'); 
+        
+        // สั่งให้ระบบทำงานทั้ง 2 ส่วน (ส่วนของแอดมิน และ ส่วนบันทึกเวลาของพนักงาน)
+        renderAdminUI(); 
+        renderEmployeeUI(); 
+    </script>
+</body>
+</html>
