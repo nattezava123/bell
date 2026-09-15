@@ -2,17 +2,17 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>เข้าสู่ระบบ | HR System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center pt-5">
-            <div class="col-md-5">
+    <div class="container mt-4 mt-md-5">
+        <div class="row justify-content-center pt-3 pt-md-5">
+            <div class="col-12 col-md-6 col-lg-5">
                 <div class="card card-custom">
-                    <div class="card-header-custom bg-primary text-white text-center">
+                    <div class="card-header bg-primary text-white text-center py-3" style="border-radius: 12px 12px 0 0;">
                         <h4 class="mb-0 fw-bold">เข้าสู่ระบบ (Login)</h4>
                     </div>
                     <div class="card-body p-4">
@@ -25,84 +25,32 @@
                         <form onsubmit="handleLogin(event)">
                             <div class="mb-3">
                                 <label class="form-label">รหัสผู้ใช้งาน</label>
-                                <input type="text" class="form-control" id="loginUsername" required>
+                                <input type="text" class="form-control form-control-lg" id="loginUsername" required>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">รหัสผ่าน</label>
-                                <input type="password" class="form-control" id="loginPassword" required>
+                                <input type="password" class="form-control form-control-lg" id="loginPassword" required>
                             </div>
-                            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">เข้าสู่ระบบ</button>
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">เข้าสู่ระบบ</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- ========================================== -->
-    <!-- ส่วนเสริมความมืออาชีพด้วย Bootstrap 5 Modal & Toast -->
-    <!-- ========================================== -->
-
-    <!-- 1. แจ้งเตือน Toast (มุมขวาล่าง) -->
+    
+    <!-- แจ้งเตือน Toast -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
         <div id="liveToast" class="toast shadow-lg border-0" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header bg-success text-white" id="toastHeader">
-                <i class="bi bi-bell-fill me-2"></i>
                 <strong class="me-auto">การแจ้งเตือนจากระบบ</strong>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button>
             </div>
-            <div class="toast-body fw-medium" id="toastMessage" style="font-size: 1.05rem;">
-                <!-- ข้อความจะเปลี่ยนไปตามการทำงาน -->
-            </div>
+            <div class="toast-body fw-medium" id="toastMessage"></div>
         </div>
     </div>
 
-    <!-- 2. Modal สำหรับ Admin แก้ไขชื่อพนักงาน -->
-    <div class="modal fade" id="editEmpModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold">แก้ไขข้อมูลพนักงาน</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">ชื่อ-นามสกุลใหม่</label>
-                        <input type="text" class="form-control form-control-lg" id="editEmpNameInput">
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-primary px-4" onclick="saveEditEmployee()">บันทึกการเปลี่ยนแปลง</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. Modal สำหรับ Manager แก้ไขการลา -->
-    <div class="modal fade" id="editLeaveModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-warning text-dark">
-                    <h5 class="modal-title fw-bold">แก้ไขคำขอการลาหยุด (Manager)</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">วันที่ลา</label>
-                        <input type="date" class="form-control" id="editLeaveDateInput">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">เหตุผลการลา</label>
-                        <input type="text" class="form-control" id="editLeaveReasonInput">
-                    </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-warning px-4 fw-bold" onclick="saveEditLeave()">บันทึกการแก้ไข</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="script.js"></script>
     <script> checkAuth('login'); </script>
 </body>
