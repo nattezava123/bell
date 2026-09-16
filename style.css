@@ -1,74 +1,116 @@
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary-color: #2c3e50;
-    --secondary-color: #34495e;
-    --background-color: #f4f7f6;
-    --card-radius: 12px;
+    --primary-blue: #0f172a;
+    --brand-blue: #2563eb;
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #334155;
+    --text-muted: #64748b;
+    --radius-lg: 16px;
+    --radius-md: 12px;
 }
 
 body {
-    background-color: var(--background-color);
+    background-color: var(--bg-color);
     font-family: 'Sarabun', sans-serif;
-    color: #333;
+    color: var(--text-main);
+    -webkit-font-smoothing: antialiased;
 }
 
-.card-custom {
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border: none;
-    border-radius: var(--card-radius);
-    margin-bottom: 20px;
-}
-
+/* ================= Navbar สไตล์ Modern ================= */
 .navbar-custom {
-    background-color: var(--primary-color);
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    background: rgba(15, 23, 42, 0.95) !important;
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
-.table-custom thead th {
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
-    color: #495057;
-    white-space: nowrap; /* ป้องกันข้อความในหัวตารางตัดบรรทัดบนมือถือ */
+.navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
-/* จัดการ Scrollbar สำหรับตารางบนมือถือ */
-.table-responsive::-webkit-scrollbar {
-    height: 6px;
+/* ================= การ์ด (Cards) ================= */
+.card-custom {
+    background: var(--card-bg);
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
+
+.card-custom:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
 }
 
 .menu-title {
-    border-left: 4px solid #3498db;
-    padding-left: 10px;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #2c3e50;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    border-left: 4px solid var(--brand-blue);
+    padding-left: 12px;
+    margin-bottom: 1.5rem;
 }
 
-/* ========================================== */
-/* Mobile Responsive Adjustments (สำหรับหน้าจอมือถือ) */
-/* ========================================== */
+/* ================= ปุ่ม (Buttons) ================= */
+.btn {
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: all 0.2s;
+}
+
+.btn-primary { background-color: var(--brand-blue); border: none; }
+.btn-primary:hover { background-color: #1d4ed8; transform: translateY(-1px); }
+.btn-success { background-color: #10b981; border: none; }
+.btn-danger { background-color: #ef4444; border: none; }
+
+/* ================= ฟอร์ม (Inputs) ================= */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    padding: 0.6rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--brand-blue);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+/* ================= ตาราง (Tables) ================= */
+.table-custom { margin-bottom: 0; }
+.table-custom thead th {
+    background-color: #f1f5f9;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e2e8f0;
+    padding: 12px 16px;
+    white-space: nowrap;
+}
+.table-custom tbody td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+.table-responsive::-webkit-scrollbar { height: 6px; }
+.table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+/* ================= กล่องตัวเลข (Stats Boxes) ================= */
+.stat-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    padding: 15px;
+    transition: all 0.2s;
+}
+.stat-box:hover { background: #f1f5f9; }
+
 @media (max-width: 768px) {
-    .display-4 {
-        font-size: 2.5rem; /* ลดขนาดนาฬิกาบนมือถือ */
-    }
-    .card-custom {
-        padding: 15px !important; /* ลด padding ลงไม่ให้กินที่ */
-    }
-    .btn-lg {
-        width: 100%; /* ให้ปุ่มเข้างาน/ออกงาน กว้างเต็มจอ */
-        margin-bottom: 10px;
-    }
-    .clock-buttons {
-        flex-direction: column; /* เปลี่ยนจากเรียงแนวนอน เป็นแนวตั้ง */
-        gap: 0 !important;
-    }
-    .leave-balances {
-        flex-direction: column;
-        gap: 15px;
-    }
+    .card-custom { padding: 1.2rem !important; }
+    .display-4 { font-size: 2.2rem; }
 }
