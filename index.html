@@ -2,41 +2,47 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>เข้าสู่ระบบ | HR System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ | HR Workspace</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row justify-content-center pt-5">
-            <div class="col-md-5">
-                <div class="card card-custom">
-                    <div class="card-header bg-primary text-white text-center py-3 rounded-top">
-                        <h4 class="mb-0 fw-bold">ระบบบริหารงานบุคคล</h4>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="alert alert-info small mb-4">
-                            <strong>รหัสผ่านทดสอบ (4 ตัวท้าย ปชช.): 1234</strong><br>
-                            - แอดมิน: <code>admin</code><br>
-                            - หัวหน้างาน: <code>mgr01</code><br>
-                            - พนักงาน: <code>emp01</code>
-                        </div>
-                        <form onsubmit="handleLogin(event)">
-                            <div class="mb-3"><label class="form-label fw-bold">รหัสผู้ใช้งาน</label><input type="text" class="form-control form-control-lg" id="loginUsername" required></div>
-                            <div class="mb-4"><label class="form-label fw-bold">รหัสผ่าน</label><input type="password" class="form-control form-control-lg" id="loginPassword" required></div>
-                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold shadow-sm">เข้าสู่ระบบ</button>
-                        </form>
+    <div class="login-wrapper">
+        <div class="login-container">
+            <div class="login-left">
+                <h1 class="fw-bold mb-3">HR Workspace</h1>
+                <p class="fs-6 opacity-75">ระบบบริหารจัดการทรัพยากรบุคคล<br>และการลงเวลาปฏิบัติงานอัจฉริยะ</p>
+                <div class="mt-5 p-4 bg-white bg-opacity-10 rounded-3">
+                    <small class="d-block fw-bold mb-2 text-uppercase">Demo Accounts</small>
+                    <div class="small opacity-75">
+                        <div>• Admin: <code>admin</code> / <code>1234</code></div>
+                        <div>• Manager: <code>mgr01</code> / <code>1234</code></div>
+                        <div>• Employee: <code>emp01</code> / <code>1234</code></div>
                     </div>
                 </div>
+            </div>
+            <div class="login-right">
+                <h3 class="fw-bold text-dark mb-1">เข้าสู่ระบบ</h3>
+                <p class="text-muted mb-5">กรุณากรอกข้อมูลเพื่อดำเนินการต่อ</p>
+                
+                <form onsubmit="window.handleLogin(event)">
+                    <div class="mb-4">
+                        <label class="form-label">รหัสผู้ใช้งาน</label>
+                        <input type="text" class="form-control" id="loginUsername" placeholder="Employee ID" required>
+                    </div>
+                    <div class="mb-5">
+                        <label class="form-label">รหัสผ่าน</label>
+                        <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-3">เข้าสู่ระบบ</button>
+                </form>
             </div>
         </div>
     </div>
     
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;"><div id="liveToast" class="toast shadow-lg border-0"><div class="toast-header text-white" id="toastHeader"><strong class="me-auto">ระบบ</strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div><div class="toast-body fw-medium" id="toastMessage"></div></div></div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
-    <script> checkAuth('login'); </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>

@@ -2,54 +2,61 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>แอดมิน | HR System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ผู้ดูแลระบบ | HR Workspace</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark navbar-custom">
-        <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold" href="#"><i class="bi bi-shield-lock-fill me-2"></i>Admin Dashboard</a>
-            <div class="d-flex text-white align-items-center gap-3">
-                <span id="navUserInfo" class="fw-bold d-none d-md-block"></span>
-                <button class="btn btn-sm btn-danger rounded-pill px-3" onclick="logout()">ออกจากระบบ</button>
+    <nav class="navbar navbar-expand-md navbar-dark navbar-custom sticky-top">
+        <div class="container-fluid px-4 px-md-5">
+            <a class="navbar-brand" href="#"><i class="bi bi-shield-check me-2"></i>Admin Center</a>
+            <div class="d-flex align-items-center gap-4">
+                <span id="navUserInfo" class="d-none d-md-block text-dark fw-medium"></span>
+                <button class="btn btn-outline-secondary btn-sm" onclick="window.logout()">ออกจากระบบ</button>
             </div>
         </div>
     </nav>
 
-    <div class="container-fluid mt-4 mb-5 px-4">
-        <ul class="nav nav-tabs mb-4 flex-nowrap overflow-auto" role="tablist">
-            <li class="nav-item"><button class="nav-link active fw-bold text-dark" data-bs-toggle="tab" data-bs-target="#tab-approval" type="button">✔️ อนุมัติการลาหัวหน้างาน</button></li>
-            <li class="nav-item"><button class="nav-link fw-bold text-dark" data-bs-toggle="tab" data-bs-target="#tab-report" type="button">📊 ดึงรีพอร์ตการลา</button></li>
-            <li class="nav-item"><button class="nav-link fw-bold text-dark" data-bs-toggle="tab" data-bs-target="#tab-manage-emp" type="button">👥 จัดการพนักงาน</button></li>
+    <div class="container-fluid mt-5 mb-5 px-4 px-md-5" style="max-width: 1200px;">
+        <ul class="nav nav-pills mb-4 gap-2" role="tablist">
+            <li class="nav-item">
+                <button class="nav-link active px-4 rounded-pill" data-bs-toggle="tab" data-bs-target="#tab-approval" type="button">รอพิจารณาอนุมัติ</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link px-4 rounded-pill text-dark" data-bs-toggle="tab" data-bs-target="#tab-report" type="button">รายงานทั้งหมด</button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link px-4 rounded-pill text-dark" data-bs-toggle="tab" data-bs-target="#tab-manage" type="button">จัดการพนักงาน</button>
+            </li>
         </ul>
 
         <div class="tab-content">
-            <!-- TAB 1: อนุมัติหัวหน้างาน -->
+            <!-- TAB 1: อนุมัติ -->
             <div class="tab-pane fade show active" id="tab-approval">
-                <div class="card card-custom p-4">
-                    <h5 class="menu-title">รายการขออนุมัติการลา (เฉพาะหัวหน้างาน)</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover text-center align-middle text-nowrap">
-                            <thead class="table-light"><tr><th>หัวหน้างาน</th><th>ประเภท</th><th>วันที่ลา</th><th>เหตุผล</th><th>สถานะ</th><th>อนุมัติ/ไม่อนุมัติ</th></tr></thead>
+                <div class="card card-custom">
+                    <h5 class="menu-title">รายการรอพิจารณา (เฉพาะระดับผู้จัดการ)</h5>
+                    <div class="table-responsive border-0">
+                        <table class="table table-custom text-center align-middle">
+                            <thead><tr><th>ชื่อพนักงาน</th><th>ประเภท</th><th>วันที่</th><th>เหตุผล</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
                             <tbody id="adminApproveManagerTableBody"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 2: ดึงรีพอร์ต -->
+            <!-- TAB 2: รายงาน -->
             <div class="tab-pane fade" id="tab-report">
-                <div class="card card-custom p-4">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="menu-title mb-0">รายงานประวัติการลา (ทั้งหมด)</h5>
-                        <button class="btn btn-outline-success btn-sm fw-bold" onclick="alert('ดึงรีพอร์ตเรียบร้อย')"><i class="bi bi-file-earmark-excel"></i> Export Excel</button>
+                <div class="card card-custom">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="menu-title mb-0">รายงานประวัติการลาทั้งหมด</h5>
+                        <button class="btn btn-outline-secondary btn-sm" onclick="window.showSwal('ดาวน์โหลดสำเร็จ', 'สร้างไฟล์ Report เรียบร้อย', 'success')"><i class="bi bi-download me-2"></i>Export Excel</button>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-striped text-center align-middle text-nowrap">
-                            <thead class="table-dark"><tr><th>รหัสพนักงาน</th><th>ชื่อ</th><th>ระดับ</th><th>ประเภทการลา</th><th>วันที่</th><th>สถานะ</th></tr></thead>
+                    <div class="table-responsive border-0">
+                        <table class="table table-custom text-center align-middle">
+                            <thead><tr><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>สิทธิ์</th><th>ประเภท</th><th>วันที่</th><th>สถานะ</th></tr></thead>
                             <tbody id="adminReportTableBody"></tbody>
                         </table>
                     </div>
@@ -57,75 +64,73 @@
             </div>
 
             <!-- TAB 3: จัดการพนักงาน -->
-            <div class="tab-pane fade" id="tab-manage-emp">
-                <div class="card card-custom p-4 mb-4">
-                    <h5 class="menu-title">ลงทะเบียนพนักงานใหม่</h5>
-                    <form id="addEmployeeForm" onsubmit="handleAddEmployee(event)" class="row g-3 align-items-end">
-                        <div class="col-md-2"><label class="form-label small">รหัสพนักงาน</label><input type="text" class="form-control" id="regId" required></div>
-                        <div class="col-md-3"><label class="form-label small">เลขบัตร ปชช. (13 หลัก)</label><input type="text" class="form-control" id="regIdCard" maxlength="13" pattern="[0-9]{13}" required></div>
-                        <div class="col-md-3"><label class="form-label small">ชื่อ-นามสกุล</label><input type="text" class="form-control" id="regName" required></div>
-                        <div class="col-md-2"><label class="form-label small">ระดับสิทธิ์</label><select class="form-select" id="regRole"><option value="employee">พนักงาน</option><option value="manager">ผู้จัดการ</option><option value="admin">แอดมิน</option></select></div>
-                        <div class="col-md-2"><button type="submit" class="btn btn-success w-100 fw-bold">ลงทะเบียน</button></div>
-                    </form>
-                </div>
-                <div class="card card-custom p-4">
-                    <div class="table-responsive">
-                        <table class="table table-hover text-center align-middle text-nowrap">
-                            <thead class="table-light"><tr><th>รหัส</th><th>เลข ปชช.</th><th>ชื่อ</th><th>สิทธิ์</th><th>จัดการ (แก้ไข/ลบ)</th></tr></thead>
-                            <tbody id="adminEmployeeTableBody"></tbody>
-                        </table>
+            <div class="tab-pane fade" id="tab-manage">
+                <div class="row">
+                    <div class="col-lg-4 mb-4">
+                        <div class="card card-custom h-100">
+                            <h5 class="menu-title">เพิ่มพนักงานใหม่</h5>
+                            <form id="addEmployeeForm" onsubmit="window.handleAddEmployee(event)">
+                                <div class="mb-3"><label class="form-label">รหัสพนักงาน</label><input type="text" class="form-control" id="regId" required></div>
+                                <div class="mb-3"><label class="form-label">เลขบัตรประชาชน (13 หลัก)</label><input type="text" class="form-control" id="regIdCard" maxlength="13" required></div>
+                                <div class="mb-3"><label class="form-label">ชื่อ - นามสกุล</label><input type="text" class="form-control" id="regName" required></div>
+                                <div class="mb-4"><label class="form-label">ระดับสิทธิ์</label><select class="form-select" id="regRole"><option value="employee">Staff (พนักงาน)</option><option value="leader">Leader (ผู้จัดการ)</option><option value="admin">Admin (แอดมิน)</option></select></div>
+                                <button type="submit" class="btn btn-primary w-100">สร้างบัญชีผู้ใช้</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 mb-4">
+                        <div class="card card-custom h-100">
+                            <h5 class="menu-title">ข้อมูลพนักงานในระบบ</h5>
+                            <div class="table-responsive border-0">
+                                <table class="table table-custom text-center align-middle">
+                                    <thead><tr><th>รหัส</th><th>เลข ปชช.</th><th>ชื่อพนักงาน</th><th>สิทธิ์</th><th>จัดการ</th></tr></thead>
+                                    <tbody id="adminEmployeeTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    <!-- ========================================== -->
-    <!-- Modal: สำหรับแก้ไขข้อมูลพนักงาน (แบบจัดเต็ม) -->
-    <!-- ========================================== -->
-    <div class="modal fade" id="editEmpModal" tabindex="-1" aria-hidden="true">
+
+    <!-- Modal Edit Employee -->
+    <div class="modal fade" id="editEmpModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title fw-bold"><i class="bi bi-pencil-square"></i> แก้ไขข้อมูลพนักงาน</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            <div class="modal-content border-0 p-3" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="fw-bold text-dark"><i class="bi bi-pencil-square text-primary me-2"></i>แก้ไขข้อมูลพนักงาน</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
-                <div class="modal-body p-4">
+                <div class="modal-body">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">รหัสพนักงาน</label>
+                        <label class="form-label text-muted small fw-bold">รหัสพนักงาน (แก้ไขไม่ได้)</label>
                         <input type="text" class="form-control bg-light" id="editEmpIdDisplay" readonly>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">เลขบัตร ปชช. (13 หลัก)</label>
-                        <input type="text" class="form-control" id="editEmpIdCardInput" maxlength="13" pattern="[0-9]{13}" required>
-                        <small class="text-danger d-block mt-1" style="font-size: 0.8rem;">* ถ้าย้าย/แก้ไขเลขบัตร ระบบจะเปลี่ยนรหัสผ่านเป็น 4 หลักท้ายอัตโนมัติ</small>
+                        <label class="form-label">เลขบัตรประชาชน <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editEmpIdCardInput" maxlength="13" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">ชื่อ-นามสกุล</label>
+                        <label class="form-label">ชื่อ - นามสกุล <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="editEmpNameInput" required>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">ระดับสิทธิ์ (Role)</label>
+                    <div class="mb-4">
+                        <label class="form-label">ระดับสิทธิ์</label>
                         <select class="form-select" id="editEmpRoleInput">
-                            <option value="employee">พนักงาน (Employee)</option>
-                            <option value="manager">ผู้จัดการ (Manager)</option>
-                            <option value="admin">แอดมิน (Admin)</option>
+                            <option value="employee">Staff (พนักงาน)</option>
+                            <option value="leader">Leader (ผู้จัดการ)</option>
+                            <option value="admin">Admin (แอดมิน)</option>
                         </select>
                     </div>
-                </div>
-                <div class="modal-footer bg-light">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-primary px-4 fw-bold" onclick="saveEditEmployee()">บันทึกการแก้ไข</button>
+                    <button type="button" id="btnSaveEdit" class="btn btn-primary w-100 py-2 fw-bold" onclick="window.saveEditEmployee()">บันทึกการเปลี่ยนแปลง</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;"><div id="liveToast" class="toast shadow-lg border-0"><div class="toast-header text-white" id="toastHeader"><strong class="me-auto">ระบบ</strong><button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast"></button></div><div class="toast-body fw-medium" id="toastMessage"></div></div></div>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
-    <script> checkAuth('admin'); renderAdminUI(); </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
