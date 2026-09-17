@@ -76,11 +76,13 @@ body {
     font-size: 0.85rem;
     border-bottom: 1px solid var(--border-light);
     padding: 1rem;
+    white-space: nowrap; /* 👈 ห้ามหัวตารางตัดคำ */
 }
 .table-custom tbody td {
     padding: 1.2rem 1rem;
     vertical-align: middle;
     border-bottom: 1px solid var(--border-light);
+    white-space: nowrap; /* 👈 ห้ามข้อมูลในตารางตัดคำ */
 }
 
 /* ================= SPA System ================= */

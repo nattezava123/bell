@@ -20,7 +20,7 @@
         </div>
     </nav>
 
-    <div class="container-fluid mt-5 mb-5 px-4 px-md-5" style="max-width: 1200px;">
+    <div class="container-fluid mt-5 mb-5 px-4 px-md-5" style="max-width: 1400px;"> <!-- เพิ่ม max-width ให้กว้างขึ้น -->
         <ul class="nav nav-pills mb-4 gap-2" role="tablist">
             <li class="nav-item">
                 <button class="nav-link active px-4 rounded-pill" data-bs-toggle="tab" data-bs-target="#tab-approval" type="button">รอพิจารณาอนุมัติ</button>
@@ -66,7 +66,8 @@
             <!-- TAB 3: จัดการพนักงาน -->
             <div class="tab-pane fade" id="tab-manage">
                 <div class="row">
-                    <div class="col-lg-4 mb-4">
+                    <!-- 👈 ปรับจาก col-lg-4 เป็น col-lg-3 เพื่อให้กล่องซ้ายเล็กลง -->
+                    <div class="col-lg-3 mb-4">
                         <div class="card card-custom h-100">
                             <h5 class="menu-title">เพิ่มพนักงานใหม่</h5>
                             <form id="addEmployeeForm" onsubmit="window.handleAddEmployee(event)">
@@ -78,7 +79,8 @@
                             </form>
                         </div>
                     </div>
-                    <div class="col-lg-8 mb-4">
+                    <!-- 👈 ปรับจาก col-lg-8 เป็น col-lg-9 เพื่อขยายตารางให้กว้างขึ้น -->
+                    <div class="col-lg-9 mb-4">
                         <div class="card card-custom h-100">
                             <h5 class="menu-title">ข้อมูลพนักงานในระบบ</h5>
                             <div class="table-responsive border-0">
