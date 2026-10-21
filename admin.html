@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ผู้ดูแลระบบ | HR Workspace</title>
+    <title>ผู้ดูแลระบบ | HRMS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar navbar-expand-md navbar-dark navbar-custom sticky-top">
         <div class="container-fluid px-4 px-md-5">
-            <a class="navbar-brand" href="#"><i class="bi bi-shield-check me-2"></i>Admin Center</a>
+            <a class="navbar-brand" href="#"><i class="bi bi-shield-check me-2"></i>HRMS Admin</a>
             <div class="d-flex align-items-center gap-4">
                 <span id="navUserInfo" class="d-none d-md-block text-dark fw-medium"></span>
                 <button class="btn btn-outline-secondary btn-sm" onclick="window.logout()">ออกจากระบบ</button>
@@ -20,28 +20,32 @@
         </div>
     </nav>
 
-    <div class="container-fluid mt-5 mb-5 px-4 px-md-5" style="max-width: 1400px;"> <!-- เพิ่ม max-width ให้กว้างขึ้น -->
+    <div class="container-fluid mt-5 mb-5 px-4 px-md-5" style="max-width: 1400px;">
         <ul class="nav nav-pills mb-4 gap-2" role="tablist">
-            <li class="nav-item">
-                <button class="nav-link active px-4 rounded-pill" data-bs-toggle="tab" data-bs-target="#tab-approval" type="button">รอพิจารณาอนุมัติ</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link px-4 rounded-pill text-dark" data-bs-toggle="tab" data-bs-target="#tab-report" type="button">รายงานทั้งหมด</button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link px-4 rounded-pill text-dark" data-bs-toggle="tab" data-bs-target="#tab-manage" type="button">จัดการพนักงาน</button>
-            </li>
+            <li class="nav-item"><button class="nav-link active px-4 rounded-pill" data-bs-toggle="tab" data-bs-target="#tab-approval" type="button">รอพิจารณาอนุมัติ</button></li>
+            <li class="nav-item"><button class="nav-link px-4 rounded-pill text-dark" data-bs-toggle="tab" data-bs-target="#tab-report" type="button">รายงานทั้งหมด</button></li>
+            <li class="nav-item"><button class="nav-link px-4 rounded-pill text-dark" data-bs-toggle="tab" data-bs-target="#tab-manage" type="button">จัดการพนักงาน</button></li>
+            <li class="nav-item"><button class="nav-link px-4 rounded-pill text-dark" data-bs-toggle="tab" data-bs-target="#tab-leave-balance" type="button">จัดการสิทธิ์การลา</button></li>
         </ul>
 
         <div class="tab-content">
             <!-- TAB 1: อนุมัติ -->
             <div class="tab-pane fade show active" id="tab-approval">
-                <div class="card card-custom">
-                    <h5 class="menu-title">รายการรอพิจารณา (เฉพาะระดับผู้จัดการ)</h5>
+                <div class="card card-custom mb-4">
+                    <h5 class="menu-title">รายการรอพิจารณาการลา (ระดับผู้จัดการ)</h5>
                     <div class="table-responsive border-0">
                         <table class="table table-custom text-center align-middle">
-                            <thead><tr><th>ชื่อพนักงาน</th><th>ประเภท</th><th>วันที่</th><th>เหตุผล</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+                            <thead><tr><th>ลำดับ</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>ข้อมูล</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
                             <tbody id="adminApproveManagerTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card card-custom">
+                    <h5 class="menu-title text-danger"><i class="bi bi-clock-history me-2"></i>คำขอแก้ไขเวลาลงงาน (ระดับผู้จัดการ)</h5>
+                    <div class="table-responsive border-0">
+                        <table class="table table-custom text-center align-middle">
+                            <thead><tr><th>ชื่อพนักงาน</th><th>วันที่</th><th>เวลาเดิม</th><th>เวลาที่ขอแก้ไข</th><th>เหตุผล</th><th>จัดการ</th></tr></thead>
+                            <tbody id="adminApproveTimeTableBody"></tbody>
                         </table>
                     </div>
                 </div>
@@ -52,11 +56,15 @@
                 <div class="card card-custom">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="menu-title mb-0">รายงานประวัติการลาทั้งหมด</h5>
-                        <button class="btn btn-outline-secondary btn-sm" onclick="window.showSwal('ดาวน์โหลดสำเร็จ', 'สร้างไฟล์ Report เรียบร้อย', 'success')"><i class="bi bi-download me-2"></i>Export Excel</button>
+                        <div class="d-flex gap-2">
+                            <div class="input-group input-group-sm"><span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchReport" class="form-control" placeholder="ค้นหาข้อมูล..." onkeyup="window.filterTable('searchReport', 'adminReportTableBody')"></div>
+                            <select id="adminFilterStatus" class="form-select form-select-sm" onchange="window.renderAdminUI()"><option value="all">สถานะทั้งหมด</option><option value="รอพิจารณา">รอพิจารณา</option><option value="อนุมัติ">อนุมัติ</option><option value="ไม่อนุมัติ">ไม่อนุมัติ</option><option value="ยกเลิก">ยกเลิก</option></select>
+                            <button class="btn btn-outline-secondary btn-sm" onclick="window.showSwal('ดาวน์โหลดสำเร็จ', 'สร้างไฟล์ Report เรียบร้อย', 'success')"><i class="bi bi-download"></i></button>
+                        </div>
                     </div>
                     <div class="table-responsive border-0">
                         <table class="table table-custom text-center align-middle">
-                            <thead><tr><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>สิทธิ์</th><th>ประเภท</th><th>วันที่</th><th>สถานะ</th></tr></thead>
+                            <thead><tr><th>ลำดับ</th><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>ช่วงเวลาลา</th><th>ประเภท</th><th>ใบรับรอง</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
                             <tbody id="adminReportTableBody"></tbody>
                         </table>
                     </div>
@@ -66,26 +74,27 @@
             <!-- TAB 3: จัดการพนักงาน -->
             <div class="tab-pane fade" id="tab-manage">
                 <div class="row">
-                    <!-- 👈 ปรับจาก col-lg-4 เป็น col-lg-3 เพื่อให้กล่องซ้ายเล็กลง -->
                     <div class="col-lg-3 mb-4">
                         <div class="card card-custom h-100">
                             <h5 class="menu-title">เพิ่มพนักงานใหม่</h5>
                             <form id="addEmployeeForm" onsubmit="window.handleAddEmployee(event)">
                                 <div class="mb-3"><label class="form-label">รหัสพนักงาน</label><input type="text" class="form-control" id="regId" required></div>
-                                <div class="mb-3"><label class="form-label">เลขบัตรประชาชน (13 หลัก)</label><input type="text" class="form-control" id="regIdCard" maxlength="13" required></div>
+                                <div class="mb-3"><label class="form-label">เลขบัตรประชาชน</label><input type="text" class="form-control" id="regIdCard" maxlength="13" required></div>
                                 <div class="mb-3"><label class="form-label">ชื่อ - นามสกุล</label><input type="text" class="form-control" id="regName" required></div>
-                                <div class="mb-4"><label class="form-label">ระดับสิทธิ์</label><select class="form-select" id="regRole"><option value="employee">Staff (พนักงาน)</option><option value="leader">Leader (ผู้จัดการ)</option><option value="admin">Admin (แอดมิน)</option></select></div>
+                                <div class="mb-4"><label class="form-label">ระดับสิทธิ์</label><select class="form-select" id="regRole"><option value="employee">Staff</option><option value="leader">Leader</option><option value="admin">Admin</option></select></div>
                                 <button type="submit" class="btn btn-primary w-100">สร้างบัญชีผู้ใช้</button>
                             </form>
                         </div>
                     </div>
-                    <!-- 👈 ปรับจาก col-lg-8 เป็น col-lg-9 เพื่อขยายตารางให้กว้างขึ้น -->
                     <div class="col-lg-9 mb-4">
                         <div class="card card-custom h-100">
-                            <h5 class="menu-title">ข้อมูลพนักงานในระบบ</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <h5 class="menu-title mb-0">ข้อมูลพนักงานในระบบ</h5>
+                                <div class="input-group input-group-sm" style="width: 250px;"><span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchEmp" class="form-control" placeholder="ค้นหารหัส, ชื่อ..." onkeyup="window.filterTable('searchEmp', 'adminEmployeeTableBody')"></div>
+                            </div>
                             <div class="table-responsive border-0">
                                 <table class="table table-custom text-center align-middle">
-                                    <thead><tr><th>รหัส</th><th>เลข ปชช.</th><th>ชื่อพนักงาน</th><th>สิทธิ์</th><th>จัดการ</th></tr></thead>
+                                    <thead><tr><th>ลำดับ</th><th>รหัส</th><th>เลข ปชช.</th><th>ชื่อพนักงาน</th><th>สิทธิ์</th><th>จัดการ</th></tr></thead>
                                     <tbody id="adminEmployeeTableBody"></tbody>
                                 </table>
                             </div>
@@ -93,39 +102,51 @@
                     </div>
                 </div>
             </div>
+
+            <!-- TAB 4: จัดการสิทธิ์การลา -->
+            <div class="tab-pane fade" id="tab-leave-balance">
+                <div class="card card-custom">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="menu-title mb-0">ข้อมูลสิทธิ์การลาคงเหลือ</h5>
+                        <div class="input-group input-group-sm" style="width: 250px;"><span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchLeaveBal" class="form-control" placeholder="ค้นหารหัส, ชื่อ..." onkeyup="window.filterTable('searchLeaveBal', 'adminLeaveBalanceTableBody')"></div>
+                    </div>
+                    <div class="table-responsive border-0">
+                        <table class="table table-custom text-center align-middle">
+                            <thead><tr><th>ลำดับ</th><th>รหัส</th><th>ชื่อพนักงาน</th><th class="text-primary">ป่วย</th><th class="text-primary">กิจ</th><th class="text-primary">พักร้อน</th><th class="text-secondary">คลอด</th><th class="text-secondary">บวช</th><th class="text-secondary">ทหาร</th><th>จัดการ</th></tr></thead>
+                            <tbody id="adminLeaveBalanceTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Edit Employee -->
+    <!-- Modals -->
     <div class="modal fade" id="editEmpModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 p-3" style="border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                <div class="modal-header border-0 pb-0">
-                    <h5 class="fw-bold text-dark"><i class="bi bi-pencil-square text-primary me-2"></i>แก้ไขข้อมูลพนักงาน</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+            <div class="modal-content border-0 p-3" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0"><h5 class="fw-bold text-dark"><i class="bi bi-person-gear text-primary me-2"></i>แก้ไขข้อมูลพนักงาน</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label text-muted small fw-bold">รหัสพนักงาน (แก้ไขไม่ได้)</label>
-                        <input type="text" class="form-control bg-light" id="editEmpIdDisplay" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">เลขบัตรประชาชน <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="editEmpIdCardInput" maxlength="13" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">ชื่อ - นามสกุล <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="editEmpNameInput" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label">ระดับสิทธิ์</label>
-                        <select class="form-select" id="editEmpRoleInput">
-                            <option value="employee">Staff (พนักงาน)</option>
-                            <option value="leader">Leader (ผู้จัดการ)</option>
-                            <option value="admin">Admin (แอดมิน)</option>
-                        </select>
-                    </div>
+                    <div class="row"><div class="col-6 mb-2"><label class="form-label small text-muted">รหัส</label><input type="text" class="form-control bg-light form-control-sm" id="editEmpIdDisplay" readonly></div><div class="col-6 mb-2"><label class="form-label small">สิทธิ์</label><select class="form-select form-select-sm" id="editEmpRoleInput"><option value="employee">Staff</option><option value="leader">Leader</option><option value="admin">Admin</option></select></div><div class="col-12 mb-2"><label class="form-label small">ชื่อ - นามสกุล <span class="text-danger">*</span></label><input type="text" class="form-control form-control-sm" id="editEmpNameInput" required></div><div class="col-12 mb-4"><label class="form-label small">เลขบัตรประชาชน <span class="text-danger">*</span></label><input type="text" class="form-control form-control-sm" id="editEmpIdCardInput" maxlength="13" required></div></div>
                     <button type="button" id="btnSaveEdit" class="btn btn-primary w-100 py-2 fw-bold" onclick="window.saveEditEmployee()">บันทึกการเปลี่ยนแปลง</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editLeaveBalanceModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 p-3" style="border-radius: 20px;">
+                <div class="modal-header border-0 pb-0"><h5 class="fw-bold text-dark"><i class="bi bi-calendar-range text-primary me-2"></i>ปรับปรุงสิทธิ์การลา</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <div class="mb-4 text-center"><span class="badge bg-primary px-3 py-2 fs-6 rounded-pill" id="leaveBalEmpName"></span></div>
+                    <div class="bg-light p-3 rounded-3 mb-4">
+                        <div class="row g-3 text-center">
+                            <div class="col-4"><label class="small text-muted mb-1">ลาป่วย</label><input type="number" class="form-control text-center fw-bold text-primary" id="editBalSick"></div><div class="col-4"><label class="small text-muted mb-1">ลากิจ</label><input type="number" class="form-control text-center fw-bold text-primary" id="editBalPers"></div><div class="col-4"><label class="small text-muted mb-1">ลาพักร้อน</label><input type="number" class="form-control text-center fw-bold text-primary" id="editBalAnn"></div>
+                            <div class="col-4"><label class="small text-muted mb-1">ลาคลอด</label><input type="number" class="form-control text-center fw-bold text-secondary" id="editBalMat"></div><div class="col-4"><label class="small text-muted mb-1">ลาบวช</label><input type="number" class="form-control text-center fw-bold text-secondary" id="editBalOrd"></div><div class="col-4"><label class="small text-muted mb-1">เกณฑ์ทหาร</label><input type="number" class="form-control text-center fw-bold text-secondary" id="editBalMil"></div>
+                        </div>
+                    </div>
+                    <button type="button" id="btnSaveLeaveBal" class="btn btn-primary w-100 py-2 fw-bold" onclick="window.saveLeaveBalance()">บันทึกสิทธิ์การลา</button>
                 </div>
             </div>
         </div>
