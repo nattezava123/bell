@@ -10,21 +10,10 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-light">
-    <!-- ================= 1. Top Navbar ================= -->
     <nav class="navbar navbar-expand-md navbar-dark sticky-top shadow-sm" style="background-color: var(--primary);">
         <div class="container-fluid px-4 px-md-5">
-            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
-                <i class="bi bi-shield-lock-fill fs-4 me-2 text-warning"></i> 
-                <span>HRMS <small class="text-white-50 fw-normal ms-1">| Manager Portal</small></span>
-            </a>
-            <div class="d-flex align-items-center gap-3">
-                <div class="text-end d-none d-md-block">
-                    <div id="navUserInfo" class="text-white fw-medium mb-0"></div>
-                </div>
-                <button class="btn btn-light btn-sm rounded-pill px-3 fw-bold text-primary shadow-sm" onclick="window.logout()">
-                    <i class="bi bi-box-arrow-right me-1"></i> ออกจากระบบ
-                </button>
-            </div>
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#"><i class="bi bi-shield-lock-fill fs-4 me-2 text-warning"></i> <span>HRMS <small class="text-white-50 fw-normal ms-1">| Manager Portal</small></span></a>
+            <div class="d-flex align-items-center gap-3"><div class="text-end d-none d-md-block"><div id="navUserInfo" class="text-white fw-medium mb-0"></div></div><button class="btn btn-light btn-sm rounded-pill px-3 fw-bold text-primary shadow-sm" onclick="window.logout()"><i class="bi bi-box-arrow-right me-1"></i> ออกจากระบบ</button></div>
         </div>
     </nav>
 
@@ -94,7 +83,7 @@
             </div>
         </div>
 
-        <!-- ================= 2. พิจารณาคำขอในทีม (พื้นที่ปรับใหม่ให้เป็นมืออาชีพ) ================= -->
+        <!-- ================= 2. พิจารณาคำขอในทีม ================= -->
         <div id="sectionApproval" class="spa-section">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="fw-bold text-dark mb-0">พิจารณาคำขอในทีม</h4>
@@ -102,7 +91,6 @@
             </div>
 
             <div class="row g-4">
-                <!-- 🌟 การ์ดที่ 1: คำขอการลาหยุดงาน -->
                 <div class="col-12">
                     <div class="card card-custom border-0 shadow-sm">
                         <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -119,7 +107,6 @@
                     </div>
                 </div>
 
-                <!-- 🌟 การ์ดที่ 2: คำขอแก้ไขเวลา -->
                 <div class="col-12">
                     <div class="card card-custom border-0 shadow-sm">
                         <div class="card-header bg-transparent border-0 pt-4 pb-3">
@@ -151,10 +138,18 @@
                     <span class="badge bg-light text-primary border shadow-sm px-3 py-2"><i class="bi bi-person-circle me-1"></i>คุณ <span id="empProfileNameLeaveHead"></span></span>
                 </div>
 
+                <!-- 🌟 เพิ่มการ์ดให้ครบ 7 ประเภท -->
                 <div class="row g-3 mb-4">
-                    <div class="col-md-4"><div class="border rounded-4 p-4 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลากิจ</h6><span class="badge bg-primary-subtle text-primary">คงเหลือ <b id="statPersBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barPers" class="progress-bar bg-primary rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statPersUsed">0</span> วัน</small></div></div>
-                    <div class="col-md-4"><div class="border rounded-4 p-4 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลาป่วย</h6><span class="badge bg-success-subtle text-success">คงเหลือ <b id="statSickBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barSick" class="progress-bar bg-success rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statSickUsed">0</span> วัน</small></div></div>
-                    <div class="col-md-4"><div class="border rounded-4 p-4 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลาพักร้อน</h6><span class="badge bg-warning-subtle text-warning">คงเหลือ <b id="statAnnBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barAnn" class="progress-bar bg-warning rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statAnnUsed">0</span> วัน</small></div></div>
+                    <!-- แถวบน 4 ประเภทหลัก -->
+                    <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-3 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลากิจ</h6><span class="badge bg-primary-subtle text-primary">คงเหลือ <b id="statPersBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barPers" class="progress-bar bg-primary rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statPersUsed">0</span> วัน</small></div></div>
+                    <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-3 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลาป่วย</h6><span class="badge bg-success-subtle text-success">คงเหลือ <b id="statSickBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barSick" class="progress-bar bg-success rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statSickUsed">0</span> วัน</small></div></div>
+                    <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-3 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลาพักร้อน</h6><span class="badge bg-warning-subtle text-warning">คงเหลือ <b id="statAnnBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barAnn" class="progress-bar bg-warning rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statAnnUsed">0</span> วัน</small></div></div>
+                    <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-3 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">หยุดชดเชย</h6><span class="badge bg-info-subtle text-info">คงเหลือ <b id="statCompBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barComp" class="progress-bar bg-info rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statCompUsed">0</span> วัน</small></div></div>
+                    
+                    <!-- แถวล่าง 3 ประเภทพิเศษ -->
+                    <div class="col-lg-4 col-md-6"><div class="border rounded-4 p-3 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลาคลอด</h6><span class="badge bg-secondary-subtle text-secondary">คงเหลือ <b id="statMatBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barMat" class="progress-bar bg-secondary rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statMatUsed">0</span> วัน</small></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="border rounded-4 p-3 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลาบวช</h6><span class="badge bg-secondary-subtle text-secondary">คงเหลือ <b id="statOrdBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barOrd" class="progress-bar bg-secondary rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statOrdUsed">0</span> วัน</small></div></div>
+                    <div class="col-lg-4 col-md-6"><div class="border rounded-4 p-3 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลาเกณฑ์ทหาร</h6><span class="badge bg-secondary-subtle text-secondary">คงเหลือ <b id="statMilBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barMil" class="progress-bar bg-secondary rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statMilUsed">0</span> วัน</small></div></div>
                 </div>
 
                 <ul class="nav nav-pills mb-4 nav-justified bg-light p-1 rounded-pill shadow-sm border" id="leaveTabs" role="tablist">
@@ -165,10 +160,42 @@
                 <div class="tab-content" id="leaveTabsContent">
                     <div class="tab-pane fade show active" id="tab-leave-form" role="tabpanel">
                         <form onsubmit="window.handleLeaveSubmit(event)" class="row g-3 p-4 bg-white shadow-sm rounded-4 border">
-                            <div class="col-md-4"><label class="form-label small fw-bold text-dark">ประเภทการลา <span class="text-danger">*</span></label><select class="form-select" id="leaveType" required><option value="" disabled selected>เลือกประเภทการลา</option><option value="sick">ลาป่วย</option><option value="personal">ลากิจ</option><option value="annual">ลาพักร้อน</option><option value="maternity">ลาคลอด</option><option value="ordination">ลาบวช</option><option value="military">ลาเกณฑ์ทหาร</option></select></div>
-                            <div class="col-md-4"><label class="form-label small fw-bold text-dark">วันที่เริ่มลา <span class="text-danger">*</span></label><input type="date" class="form-control" id="leaveStartDate" required></div>
-                            <div class="col-md-4"><label class="form-label small fw-bold text-dark">ถึงวันที่ <span class="text-muted fw-normal">(กรณีลาหลายวัน)</span></label><input type="date" class="form-control" id="leaveEndDate"></div>
-                            <div class="col-md-12"><label class="form-label small fw-bold text-dark">เหตุผลความจำเป็น <span class="text-danger">*</span></label><input type="text" class="form-control" id="leaveReason" placeholder="ระบุเหตุผลให้ชัดเจน..." required></div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">ประเภทการลา <span class="text-danger">*</span></label>
+                                <select class="form-select" id="leaveType" required onchange="window.toggleOtherLeaveType(this.value)">
+                                    <option value="" disabled selected>เลือกประเภทการลา</option>
+                                    <option value="sick">ลาป่วย</option>
+                                    <option value="personal">ลากิจ</option>
+                                    <option value="annual">ลาพักร้อน</option>
+                                    <option value="compensatory">วันหยุดชดเชย</option>
+                                    <option value="maternity">ลาคลอด</option>
+                                    <option value="ordination">ลาบวช</option>
+                                    <option value="military">ลาเกณฑ์ทหาร</option>
+                                    <option value="other">ลาอื่นๆ (ระบุเอง)</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">วันที่เริ่มลา <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="leaveStartDate" required>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">ถึงวันที่ <span class="text-muted fw-normal">(ถ้ามี)</span></label>
+                                <input type="date" class="form-control" id="leaveEndDate">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small fw-bold text-dark">ระบุเวลา <span class="text-muted fw-normal">(ถ้าไม่เต็มวัน)</span></label>
+                                <input type="text" class="form-control" id="leaveTime" placeholder="เช่น ครึ่งเช้า, 13:00-15:00" value="เต็มวัน" required>
+                            </div>
+                            
+                            <div class="col-md-12" id="leaveTypeOtherDiv" style="display: none;">
+                                <label class="form-label small fw-bold text-dark">ระบุการลาอื่นๆ <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control bg-warning bg-opacity-10 border-warning" id="leaveTypeOther" placeholder="เช่น ลาทำธุระพิเศษ, ลาฌาปนกิจ...">
+                            </div>
+
+                            <div class="col-md-12">
+                                <label class="form-label small fw-bold text-dark">เหตุผลความจำเป็น <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="leaveReason" placeholder="ระบุเหตุผลให้ชัดเจน..." required>
+                            </div>
                             <div class="col-md-12"><div class="bg-light p-3 rounded-3 border border-secondary-subtle mt-2"><label for="leaveCertFile" class="form-label small fw-bold text-dark mb-2"><i class="bi bi-paperclip me-1 text-primary"></i>แนบรูปใบรับรองแพทย์ / เอกสารอ้างอิง <span class="text-muted fw-normal">(รองรับรูปภาพหรือ PDF ไม่เกิน 500KB)</span></label><input class="form-control bg-white" type="file" id="leaveCertFile" accept="image/*,.pdf"></div></div>
                             <div class="col-md-12 d-flex justify-content-end mt-4"><button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm py-2"><i class="bi bi-send me-1"></i> ส่งคำขออนุมัติ</button></div>
                         </form>
@@ -187,8 +214,8 @@
         </div>
     </div>
 
-    <!-- Offcanvas -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 420px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
+    <!-- 🌟 ขยายขนาด Offcanvas ให้กว้างขึ้นเพื่อกดอนุมัติง่ายขึ้น -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 480px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
         <div class="offcanvas-header border-bottom bg-light py-3"><h5 class="offcanvas-title fw-bold text-dark"><i class="bi bi-file-text text-primary me-2"></i>รายละเอียดคำขอการลา</h5><button type="button" class="btn-close bg-white rounded-circle p-2 shadow-sm" data-bs-dismiss="offcanvas"></button></div>
         <div class="offcanvas-body p-4" id="leaveDetailOffcanvasBody"></div>
     </div>

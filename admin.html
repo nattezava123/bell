@@ -10,29 +10,16 @@
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     
-    <!-- 🌟 CSS พิเศษสำหรับจัดระเบียบหน้า Admin โดยเฉพาะ -->
     <style>
-        /* จัดกลุ่มฟอร์มให้แน่นขึ้น */
         .form-label { font-size: 0.85rem; margin-bottom: 0.25rem; color: #475569; }
         .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.95rem; }
-        
-        /* แก้ปัญหาตารางล้นจอ (Scrollbar) โดยย่อขนาดปุ่มจัดการ */
         .table-custom td { white-space: nowrap; vertical-align: middle; }
-        #adminEmployeeTableBody .btn, 
-        #adminReportTableBody .btn, 
-        #adminApproveManagerTableBody .btn {
-            padding: 0.25rem 0.6rem;
-            font-size: 0.8rem;
-        }
+        #adminEmployeeTableBody .btn, #adminReportTableBody .btn, #adminApproveManagerTableBody .btn { padding: 0.25rem 0.6rem; font-size: 0.8rem; }
         #adminEmployeeTableBody .gap-2 { gap: 0.35rem !important; }
-        
-        /* ตกแต่ง Scrollbar ของตารางให้ดูเนียนตา */
         .table-responsive::-webkit-scrollbar { height: 6px; }
         .table-responsive::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
         .table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* ตกแต่งหัวข้อ Card ให้ดูพรีเมียม */
         .card-title-icon { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; margin-right: 12px; }
     </style>
 </head>
@@ -58,29 +45,12 @@
     <!-- ================= 2. Main Content ================= -->
     <div class="container-fluid mt-4 mb-5 px-4 px-md-5" style="max-width: 1440px;">
         
-        <!-- Modern Segmented Tabs -->
         <div class="text-center mb-4">
             <ul class="nav nav-pills d-inline-flex bg-white shadow-sm p-2 rounded-pill gap-1 border" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active rounded-pill px-4 fw-bold" data-bs-toggle="tab" data-bs-target="#tab-approval" type="button">
-                        <i class="bi bi-ui-checks me-1"></i> รอพิจารณาอนุมัติ
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link rounded-pill px-4 text-secondary fw-bold" data-bs-toggle="tab" data-bs-target="#tab-report" type="button">
-                        <i class="bi bi-journal-text me-1"></i> รายงานการลา
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link rounded-pill px-4 text-secondary fw-bold" data-bs-toggle="tab" data-bs-target="#tab-manage" type="button">
-                        <i class="bi bi-people-fill me-1"></i> จัดการพนักงาน
-                    </button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link rounded-pill px-4 text-secondary fw-bold" data-bs-toggle="tab" data-bs-target="#tab-leave-balance" type="button">
-                        <i class="bi bi-sliders me-1"></i> สิทธิ์การลา
-                    </button>
-                </li>
+                <li class="nav-item"><button class="nav-link active rounded-pill px-4 fw-bold" data-bs-toggle="tab" data-bs-target="#tab-approval" type="button"><i class="bi bi-ui-checks me-1"></i> รอพิจารณาอนุมัติ</button></li>
+                <li class="nav-item"><button class="nav-link rounded-pill px-4 text-secondary fw-bold" data-bs-toggle="tab" data-bs-target="#tab-report" type="button"><i class="bi bi-journal-text me-1"></i> รายงานการลา</button></li>
+                <li class="nav-item"><button class="nav-link rounded-pill px-4 text-secondary fw-bold" data-bs-toggle="tab" data-bs-target="#tab-manage" type="button"><i class="bi bi-people-fill me-1"></i> จัดการพนักงาน</button></li>
+                <li class="nav-item"><button class="nav-link rounded-pill px-4 text-secondary fw-bold" data-bs-toggle="tab" data-bs-target="#tab-leave-balance" type="button"><i class="bi bi-sliders me-1"></i> สิทธิ์การลา</button></li>
             </ul>
         </div>
 
@@ -89,17 +59,12 @@
             <div class="tab-pane fade show active" id="tab-approval">
                 <div class="card card-custom mb-4 border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 pt-4 pb-2 d-flex align-items-center">
-                        <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
-                            <div class="card-title-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-person-fill-exclamation fs-5"></i></div>
-                            รายการรอพิจารณาการลา (ระดับผู้จัดการ)
-                        </h5>
+                        <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-person-fill-exclamation fs-5"></i></div>รายการรอพิจารณาการลา (ระดับผู้จัดการ)</h5>
                     </div>
                     <div class="card-body pt-2">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead>
-                                    <tr><th>ลำดับ</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>รายละเอียด</th><th>สถานะ</th><th>จัดการ</th></tr>
-                                </thead>
+                                <thead><tr><th>ลำดับ</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>รายละเอียด</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
                                 <tbody id="adminApproveManagerTableBody"></tbody>
                             </table>
                         </div>
@@ -108,17 +73,12 @@
 
                 <div class="card card-custom border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 pt-4 pb-2 d-flex align-items-center">
-                        <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
-                            <div class="card-title-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-clock-history fs-5"></i></div>
-                            คำขอแก้ไขเวลาลงงาน (ระดับผู้จัดการ)
-                        </h5>
+                        <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-clock-history fs-5"></i></div>คำขอแก้ไขเวลาลงงาน (ระดับผู้จัดการ)</h5>
                     </div>
                     <div class="card-body pt-2">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead>
-                                    <tr><th>ชื่อพนักงาน</th><th>วันที่</th><th>เวลาเดิม</th><th>เวลาที่ขอแก้ไข</th><th>เหตุผล</th><th>จัดการ</th></tr>
-                                </thead>
+                                <thead><tr><th>ชื่อพนักงาน</th><th>วันที่</th><th>เวลาเดิม</th><th>เวลาที่ขอแก้ไข</th><th>เหตุผล</th><th>จัดการ</th></tr></thead>
                                 <tbody id="adminApproveTimeTableBody"></tbody>
                             </table>
                         </div>
@@ -126,38 +86,21 @@
                 </div>
             </div>
 
-            <!-- ================= TAB 2: รายงาน (Leave Reports) ================= -->
+            <!-- ================= TAB 2: รายงาน ================= -->
             <div class="tab-pane fade" id="tab-report">
                 <div class="card card-custom border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
-                        <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
-                            <div class="card-title-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-file-earmark-bar-graph fs-5"></i></div>
-                            รายงานประวัติการลาทั้งหมด
-                        </h5>
-                        
+                        <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-file-earmark-bar-graph fs-5"></i></div>รายงานประวัติการลาทั้งหมด</h5>
                         <div class="d-flex flex-wrap gap-2 align-items-center">
-                            <div class="input-group input-group-sm shadow-sm" style="width: 250px;">
-                                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                                <input type="text" id="searchReport" class="form-control border-start-0 ps-0" placeholder="ค้นหา รหัส, ชื่อ, ประเภท..." onkeyup="window.filterTable('searchReport', 'adminReportTableBody')">
-                            </div>
-                            <select id="adminFilterStatus" class="form-select form-select-sm shadow-sm fw-medium" style="width: 150px; color: #475569;" onchange="window.renderAdminUI()">
-                                <option value="all">สถานะทั้งหมด</option>
-                                <option value="รอพิจารณา">รอพิจารณา</option>
-                                <option value="อนุมัติ">อนุมัติ</option>
-                                <option value="ไม่อนุมัติ">ไม่อนุมัติ</option>
-                                <option value="ยกเลิก">ยกเลิกแล้ว</option>
-                            </select>
-                            <button class="btn btn-success btn-sm d-flex align-items-center rounded-pill px-3 shadow-sm fw-bold" onclick="window.exportAdminLeaveReport()">
-                                <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
-                            </button>
+                            <div class="input-group input-group-sm shadow-sm" style="width: 250px;"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchReport" class="form-control border-start-0 ps-0" placeholder="ค้นหา รหัส, ชื่อ, ประเภท..." onkeyup="window.filterTable('searchReport', 'adminReportTableBody')"></div>
+                            <select id="adminFilterStatus" class="form-select form-select-sm shadow-sm fw-medium" style="width: 150px; color: #475569;" onchange="window.renderAdminUI()"><option value="all">สถานะทั้งหมด</option><option value="รอพิจารณา">รอพิจารณา</option><option value="อนุมัติ">อนุมัติ</option><option value="ไม่อนุมัติ">ไม่อนุมัติ</option><option value="ยกเลิก">ยกเลิกแล้ว</option></select>
+                            <button class="btn btn-success btn-sm d-flex align-items-center rounded-pill px-3 shadow-sm fw-bold" onclick="window.exportAdminLeaveReport()"><i class="bi bi-file-earmark-excel me-1"></i> Export CSV</button>
                         </div>
                     </div>
                     <div class="card-body pt-0">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead>
-                                    <tr><th>ลำดับ</th><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>ช่วงเวลาลา</th><th>ประเภท</th><th>เอกสาร</th><th>สถานะ</th><th>รายละเอียด</th></tr>
-                                </thead>
+                                <thead><tr><th>ลำดับ</th><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>ช่วงเวลาลา</th><th>ประเภท</th><th>เอกสาร</th><th>สถานะ</th><th>รายละเอียด</th></tr></thead>
                                 <tbody id="adminReportTableBody"></tbody>
                             </table>
                         </div>
@@ -165,88 +108,40 @@
                 </div>
             </div>
 
-            <!-- ================= TAB 3: จัดการพนักงาน (Manage Employees) ================= -->
+            <!-- ================= TAB 3: จัดการพนักงาน ================= -->
             <div class="tab-pane fade" id="tab-manage">
                 <div class="row g-4">
-                    <!-- Column 1: ฟอร์มเพิ่มพนักงาน -->
-                    <div class="col-lg-3 col-md-4">
+                    <div class="col-lg-4 col-md-5">
                         <div class="card card-custom border-0 shadow-sm h-100 p-4">
                             <div class="card-header bg-transparent border-0 p-0 mb-4 d-flex align-items-center">
-                                <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
-                                    <div class="card-title-icon bg-success bg-opacity-10 text-success m-0 me-2"><i class="bi bi-person-plus-fill fs-5"></i></div>
-                                    เพิ่มพนักงานใหม่
-                                </h5>
+                                <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-success bg-opacity-10 text-success m-0 me-2"><i class="bi bi-person-plus-fill fs-5"></i></div>เพิ่มพนักงานใหม่</h5>
                             </div>
                             <div class="card-body p-0">
                                 <form id="addEmployeeForm" onsubmit="window.handleAddEmployee(event)">
-                                    <!-- 🌟 จัดกลุ่มฟอร์มใหม่ให้แนบสนิทกัน ลดช่องว่างส่วนเกิน -->
-                                    <div class="mb-3">
-                                        <label for="regId" class="form-label fw-bold">รหัสพนักงาน</label>
-                                        <input type="text" class="form-control bg-light shadow-none" id="regId" placeholder="เช่น EMP001" required>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="regIdCard" class="form-label fw-bold">เลขบัตรประชาชน</label>
-                                        <input type="text" class="form-control bg-light shadow-none" id="regIdCard" placeholder="ระบุ 13 หลัก" maxlength="13" required>
-                                        <div class="form-text text-muted mt-1" style="font-size: 0.75rem; line-height: 1.2;">
-                                            <i class="bi bi-info-circle me-1"></i>ระบบจะใช้ 4 ตัวท้าย เป็นรหัสผ่านเริ่มต้น
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <label for="regName" class="form-label fw-bold">ชื่อ - นามสกุล</label>
-                                        <input type="text" class="form-control bg-light shadow-none" id="regName" placeholder="เช่น สมชาย ใจดี" required>
-                                    </div>
-                                    
-                                    <div class="mb-4">
-                                        <label for="regRole" class="form-label fw-bold">ระดับสิทธิ์การใช้งาน</label>
-                                        <select class="form-select bg-light shadow-none fw-medium text-dark" id="regRole">
-                                            <option value="employee">Staff (พนักงานทั่วไป)</option>
-                                            <option value="leader">Manager (หัวหน้างาน)</option>
-                                            <option value="admin">Admin (ผู้ดูแลระบบ)</option>
-                                        </select>
-                                    </div>
-                                    
-                                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm mt-2">
-                                        <i class="bi bi-plus-circle me-1"></i> สร้างบัญชีผู้ใช้
-                                    </button>
+                                    <div class="mb-3"><label for="regId" class="form-label fw-bold">รหัสพนักงาน</label><input type="text" class="form-control bg-light shadow-none" id="regId" placeholder="เช่น EMP001" required></div>
+                                    <div class="mb-1"><label for="regIdCard" class="form-label fw-bold">เลขบัตรประชาชน</label><input type="text" class="form-control bg-light shadow-none" id="regIdCard" placeholder="ระบุ 13 หลัก" maxlength="13" required></div>
+                                    <div class="form-text small text-muted mb-3"><i class="bi bi-info-circle me-1"></i>ระบบจะใช้ 4 ตัวท้าย เป็นรหัสผ่านเริ่มต้น</div>
+                                    <div class="mb-3"><label for="regName" class="form-label fw-bold">ชื่อ - นามสกุล</label><input type="text" class="form-control bg-light shadow-none" id="regName" placeholder="เช่น สมชาย ใจดี" required></div>
+                                    <div class="mb-4"><label for="regRole" class="form-label fw-bold">ระดับสิทธิ์การใช้งาน</label><select class="form-select bg-light shadow-none fw-medium text-dark" id="regRole"><option value="employee">Staff (พนักงานทั่วไป)</option><option value="leader">Manager (หัวหน้างาน)</option><option value="admin">Admin (ผู้ดูแลระบบ)</option></select></div>
+                                    <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold shadow-sm mt-2"><i class="bi bi-plus-circle me-1"></i> สร้างบัญชีผู้ใช้</button>
                                 </form>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Column 2: ตารางรายชื่อพนักงาน -->
-                    <div class="col-lg-9 col-md-8">
+                    <div class="col-lg-8 col-md-7">
                         <div class="card card-custom border-0 shadow-sm h-100 p-4">
                             <div class="card-header bg-transparent border-0 p-0 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
-                                <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
-                                    <div class="card-title-icon bg-primary bg-opacity-10 text-primary m-0 me-2"><i class="bi bi-people-fill fs-5"></i></div>
-                                    รายชื่อพนักงานในระบบ
-                                </h5>
+                                <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-primary bg-opacity-10 text-primary m-0 me-2"><i class="bi bi-people-fill fs-5"></i></div>รายชื่อพนักงานในระบบ</h5>
                                 <div class="d-flex flex-wrap gap-2">
-                                    <div class="input-group input-group-sm shadow-sm" style="width: 230px;">
-                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                                        <input type="text" id="searchEmp" class="form-control border-start-0 ps-0" placeholder="ค้นหารหัส, ชื่อพนักงาน..." onkeyup="window.filterTable('searchEmp', 'adminEmployeeTableBody')">
-                                    </div>
-                                    <button class="btn btn-success btn-sm d-flex align-items-center rounded-pill px-3 shadow-sm fw-bold" onclick="window.exportAdminEmployees()">
-                                        <i class="bi bi-file-earmark-excel me-1"></i> Export CSV
-                                    </button>
+                                    <div class="input-group input-group-sm shadow-sm" style="width: 230px;"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchEmp" class="form-control border-start-0 ps-0" placeholder="ค้นหารหัส, ชื่อพนักงาน..." onkeyup="window.filterTable('searchEmp', 'adminEmployeeTableBody')"></div>
+                                    <button class="btn btn-success btn-sm d-flex align-items-center rounded-pill px-3 shadow-sm fw-bold" onclick="window.exportAdminEmployees()"><i class="bi bi-file-earmark-excel me-1"></i> Export CSV</button>
                                 </div>
                             </div>
                             <div class="card-body p-0">
                                 <div class="table-responsive border-0 min-vh-25">
-                                    <!-- 🌟 กำหนดความกว้างของ Column คร่าวๆ เพื่อไม่ให้ปุ่มโดนถ่าง -->
                                     <table class="table table-custom text-center align-middle mb-0">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 10%;">ลำดับ</th>
-                                                <th style="width: 15%;">รหัสพนักงาน</th>
-                                                <th style="width: 20%;">เลข ปชช.</th>
-                                                <th style="width: 25%;">ชื่อ - นามสกุล</th>
-                                                <th style="width: 15%;">ระดับสิทธิ์</th>
-                                                <th style="width: 15%;">การจัดการ</th>
-                                            </tr>
-                                        </thead>
+                                        <thead><tr><th style="width: 10%;">ลำดับ</th><th style="width: 15%;">รหัสพนักงาน</th><th style="width: 20%;">เลข ปชช.</th><th style="width: 25%;">ชื่อ - นามสกุล</th><th style="width: 15%;">ระดับสิทธิ์</th><th style="width: 15%;">การจัดการ</th></tr></thead>
                                         <tbody id="adminEmployeeTableBody"></tbody>
                                     </table>
                                 </div>
@@ -256,28 +151,24 @@
                 </div>
             </div>
 
-            <!-- ================= TAB 4: จัดการสิทธิ์การลา (Leave Balances) ================= -->
+            <!-- ================= TAB 4: จัดการสิทธิ์การลา ================= -->
             <div class="tab-pane fade" id="tab-leave-balance">
                 <div class="card card-custom border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
-                        <h5 class="fw-bold text-dark mb-0 d-flex align-items-center">
-                            <div class="card-title-icon bg-info bg-opacity-10 text-info"><i class="bi bi-sliders2 fs-5"></i></div>
-                            ปรับปรุงโควตาสิทธิ์การลาพนักงาน
-                        </h5>
-                        <div class="input-group input-group-sm shadow-sm" style="width: 300px;">
-                            <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
-                            <input type="text" id="searchLeaveBal" class="form-control border-start-0 ps-0" placeholder="ค้นหารหัส, ชื่อพนักงาน..." onkeyup="window.filterTable('searchLeaveBal', 'adminLeaveBalanceTableBody')">
-                        </div>
+                        <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-info bg-opacity-10 text-info"><i class="bi bi-sliders2 fs-5"></i></div>ปรับปรุงโควตาสิทธิ์การลาพนักงาน</h5>
+                        <div class="input-group input-group-sm shadow-sm" style="width: 300px;"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchLeaveBal" class="form-control border-start-0 ps-0" placeholder="ค้นหารหัส, ชื่อพนักงาน..." onkeyup="window.filterTable('searchLeaveBal', 'adminLeaveBalanceTableBody')"></div>
                     </div>
                     <div class="card-body pt-0">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
+                                <!-- 🌟 เพิ่มช่องสิทธิ์ "ชดเชย" สำหรับ Admin -->
                                 <thead>
                                     <tr>
                                         <th>ลำดับ</th><th>รหัส</th><th>ชื่อพนักงาน</th>
                                         <th class="text-primary bg-primary bg-opacity-10 rounded-start">ป่วย</th>
                                         <th class="text-primary bg-primary bg-opacity-10">กิจ</th>
                                         <th class="text-primary bg-primary bg-opacity-10 rounded-end">พักร้อน</th>
+                                        <th class="text-info bg-info bg-opacity-10 rounded-start rounded-end ms-2">ชดเชย</th>
                                         <th class="text-secondary bg-secondary bg-opacity-10 rounded-start ms-2">คลอด</th>
                                         <th class="text-secondary bg-secondary bg-opacity-10">บวช</th>
                                         <th class="text-secondary bg-secondary bg-opacity-10 rounded-end">ทหาร</th>
@@ -293,90 +184,54 @@
         </div>
     </div>
 
-    <!-- ================= Modals ================= -->
-    <!-- Modal แก้ไขข้อมูลพนักงาน -->
+    <!-- Modals & Offcanvas -->
     <div class="modal fade" id="editEmpModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 24px;">
-                <div class="modal-header border-0 pb-0 mt-2 px-4">
-                    <h5 class="fw-bold text-dark"><i class="bi bi-person-gear text-primary me-2"></i>แก้ไขข้อมูลพนักงาน</h5>
-                    <button type="button" class="btn-close bg-light rounded-circle p-2" data-bs-dismiss="modal"></button>
-                </div>
+                <div class="modal-header border-0 pb-0 mt-2 px-4"><h5 class="fw-bold text-dark"><i class="bi bi-person-gear text-primary me-2"></i>แก้ไขข้อมูลพนักงาน</h5><button type="button" class="btn-close bg-light rounded-circle p-2" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body px-4 pb-4">
                     <div class="row g-3 mb-4 mt-1">
-                        <div class="col-6">
-                            <label class="form-label small fw-bold text-muted mb-1">รหัสพนักงาน</label>
-                            <input type="text" class="form-control bg-light text-muted" id="editEmpIdDisplay" readonly>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label small fw-bold mb-1">ระดับสิทธิ์</label>
-                            <select class="form-select" id="editEmpRoleInput">
-                                <option value="employee">Staff (ทั่วไป)</option>
-                                <option value="leader">Manager (หัวหน้า)</option>
-                                <option value="admin">Admin (แอดมิน)</option>
-                            </select>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold mb-1">ชื่อ - นามสกุล <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editEmpNameInput" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label small fw-bold mb-1">เลขบัตรประชาชน <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" id="editEmpIdCardInput" maxlength="13" required>
-                            <div class="form-text small text-muted mt-1"><i class="bi bi-info-circle me-1"></i>ใช้สำหรับรีเซ็ตรหัสผ่าน (4 ตัวท้าย)</div>
-                        </div>
+                        <div class="col-6"><label class="form-label small fw-bold text-muted mb-1">รหัสพนักงาน</label><input type="text" class="form-control bg-light text-muted" id="editEmpIdDisplay" readonly></div>
+                        <div class="col-6"><label class="form-label small fw-bold mb-1">ระดับสิทธิ์</label><select class="form-select" id="editEmpRoleInput"><option value="employee">Staff</option><option value="leader">Manager</option><option value="admin">Admin</option></select></div>
+                        <div class="col-12"><label class="form-label small fw-bold mb-1">ชื่อ - นามสกุล <span class="text-danger">*</span></label><input type="text" class="form-control" id="editEmpNameInput" required></div>
+                        <div class="col-12"><label class="form-label small fw-bold mb-1">เลขบัตรประชาชน <span class="text-danger">*</span></label><input type="text" class="form-control" id="editEmpIdCardInput" maxlength="13" required><div class="form-text small text-muted mt-1"><i class="bi bi-info-circle me-1"></i>ใช้สำหรับรีเซ็ตรหัสผ่าน (4 ตัวท้าย)</div></div>
                     </div>
-                    <button type="button" id="btnSaveEdit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm" onclick="window.saveEditEmployee()">
-                        <i class="bi bi-save me-1"></i> บันทึกการเปลี่ยนแปลง
-                    </button>
+                    <button type="button" id="btnSaveEdit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm" onclick="window.saveEditEmployee()"><i class="bi bi-save me-1"></i> บันทึกการเปลี่ยนแปลง</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal จัดการสิทธิ์การลา -->
     <div class="modal fade" id="editLeaveBalanceModal" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 24px;">
-                <div class="modal-header border-0 pb-0 mt-2 px-4">
-                    <h5 class="fw-bold text-dark"><i class="bi bi-calendar-range text-primary me-2"></i>ปรับปรุงโควตาสิทธิ์การลา</h5>
-                    <button type="button" class="btn-close bg-light rounded-circle p-2" data-bs-dismiss="modal"></button>
-                </div>
+                <div class="modal-header border-0 pb-0 mt-2 px-4"><h5 class="fw-bold text-dark"><i class="bi bi-calendar-range text-primary me-2"></i>ปรับปรุงโควตาสิทธิ์การลา</h5><button type="button" class="btn-close bg-light rounded-circle p-2" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body px-4 pb-4">
-                    <div class="mb-4 text-center mt-2">
-                        <span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 fs-6 rounded-pill w-100" id="leaveBalEmpName"></span>
-                    </div>
+                    <div class="mb-4 text-center mt-2"><span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 fs-6 rounded-pill w-100" id="leaveBalEmpName"></span></div>
                     <div class="bg-light p-3 rounded-4 mb-4 border">
                         <div class="row g-3 text-center">
-                            <div class="col-4"><label class="small text-muted mb-1 fw-bold">ลาป่วย</label><input type="number" class="form-control text-center fw-bold text-primary fs-5" id="editBalSick"></div>
-                            <div class="col-4"><label class="small text-muted mb-1 fw-bold">ลากิจ</label><input type="number" class="form-control text-center fw-bold text-primary fs-5" id="editBalPers"></div>
-                            <div class="col-4"><label class="small text-muted mb-1 fw-bold">พักร้อน</label><input type="number" class="form-control text-center fw-bold text-primary fs-5" id="editBalAnn"></div>
-                            <hr class="my-2 border-secondary-subtle">
+                            <!-- 🌟 เพิ่มกล่องปรับสิทธิ์วันหยุดชดเชย -->
+                            <div class="col-3"><label class="small text-muted mb-1 fw-bold">ลาป่วย</label><input type="number" class="form-control text-center fw-bold text-primary fs-5 px-1" id="editBalSick"></div>
+                            <div class="col-3"><label class="small text-muted mb-1 fw-bold">ลากิจ</label><input type="number" class="form-control text-center fw-bold text-primary fs-5 px-1" id="editBalPers"></div>
+                            <div class="col-3"><label class="small text-muted mb-1 fw-bold">พักร้อน</label><input type="number" class="form-control text-center fw-bold text-primary fs-5 px-1" id="editBalAnn"></div>
+                            <div class="col-3"><label class="small text-muted mb-1 fw-bold">ชดเชย</label><input type="number" class="form-control text-center fw-bold text-info fs-5 px-1" id="editBalComp"></div>
+                            <hr class="my-2 border-secondary-subtle w-100">
                             <div class="col-4"><label class="small text-muted mb-1 fw-bold">ลาคลอด</label><input type="number" class="form-control text-center fw-bold text-secondary" id="editBalMat"></div>
                             <div class="col-4"><label class="small text-muted mb-1 fw-bold">ลาบวช</label><input type="number" class="form-control text-center fw-bold text-secondary" id="editBalOrd"></div>
                             <div class="col-4"><label class="small text-muted mb-1 fw-bold">เกณฑ์ทหาร</label><input type="number" class="form-control text-center fw-bold text-secondary" id="editBalMil"></div>
                         </div>
                     </div>
-                    <button type="button" id="btnSaveLeaveBal" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm" onclick="window.saveLeaveBalance()">
-                        <i class="bi bi-save me-1"></i> บันทึกโควตาสิทธิ์การลา
-                    </button>
+                    <button type="button" id="btnSaveLeaveBal" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm" onclick="window.saveLeaveBalance()"><i class="bi bi-save me-1"></i> บันทึกโควตาสิทธิ์การลา</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ================= Offcanvas Drawer ================= -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 420px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
-        <div class="offcanvas-header border-bottom bg-light py-3">
-            <h5 class="offcanvas-title fw-bold text-dark"><i class="bi bi-file-text text-primary me-2"></i>รายละเอียดคำขอการลา</h5>
-            <button type="button" class="btn-close bg-white rounded-circle p-2 shadow-sm" data-bs-dismiss="offcanvas"></button>
-        </div>
-        <div class="offcanvas-body p-4" id="leaveDetailOffcanvasBody">
-            <!-- เนื้อหาดึงผ่าน JS -->
-        </div>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 480px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
+        <div class="offcanvas-header border-bottom bg-light py-3"><h5 class="offcanvas-title fw-bold text-dark"><i class="bi bi-file-text text-primary me-2"></i>รายละเอียดคำขอการลา</h5><button type="button" class="btn-close bg-white rounded-circle p-2 shadow-sm" data-bs-dismiss="offcanvas"></button></div>
+        <div class="offcanvas-body p-4" id="leaveDetailOffcanvasBody"></div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="script.js"></script>
