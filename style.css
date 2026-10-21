@@ -1,260 +1,74 @@
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 
-/* ==========================================
-   1. Modern Enterprise Design Tokens
-========================================== */
 :root {
-    /* Fresh Color Palette - สีสว่าง ดูเป็นมิตรและน่าใช้ */
-    --primary: #2563eb;         /* Vibrant Blue */
-    --primary-hover: #1d4ed8;   
-    --surface: #ffffff;         /* Pure White */
-    --background: #f8fafc;      /* Soft Slate Background */
-    
-    /* Text & Borders */
-    --text-main: #0f172a;       /* Dark text for contrast */
-    --text-muted: #64748b;      /* Softer gray for less important text */
-    --border-light: #e2e8f0;    /* Very soft borders */
-    --border-input: #cbd5e1;
-
-    /* Shapes & Shadows - มิตินุ่มนวลน่าสัมผัส */
-    --radius-sm: 8px;           /* Buttons & Inputs */
-    --radius-md: 20px;          /* Cards & Modals (โค้งมนน่าใช้) */
-    --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.04);
-    --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.05); /* เงาฟุ้งๆ ให้กล่องดูลอย */
-    --shadow-glow: 0 4px 14px 0 rgba(37, 99, 235, 0.25);  /* เงาสีน้ำเงินสำหรับปุ่มหลัก */
+    --primary: #2563eb; --primary-hover: #1d4ed8;   
+    --surface: #ffffff; --background: #f1f5f9;      
+    --text-dark: #0f172a; --text-main: #334155; --text-muted: #64748b;  
+    --border-light: #e2e8f0; --border-input: #cbd5e1;
+    --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px;         
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
+    --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.05); 
+    --shadow-glow: 0 4px 14px 0 rgba(37, 99, 235, 0.25);  
 }
 
-body {
-    font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--background);
-    color: var(--text-main);
-    -webkit-font-smoothing: antialiased;
-    line-height: 1.6;
+body { 
+    font-family: 'Sarabun', sans-serif; background-color: var(--background); 
+    color: var(--text-main); font-size: 16px; line-height: 1.6; 
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;
 }
 
-/* ==========================================
-   2. Navbar (Top Navigation)
-========================================== */
-.navbar-custom {
-    background-color: var(--surface) !important;
-    box-shadow: var(--shadow-sm);
-    padding: 0.8rem 0;
-    border-bottom: 1px solid var(--border-light);
-}
-.navbar-brand {
-    color: var(--primary) !important;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    font-size: 1.3rem;
-}
+h1, h2, h3, h4, h5, h6 { color: var(--text-dark); font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
 
-/* ==========================================
-   3. Cards & Panels
-========================================== */
-.card-custom {
-    background: var(--surface);
-    border: 1px solid rgba(226, 232, 240, 0.8);
-    border-radius: var(--radius-md);
-    box-shadow: var(--shadow-md);
-    padding: 2.5rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-.card-custom:hover {
-    box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08); /* Hover ลอยขึ้นนิดๆ */
-}
-.menu-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--text-main);
-    margin-bottom: 1.5rem;
-}
+.navbar-custom { background-color: var(--surface) !important; box-shadow: var(--shadow-sm); padding: 0.8rem 0; border-bottom: 1px solid var(--border-light); }
+.navbar-brand { color: var(--primary) !important; font-weight: 700; letter-spacing: 0.5px; font-size: 1.4rem; }
 
-/* ==========================================
-   4. Buttons & Forms
-========================================== */
-.btn {
-    border-radius: var(--radius-sm);
-    font-weight: 600;
-    padding: 0.6rem 1.4rem;
-    transition: all 0.2s ease;
-}
-.btn-primary { 
-    background-color: var(--primary); 
-    border-color: var(--primary); 
-    color: white; 
-    box-shadow: var(--shadow-sm);
-}
-.btn-primary:hover, .btn-primary:focus { 
-    background-color: var(--primary-hover); 
-    border-color: var(--primary-hover);
-    transform: translateY(-2px); 
-    box-shadow: var(--shadow-glow); /* เรืองแสงสีน้ำเงินเวลากด */
-}
-.btn-outline-primary {
-    color: var(--primary);
-    border-color: var(--primary);
-}
-.btn-outline-primary:hover {
-    background-color: var(--primary);
-    color: white;
-    box-shadow: var(--shadow-glow);
-}
+.card-custom { background: var(--surface); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); padding: 2.5rem; transition: all 0.3s ease; }
+.card-custom:hover { box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08); }
+.menu-title { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.5rem; }
 
-/* Inputs */
-.form-label {
-    font-weight: 600;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-}
-.form-control, .form-select {
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border-input);
-    padding: 0.8rem 1rem;
-    background-color: #f8fafc; /* พื้นหลังช่องกรอกสีเทาอ่อนมาก */
-    color: var(--text-main);
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-}
-.form-control:focus, .form-select:focus {
-    background-color: var(--surface);
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
-}
-.input-group-text {
-    border: 1px solid var(--border-input);
-    background-color: var(--surface);
-    color: var(--text-muted);
-}
+.btn { border-radius: var(--radius-sm); font-weight: 600; padding: 0.6rem 1.4rem; transition: all 0.2s ease; letter-spacing: 0.02em; }
+.btn-primary { background-color: var(--primary); border-color: var(--primary); color: white; box-shadow: var(--shadow-sm); }
+.btn-primary:hover, .btn-primary:focus { background-color: var(--primary-hover); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
 
-/* ==========================================
-   5. Tables (Data Grids) - สะอาดและโปร่ง
-========================================== */
-.table-custom {
-    border-collapse: separate;
-    border-spacing: 0 8px; /* เว้นช่องไฟระหว่างแถวให้น่าอ่าน */
-    width: 100%;
-}
-.table-custom thead th {
-    background-color: transparent;
-    color: var(--text-muted);
-    font-weight: 600;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    padding: 1rem;
-    border-bottom: 2px solid var(--border-light);
-    white-space: nowrap;
-}
-.table-custom tbody tr {
-    background-color: var(--surface);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-    border-radius: var(--radius-sm);
-    transition: all 0.2s ease;
-}
-.table-custom tbody tr:hover {
-    background-color: #f1f5f9;
-    transform: scale(1.002);
-}
-.table-custom tbody td {
-    padding: 1.2rem 1rem;
-    vertical-align: middle;
-    border-top: 1px solid var(--border-light);
-    border-bottom: 1px solid var(--border-light);
-    white-space: nowrap;
-}
+/* ป้องกันตัวหนังสือฟอร์มซ้อนทับกัน */
+.form-label { font-weight: 600; color: var(--text-dark); font-size: 0.95rem; margin-bottom: 0.4rem; }
+.form-control, .form-select { border-radius: var(--radius-sm); border: 1px solid var(--border-input); padding: 0.8rem 1rem; background-color: #f8fafc; color: var(--text-dark); font-weight: 500; transition: all 0.2s ease; }
+.form-control:focus, .form-select:focus { background-color: var(--surface); border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); color: var(--text-dark); }
+.form-control::placeholder { color: #94a3b8; font-weight: 400; }
+
+.table-custom { border-collapse: separate; border-spacing: 0 8px; width: 100%; }
+.table-custom thead th { background-color: transparent; color: var(--text-muted); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 1rem; border-bottom: 2px solid var(--border-light); white-space: nowrap; }
+.table-custom tbody tr { background-color: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,0.02); border-radius: var(--radius-sm); transition: all 0.2s ease; }
+.table-custom tbody tr:hover { background-color: #f8fafc; transform: scale(1.002); box-shadow: var(--shadow-sm); }
+.table-custom tbody td { padding: 1rem; vertical-align: middle; color: var(--text-main); font-weight: 500; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); white-space: nowrap; }
 .table-custom tbody td:first-child { border-left: 1px solid var(--border-light); border-top-left-radius: var(--radius-sm); border-bottom-left-radius: var(--radius-sm); }
 .table-custom tbody td:last-child { border-right: 1px solid var(--border-light); border-top-right-radius: var(--radius-sm); border-bottom-right-radius: var(--radius-sm); }
 
-/* ==========================================
-   6. Badges & Indicators
-========================================== */
-.badge {
-    font-weight: 600;
-    padding: 0.5em 0.9em;
-    border-radius: 30px; /* ป้ายกำกับโค้งมน */
-}
+.badge { font-weight: 700; padding: 0.55em 0.9em; border-radius: 30px; letter-spacing: 0.01em; }
 .bg-success-subtle { background-color: #dcfce7 !important; color: #166534 !important; }
 .bg-danger-subtle { background-color: #fee2e2 !important; color: #991b1b !important; }
 .bg-warning-subtle { background-color: #fef3c7 !important; color: #92400e !important; }
 .bg-primary-subtle { background-color: #dbeafe !important; color: #1e40af !important; }
 .bg-info-subtle { background-color: #cffafe !important; color: #155e75 !important; }
+.bg-secondary-subtle { background-color: #f1f5f9 !important; color: #475569 !important; }
 
-/* ==========================================
-   7. SPA Routing System & Dashboard Menu
-========================================== */
 .spa-section { display: none; }
 .spa-section.active { display: block; animation: fadeIn 0.4s ease-out; }
-@keyframes fadeIn { 
-    from { opacity: 0; transform: translateY(15px); } 
-    to { opacity: 1; transform: translateY(0); } 
-}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-.menu-btn-card {
-    border: 1px solid var(--border-light);
-    border-radius: var(--radius-md);
-    background: var(--surface);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-.menu-btn-card:hover {
-    border-color: #bfdbfe;
-    background-color: #f8fafc;
-    box-shadow: var(--shadow-md);
-    transform: translateY(-4px);
-}
-.icon-box {
-    width: 60px; height: 60px;
-    display: flex; align-items: center; justify-content: center;
-    border-radius: 16px; 
-    font-size: 1.8rem;
-}
+.menu-btn-card { border: 1px solid var(--border-light); border-radius: var(--radius-md); background: var(--surface); cursor: pointer; transition: all 0.3s ease; }
+.menu-btn-card:hover { border-color: #bfdbfe; background-color: #f8fafc; box-shadow: var(--shadow-md); transform: translateY(-4px); }
+.icon-box { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; font-size: 1.8rem; }
 
-/* ==========================================
-   8. Login Screen (Fresh & Welcoming)
-========================================== */
-.login-wrapper { 
-    min-height: 100vh; 
-    display: flex; align-items: center; justify-content: center; 
-    padding: 2rem; 
-    background-color: #e2e8f0; /* พื้นหลังเข้มขึ้นนิดนึงเพื่อดันกล่อง Login ให้เด่น */
-}
-.login-container { 
-    display: flex; 
-    background: var(--surface); 
-    border-radius: 24px; 
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
-    overflow: hidden; 
-    width: 100%; max-width: 950px; min-height: 550px; 
-}
-.login-left { 
-    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); /* ไล่สีน้ำเงินสว่าง น่าใช้ */
-    color: white; 
-    padding: 4rem; width: 50%; 
-    display: flex; flex-direction: column; justify-content: center; 
-    position: relative;
-}
-.login-left::after {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-    background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0);
-    background-size: 30px 30px;
-    pointer-events: none;
-}
-.login-left > * { z-index: 1; position: relative; }
-
-.login-right { 
-    padding: 4rem; width: 50%; 
-    display: flex; flex-direction: column; justify-content: center; 
-    background-color: var(--surface);
-}
-
-@media (max-width: 768px) {
-    .login-left { display: none; }
-    .login-right { width: 100%; padding: 2.5rem; }
-    .card-custom { padding: 1.5rem; }
-}
-
-/* Miscellaneous Helpers */
+.login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background-color: var(--border-light); }
+.login-container { display: flex; background: var(--surface); border-radius: var(--radius-lg); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); overflow: hidden; width: 100%; max-width: 1000px; min-height: 550px; }
+.login-left { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 4rem; width: 50%; display: flex; flex-direction: column; justify-content: center; position: relative; }
+.login-right { padding: 4rem; width: 50%; display: flex; flex-direction: column; justify-content: center; background-color: var(--surface); }
+@media (max-width: 768px) { .login-left { display: none; } .login-right { width: 100%; padding: 2.5rem; } .card-custom { padding: 1.5rem; } body { font-size: 15px; } }
 .min-vh-25 { min-height: 25vh; }
-.tabular-nums { font-variant-numeric: tabular-nums; }
+.tabular-nums { font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.style-07 { font-size: 0.75rem; letter-spacing: 0.03em; }
+
+/* 🌟 ปรับปรุง Swal2 ให้อ่านง่าย */
+.swal2-title { font-family: 'Sarabun', sans-serif !important; font-weight: 700 !important; color: var(--text-dark) !important; }
+.swal2-html-container { font-family: 'Sarabun', sans-serif !important; color: var(--text-main) !important; font-weight: 500 !important; line-height: 1.6 !important; }

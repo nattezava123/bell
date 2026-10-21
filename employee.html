@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bg-light">
     <div class="container mt-4 mb-5" style="max-width: 1080px;">
         <!-- ================= เมนูหลัก ================= -->
         <div id="sectionMenu" class="spa-section active">
@@ -22,7 +22,7 @@
                     <div class="col-md-8"><div class="card menu-btn-card p-4 text-start d-flex flex-row align-items-center" onclick="window.navigate('sectionTime')"><div class="bg-success bg-opacity-10 text-success icon-box me-4"><i class="bi bi-clock-history"></i></div><div><h6 class="fw-bold mb-1 text-dark">บันทึกเวลางานส่วนตัว</h6><small class="text-muted">Check-in / Check-out & Work Attendance</small></div></div></div>
                     <div class="col-md-8"><div class="card menu-btn-card p-4 text-start d-flex flex-row align-items-center" onclick="window.navigate('sectionStats')"><div class="bg-primary bg-opacity-10 text-primary icon-box me-4"><i class="bi bi-calendar-event"></i></div><div><h6 class="fw-bold mb-1 text-dark">จัดการวันลา & ประวัติส่วนตัว</h6><small class="text-muted">Leave Application & Personal History</small></div></div></div>
                 </div>
-                <div class="mt-5"><button class="btn btn-outline-danger btn-sm rounded-pill px-4" onclick="window.logout()"><i class="bi bi-box-arrow-right me-2"></i>ออกจากระบบ</button></div>
+                <div class="mt-5"><button class="btn btn-outline-danger btn-sm rounded-pill px-4 fw-bold" onclick="window.logout()"><i class="bi bi-box-arrow-right me-2"></i>ออกจากระบบ</button></div>
             </div>
         </div>
 
@@ -30,11 +30,11 @@
         <div id="sectionTime" class="spa-section">
             <div class="card card-custom">
                 <nav aria-label="breadcrumb" class="mb-3"><ol class="breadcrumb small"><li class="breadcrumb-item"><a href="#" onclick="window.navigate('sectionMenu')">หน้าหลัก</a></li><li class="breadcrumb-item active">บันทึกเวลางานส่วนตัว</li></ol></nav>
-                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom"><h5 class="fw-bold text-dark mb-0"><i class="bi bi-clock me-2 text-primary"></i>ระบบลงเวลาปฏิบัติงาน</h5><button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="window.navigate('sectionMenu')">กลับหน้าหลัก</button></div>
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom"><h5 class="fw-bold text-dark mb-0"><i class="bi bi-clock me-2 text-primary"></i>ระบบลงเวลาปฏิบัติงาน</h5><button class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold" onclick="window.navigate('sectionMenu')">กลับหน้าหลัก</button></div>
                 
                 <div class="row mb-5">
                     <div class="col-md-5 border-end pe-md-4 d-flex flex-column justify-content-center text-center">
-                        <div class="text-primary fw-medium mb-1" id="empCurrentDateDisplay"></div>
+                        <div class="text-primary fw-bold mb-1" id="empCurrentDateDisplay"></div>
                         <h2 class="text-dark fw-bold mb-2" id="empCurrentTime" style="font-variant-numeric: tabular-nums;">--:--:--</h2>
                         <div class="mb-4"><span class="badge bg-light text-dark border shadow-sm px-3 py-2 fs-6 rounded-pill"><i class="bi bi-person-circle text-primary me-2"></i>คุณ <span id="empProfileNameTime"></span></span></div>
                         
@@ -46,10 +46,10 @@
                     <div class="col-md-7 ps-md-4 mt-4 mt-md-0">
                         <h6 class="fw-bold text-dark mb-3">ระบุข้อมูลการปฏิบัติงาน</h6>
                         <form onsubmit="window.saveDailyDetails(event)">
-                            <div class="form-floating mb-3"><input type="text" class="form-control bg-light" id="empCompDisplay" value="บริษัท ศิลามาศ ทรานสปอร์ต จำกัด" readonly><label>สังกัดบริษัท</label></div>
-                            <div class="form-floating mb-3"><select class="form-select" id="workLocation" required><option value="" disabled selected>เลือกสาขา / ไซต์งาน</option><option value="Silamas 1">Silamas 1 (สำนักงานใหญ่)</option><option value="Silamas 2">Silamas 2 (คลังสินค้า)</option><option value="Site A">Site A (ศูนย์กระจายสินค้า)</option><option value="WFH">Work From Home</option></select><label>สถานที่ปฏิบัติงาน</label></div>
-                            <div class="form-floating mb-3"><textarea class="form-control" id="workDetails" style="height: 110px" placeholder="ระบุรายละเอียดงาน" required></textarea><label>รายละเอียดงานประจำวัน</label></div>
-                            <button type="submit" class="btn btn-outline-secondary w-100 rounded-pill fw-bold">บันทึกรายละเอียดงาน</button>
+                            <div class="mb-3"><label class="form-label small text-muted">สังกัดบริษัท</label><input type="text" class="form-control bg-light" id="empCompDisplay" value="บริษัท ศิลามาศ ทรานสปอร์ต จำกัด" readonly></div>
+                            <div class="mb-3"><label class="form-label small text-muted">สถานที่ปฏิบัติงาน</label><select class="form-select" id="workLocation" required><option value="" disabled selected>เลือกสาขา / ไซต์งาน</option><option value="Silamas 1">Silamas 1 (สำนักงานใหญ่)</option><option value="Silamas 2">Silamas 2 (คลังสินค้า)</option><option value="Site A">Site A (ศูนย์กระจายสินค้า)</option><option value="WFH">Work From Home</option></select></div>
+                            <div class="mb-3"><label class="form-label small text-muted">รายละเอียดงานประจำวัน</label><textarea class="form-control" id="workDetails" style="height: 110px" placeholder="ระบุรายละเอียดงาน" required></textarea></div>
+                            <button type="submit" class="btn btn-outline-secondary w-100 rounded-pill fw-bold mt-2">บันทึกรายละเอียดงาน</button>
                         </form>
                     </div>
                 </div>
@@ -57,18 +57,18 @@
                 <div class="pt-4 border-top">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
                         <h6 class="fw-bold text-dark mb-0"><i class="bi bi-journal-text me-2"></i>ประวัติการลงเวลางาน</h6>
-                        <div class="d-flex gap-2"><input type="month" id="timeHistoryMonth" class="form-control form-control-sm" onchange="window.renderTimeHistoryPage(1)"><button class="btn btn-outline-success btn-sm d-flex align-items-center rounded-pill" onclick="window.exportTimesheet()"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV</button></div>
+                        <div class="d-flex gap-2"><input type="month" id="timeHistoryMonth" class="form-control form-control-sm" onchange="window.renderTimeHistoryPage(1)"><button class="btn btn-outline-success btn-sm d-flex align-items-center rounded-pill fw-bold" onclick="window.exportTimesheet()"><i class="bi bi-file-earmark-spreadsheet me-1"></i> Export CSV</button></div>
                     </div>
                     <div class="row g-2 mb-3"><div class="col-6"><div class="bg-light p-2 rounded text-center border"><small class="text-muted d-block fw-bold style-07">ชั่วโมงปกติ (เดือนนี้)</small><span class="fw-bold text-dark fs-5" id="sumWorkHr">0.00</span></div></div><div class="col-6"><div class="bg-light p-2 rounded text-center border"><small class="text-muted d-block fw-bold style-07">OT (เดือนนี้)</small><span class="fw-bold text-primary fs-5" id="sumOtHr">0.00</span></div></div></div>
                     <div class="table-responsive border-0 min-vh-25">
-                        <table class="table table-custom text-center align-middle">
+                        <table class="table table-custom text-center align-middle mb-0">
                             <thead><tr><th>วันที่</th><th>สถานที่</th><th>เวลาเข้า</th><th>เวลาออก</th><th>ชม.ปกติ</th><th>OT</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
                             <tbody id="myTimeHistoryTableBody"></tbody>
                         </table>
                     </div>
                     <div class="d-flex justify-content-between align-items-center mt-3 border-top pt-3">
-                        <div class="d-flex align-items-center gap-2"><span class="small text-muted">แสดง</span><select id="timeRowsPerPage" class="form-select form-select-sm text-muted" style="width: 75px;" onchange="window.changeRowsPerPage()"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option></select><span class="small text-muted" id="timePageInfo">รายการ</span></div>
-                        <div class="btn-group"><button class="btn btn-sm btn-outline-secondary px-3" id="btnPrevTime" onclick="window.changeTimePage(-1)"><i class="bi bi-chevron-left me-1"></i>ก่อนหน้า</button><button class="btn btn-sm btn-outline-secondary px-3" id="btnNextTime" onclick="window.changeTimePage(1)">ถัดไป <i class="bi bi-chevron-right ms-1"></i></button></div>
+                        <div class="d-flex align-items-center gap-2"><span class="small text-muted fw-bold">แสดง</span><select id="timeRowsPerPage" class="form-select form-select-sm text-muted fw-bold" style="width: 75px;" onchange="window.changeRowsPerPage()"><option value="5">5</option><option value="10" selected>10</option><option value="20">20</option></select><span class="small text-muted fw-bold" id="timePageInfo">รายการ</span></div>
+                        <div class="btn-group"><button class="btn btn-sm btn-outline-secondary px-3 fw-bold" id="btnPrevTime" onclick="window.changeTimePage(-1)"><i class="bi bi-chevron-left me-1"></i>ก่อนหน้า</button><button class="btn btn-sm btn-outline-secondary px-3 fw-bold" id="btnNextTime" onclick="window.changeTimePage(1)">ถัดไป <i class="bi bi-chevron-right ms-1"></i></button></div>
                     </div>
                 </div>
             </div>
@@ -80,7 +80,7 @@
                 <nav aria-label="breadcrumb" class="mb-3"><ol class="breadcrumb small"><li class="breadcrumb-item"><a href="#" onclick="window.navigate('sectionMenu')">หน้าหลัก</a></li><li class="breadcrumb-item active">ข้อมูลการลาหยุดงาน</li></ol></nav>
                 <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
                     <div><h5 class="fw-bold text-dark mb-1"><i class="bi bi-calendar-check me-2 text-primary"></i>จัดการข้อมูลการลาหยุดงาน</h5><span class="badge bg-light text-primary border"><i class="bi bi-person-circle me-1"></i>คุณ <span id="empProfileNameLeaveHead"></span></span></div>
-                    <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="window.navigate('sectionMenu')">กลับหน้าหลัก</button>
+                    <button class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold" onclick="window.navigate('sectionMenu')">กลับหน้าหลัก</button>
                 </div>
 
                 <div class="row g-3 mb-4">
@@ -97,10 +97,10 @@
                 <div class="tab-content" id="leaveTabsContent">
                     <div class="tab-pane fade show active" id="tab-leave-form" role="tabpanel">
                         <form onsubmit="window.handleLeaveSubmit(event)" class="row g-3 p-3 bg-light rounded-3 border">
-                            <div class="col-md-4"><div class="form-floating"><select class="form-select" id="leaveType" required><option value="" disabled selected>เลือกประเภทการลา</option><option value="sick">ลาป่วย</option><option value="personal">ลากิจ</option><option value="annual">ลาพักร้อน</option><option value="maternity">ลาคลอด</option><option value="ordination">ลาบวช</option><option value="military">ลาเกณฑ์ทหาร</option></select><label>ประเภทการลา <span class="text-danger">*</span></label></div></div>
-                            <div class="col-md-4"><div class="form-floating"><input type="date" class="form-control" id="leaveStartDate" required><label>วันที่เริ่มลา <span class="text-danger">*</span></label></div></div>
-                            <div class="col-md-4"><div class="form-floating"><input type="date" class="form-control" id="leaveEndDate"><label>ถึงวันที่ (กรณีลาหลายวัน)</label></div></div>
-                            <div class="col-md-12"><div class="form-floating"><input type="text" class="form-control" id="leaveReason" placeholder="ระบุเหตุผล" required><label>เหตุผลความจำเป็น <span class="text-danger">*</span></label></div></div>
+                            <div class="col-md-4"><label class="form-label small text-muted">ประเภทการลา <span class="text-danger">*</span></label><select class="form-select" id="leaveType" required><option value="" disabled selected>เลือกประเภทการลา</option><option value="sick">ลาป่วย</option><option value="personal">ลากิจ</option><option value="annual">ลาพักร้อน</option><option value="maternity">ลาคลอด</option><option value="ordination">ลาบวช</option><option value="military">ลาเกณฑ์ทหาร</option></select></div>
+                            <div class="col-md-4"><label class="form-label small text-muted">วันที่เริ่มลา <span class="text-danger">*</span></label><input type="date" class="form-control" id="leaveStartDate" required></div>
+                            <div class="col-md-4"><label class="form-label small text-muted">ถึงวันที่ (กรณีลาหลายวัน)</label><input type="date" class="form-control" id="leaveEndDate"></div>
+                            <div class="col-md-12"><label class="form-label small text-muted">เหตุผลความจำเป็น <span class="text-danger">*</span></label><input type="text" class="form-control" id="leaveReason" placeholder="ระบุเหตุผลให้ชัดเจน" required></div>
                             <div class="col-md-12"><div class="bg-white p-3 rounded-3 border"><label for="leaveCertFile" class="form-label small fw-bold text-dark mb-2"><i class="bi bi-paperclip me-1 text-primary"></i>แนบรูปใบรับรองแพทย์ / เอกสารอ้างอิง (รองรับรูปภาพหรือ PDF ขนาดไม่เกิน 500KB)</label><input class="form-control form-control-sm" type="file" id="leaveCertFile" accept="image/*,.pdf"></div></div>
                             <div class="col-md-12 d-flex justify-content-end mt-3 pt-2 border-top"><button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm">ส่งคำขออนุมัติ</button></div>
                         </form>
@@ -108,7 +108,7 @@
                     <div class="tab-pane fade" id="tab-leave-history" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-3"><h6 class="fw-bold text-dark mb-0">รายการประวัติการลาของคุณ <span id="empProfileNameLeaveTable" class="text-primary"></span></h6></div>
                         <div class="table-responsive border-0 min-vh-25">
-                            <table class="table table-custom text-center align-middle">
+                            <table class="table table-custom text-center align-middle mb-0">
                                 <thead><tr><th>ลำดับ</th><th>วันที่ยื่น</th><th>ช่วงเวลาที่ลา</th><th>ประเภท</th><th>เอกสาร</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
                                 <tbody id="myLeaveStatusTable"></tbody>
                             </table>
@@ -120,8 +120,8 @@
     </div>
 
     <!-- Offcanvas -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 420px;">
-        <div class="offcanvas-header border-bottom bg-light"><h5 class="offcanvas-title fw-bold text-dark"><i class="bi bi-file-text text-primary me-2"></i>รายละเอียดคำขอการลา</h5><button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button></div>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 420px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
+        <div class="offcanvas-header border-bottom bg-light py-3"><h5 class="offcanvas-title fw-bold text-dark"><i class="bi bi-file-text text-primary me-2"></i>รายละเอียดคำขอการลา</h5><button type="button" class="btn-close bg-white rounded-circle p-2 shadow-sm" data-bs-dismiss="offcanvas"></button></div>
         <div class="offcanvas-body p-4" id="leaveDetailOffcanvasBody"></div>
     </div>
 
