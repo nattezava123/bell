@@ -24,7 +24,8 @@
                 <h4 class="fw-bold text-dark mb-1">ยินดีต้อนรับกลับมา</h4>
                 <p class="text-muted mb-4 small">กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ</p>
 
-                <form id="loginForm" onsubmit="window.handleLogin(event)">
+                <!-- 🌟 ผูกฟังก์ชันผ่าน id เพื่อความชัวร์ 100% -->
+                <form id="loginForm">
                     <div class="mb-3">
                         <label class="form-label">รหัสพนักงาน</label>
                         <div class="input-group">
@@ -39,7 +40,7 @@
                             <input type="password" class="form-control bg-light border-start-0 ps-0 py-2" id="loginPassword" placeholder="ระบุรหัสผ่านของคุณ" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm mt-2">
+                    <button type="submit" id="btnLoginSubmit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm mt-2">
                         เข้าสู่ระบบ <i class="bi bi-box-arrow-in-right ms-1"></i>
                     </button>
                 </form>
