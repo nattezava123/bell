@@ -3,49 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เข้าสู่ระบบ | HRMS</title>
+    <title>เข้าสู่ระบบ | HRMS Enterprise</title>
+    <!-- CSS & Frameworks -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="bg-light">
+    
     <div class="login-wrapper">
         <div class="login-container">
+            <!-- ฝั่งซ้าย (แบนเนอร์) -->
             <div class="login-left">
-                <h1 class="fw-bold mb-3">HRMS</h1>
-                <p class="fs-6 opacity-75">ระบบบริหารงานบุคคลบนเว็บไซต์<br>Human Resource Management System</p>
-                
-                <div class="mt-5 p-4 bg-white bg-opacity-10 rounded-4 border border-white border-opacity-25 shadow-sm">
-                    <h6 class="fw-bold mb-3 d-flex align-items-center">
-                        <i class="bi bi-info-circle fs-5 me-2"></i>คำแนะนำการล็อกอิน
-                    </h6>
-                    <ol class="small opacity-100 ps-3 mb-4" style="line-height: 1.8;">
-                        <li>กรอก <strong>รหัสพนักงาน</strong> หรือ ชื่อพนักงาน ลงในช่องแรก (ระบบจะแสดงรายชื่อให้เลือกอัตโนมัติ)</li>
-                        <li>กรอกรหัสผ่าน (<strong>PIN 4 ตัวท้ายของบัตรประชาชน</strong>)</li>
-                        <li>กดปุ่มเข้าสู่ระบบ</li>
-                    </ol>
+                <div class="mb-4">
+                    <i class="bi bi-shield-lock-fill text-warning" style="font-size: 3.5rem;"></i>
                 </div>
+                <h2 class="fw-bold mb-3 text-white">HRMS Enterprise</h2>
+                <p class="text-white-50" style="font-size: 1.1rem; line-height: 1.6;">
+                    ระบบบริหารจัดการทรัพยากรบุคคลแบบครบวงจร <br>
+                    ครอบคลุมการลงเวลาปฏิบัติงานและการจัดการวันลา
+                </p>
             </div>
+            
+            <!-- ฝั่งขวา (ฟอร์มเข้าสู่ระบบ) -->
             <div class="login-right">
-                <h3 class="fw-bold text-dark mb-1">เข้าสู่ระบบ</h3>
-                <p class="text-muted mb-5">กรุณากรอกข้อมูลเพื่อดำเนินการต่อ</p>
-                
-                <form onsubmit="window.handleLogin(event)">
+                <div class="text-center mb-4 d-md-none">
+                    <i class="bi bi-shield-lock-fill text-primary" style="font-size: 3.5rem;"></i>
+                </div>
+                <h4 class="fw-bold text-dark mb-1">ยินดีต้อนรับกลับมา</h4>
+                <p class="text-muted mb-4 small">กรุณาเข้าสู่ระบบเพื่อดำเนินการต่อ</p>
+
+                <form id="loginForm" onsubmit="window.handleLogin(event)">
+                    <div class="mb-3">
+                        <label for="loginUsername" class="form-label">รหัสพนักงาน</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0 px-3"><i class="bi bi-person fs-5"></i></span>
+                            <input type="text" class="form-control bg-light border-start-0 ps-0 py-2" id="loginUsername" placeholder="เช่น EMP001" required>
+                        </div>
+                    </div>
+                    
                     <div class="mb-4">
-                        <label class="form-label">รหัสผู้ใช้งาน</label>
-                        <input type="text" class="form-control" id="loginUsername" placeholder="Employee ID" required>
+                        <label for="loginPassword" class="form-label">รหัสผ่าน</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light text-muted border-end-0 px-3"><i class="bi bi-key fs-5"></i></span>
+                            <input type="password" class="form-control bg-light border-start-0 ps-0 py-2" id="loginPassword" placeholder="ระบุรหัสผ่านของคุณ" required>
+                        </div>
                     </div>
-                    <div class="mb-5">
-                        <label class="form-label">รหัสผ่าน</label>
-                        <input type="password" class="form-control" id="loginPassword" placeholder="••••••••" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-3">เข้าสู่ระบบ</button>
+                    
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-bold rounded-pill shadow-sm mt-2">
+                        เข้าสู่ระบบ <i class="bi bi-box-arrow-in-right ms-1"></i>
+                    </button>
                 </form>
             </div>
         </div>
     </div>
-    
+
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="module" src="script.js"></script>

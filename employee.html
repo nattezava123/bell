@@ -54,12 +54,20 @@
                     </div>
                 </div>
 
+                <!-- 🌟 อัปเดตส่วนประวัติเวลา นำ Export ออกและเปลี่ยนเป็น Date Picker -->
                 <div class="pt-4 border-top">
-                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                        <h6 class="fw-bold text-dark mb-0"><i class="bi bi-journal-text me-2"></i>ประวัติการลงเวลางาน</h6>
-                        <div class="d-flex gap-2"><input type="month" id="timeHistoryMonth" class="form-control form-control-sm" onchange="window.renderTimeHistoryPage(1)"><button class="btn btn-success btn-sm d-flex align-items-center rounded-pill fw-bold" onclick="window.exportTimesheet()"><i class="bi bi-file-earmark-excel me-1"></i> Export CSV</button></div>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                        <h5 class="fw-bold text-dark mb-0"><i class="bi bi-journal-text text-primary me-2"></i>ประวัติลงเวลาส่วนตัว</h5>
+                        <div class="d-flex align-items-center gap-2">
+                            <label for="timeHistoryDate" class="form-label small fw-bold text-muted mb-0">ค้นหาวันที่ :</label>
+                            <input type="date" id="timeHistoryDate" class="form-control form-control-sm shadow-sm" onchange="window.renderTimeHistoryPage(1)" style="width: 140px; border-radius: 8px;">
+                            <button class="btn btn-light btn-sm border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" onclick="document.getElementById('timeHistoryDate').value=''; window.renderTimeHistoryPage(1);" title="แสดงข้อมูลทั้งหมด"><i class="bi bi-arrow-counterclockwise"></i></button>
+                        </div>
                     </div>
-                    <div class="row g-2 mb-3"><div class="col-6"><div class="bg-light p-2 rounded-3 text-center border"><small class="text-muted d-block fw-bold style-07">ชั่วโมงปกติ (เดือนนี้)</small><span class="fw-bold text-dark fs-5" id="sumWorkHr">0.00</span></div></div><div class="col-6"><div class="bg-light p-2 rounded-3 text-center border"><small class="text-muted d-block fw-bold style-07">OT (เดือนนี้)</small><span class="fw-bold text-primary fs-5" id="sumOtHr">0.00</span></div></div></div>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6"><div class="bg-white p-3 rounded-4 text-center border shadow-sm"><small class="text-muted d-block fw-bold style-07 mb-1">ชั่วโมงทำงาน (รวม)</small><span class="fw-bold text-dark fs-4" id="sumWorkHr">0.00</span></div></div>
+                        <div class="col-6"><div class="bg-white p-3 rounded-4 text-center border shadow-sm"><small class="text-muted d-block fw-bold style-07 mb-1">ล่วงเวลา OT (รวม)</small><span class="fw-bold text-primary fs-4" id="sumOtHr">0.00</span></div></div>
+                    </div>
                     <div class="table-responsive border-0 min-vh-25">
                         <table class="table table-custom text-center align-middle mb-0">
                             <thead><tr><th>วันที่</th><th>สถานที่</th><th>เวลาเข้า</th><th>เวลาออก</th><th>ชม.ปกติ</th><th>OT</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
@@ -83,7 +91,6 @@
                     <button class="btn btn-outline-secondary btn-sm rounded-pill px-3 fw-bold" onclick="window.navigate('sectionMenu')">กลับหน้าหลัก</button>
                 </div>
 
-                <!-- 🌟 เพิ่มการ์ดให้ครบ 7 ประเภท -->
                 <div class="row g-3 mb-4">
                     <!-- แถวบน 4 ประเภทหลัก -->
                     <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-3 bg-light shadow-sm"><div class="d-flex justify-content-between align-items-center mb-2"><h6 class="text-dark fw-bold mb-0">ลากิจ</h6><span class="badge bg-primary-subtle text-primary">คงเหลือ <b id="statPersBal" class="fs-6">0</b> วัน</span></div><div class="progress mb-2 bg-white border" style="height: 8px;"><div id="barPers" class="progress-bar bg-primary rounded-pill" role="progressbar" style="width: 0%;"></div></div><small class="text-muted fw-medium">ใช้ไปแล้ว <span id="statPersUsed">0</span> วัน</small></div></div>
@@ -149,7 +156,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold text-dark mb-0"><i class="bi bi-card-list text-primary me-2"></i>รายการประวัติการลาของคุณ <span id="empProfileNameLeaveTable" class="text-primary"></span></h5></div>
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead><tr><th>ลำดับ</th><th>วันที่ยื่น</th><th>ช่วงเวลาที่ลา</th><th>ประเภท</th><th>เอกสาร</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+                                <thead><tr><th>ลำดับ</th><th>วันที่ยื่น</th><th>ช่วงเวลาที่ลา</th><th>ประเภท</th><th>สถานะ</th><th>ตรวจสอบ</th><th>จัดการ</th></tr></thead>
                                 <tbody id="myLeaveStatusTable"></tbody>
                             </table>
                         </div>

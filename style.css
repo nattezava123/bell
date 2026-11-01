@@ -1,74 +1,227 @@
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary: #2563eb; --primary-hover: #1d4ed8;   
-    --surface: #ffffff; --background: #f1f5f9;      
-    --text-dark: #0f172a; --text-main: #334155; --text-muted: #64748b;  
-    --border-light: #e2e8f0; --border-input: #cbd5e1;
-    --radius-sm: 8px; --radius-md: 16px; --radius-lg: 24px;         
-    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-    --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.05); 
-    --shadow-glow: 0 4px 14px 0 rgba(37, 99, 235, 0.25);  
+    /* 🌟 Ergonomic Color Palette (สบายตา เป็นมิตรกับผู้ใช้งาน) */
+    --primary: #2563eb;       
+    --primary-hover: #1d4ed8;   
+    --surface: #ffffff; 
+    --background: #f8fafc;    
+    
+    /* 🌟 Text Colors */
+    --text-dark: #1e293b;     
+    --text-main: #334155;     
+    --text-muted: #64748b;    
+    
+    /* 🌟 Borders & Radius */
+    --border-light: #e2e8f0;  
+    --border-input: #cbd5e1;
+    --radius-sm: 6px; 
+    --radius-md: 10px; 
+    --radius-lg: 16px;         
+    
+    /* 🌟 Clean Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03); 
 }
 
+/* ==========================================
+   1. Typography & Base
+   ========================================== */
 body { 
-    font-family: 'Sarabun', sans-serif; background-color: var(--background); 
-    color: var(--text-main); font-size: 16px; line-height: 1.6; 
-    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;
+    font-family: 'Sarabun', sans-serif; 
+    background-color: var(--background); 
+    color: var(--text-main); 
+    font-size: 16px; 
+    line-height: 1.6; 
+    -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, h5, h6 { color: var(--text-dark); font-weight: 700; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+h1, h2, h3, h4, h5, h6 { 
+    color: var(--text-dark); 
+    font-weight: 700; 
+    margin-bottom: 0.5rem; 
+}
 
-.navbar-custom { background-color: var(--surface) !important; box-shadow: var(--shadow-sm); padding: 0.8rem 0; border-bottom: 1px solid var(--border-light); }
-.navbar-brand { color: var(--primary) !important; font-weight: 700; letter-spacing: 0.5px; font-size: 1.4rem; }
+/* ==========================================
+   2. Layout & Navbar
+   ========================================== */
+.navbar-custom { 
+    background-color: var(--surface) !important; 
+    border-bottom: 1px solid var(--border-light); 
+    padding: 0.8rem 0; 
+    box-shadow: var(--shadow-sm);
+}
+.navbar-brand { 
+    color: var(--primary) !important; 
+    font-weight: 700; 
+    font-size: 1.3rem; 
+}
 
-.card-custom { background: var(--surface); border: 1px solid rgba(226, 232, 240, 0.8); border-radius: var(--radius-lg); box-shadow: var(--shadow-md); padding: 2.5rem; transition: all 0.3s ease; }
-.card-custom:hover { box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08); }
-.menu-title { font-size: 1.25rem; font-weight: 700; color: var(--text-dark); margin-bottom: 1.5rem; }
+/* ==========================================
+   3. Cards (สะอาดตา เป็นระเบียบ)
+   ========================================== */
+.card-custom { 
+    background: var(--surface); 
+    border: 1px solid var(--border-light); 
+    border-radius: var(--radius-lg); 
+    box-shadow: var(--shadow-md); 
+    padding: 2rem; 
+    transition: box-shadow 0.2s ease; 
+}
+.card-custom:hover { 
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05); 
+}
 
-.btn { border-radius: var(--radius-sm); font-weight: 600; padding: 0.6rem 1.4rem; transition: all 0.2s ease; letter-spacing: 0.02em; }
-.btn-primary { background-color: var(--primary); border-color: var(--primary); color: white; box-shadow: var(--shadow-sm); }
-.btn-primary:hover, .btn-primary:focus { background-color: var(--primary-hover); transform: translateY(-2px); box-shadow: var(--shadow-glow); }
+/* ==========================================
+   4. Forms & Buttons
+   ========================================== */
+.btn { 
+    border-radius: var(--radius-sm); 
+    font-weight: 600; 
+    padding: 0.5rem 1.25rem; 
+    transition: all 0.2s ease; 
+}
+.btn-primary { background-color: var(--primary); border-color: var(--primary); color: white; }
+.btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+.btn-outline-primary { color: var(--primary); border-color: var(--primary); }
+.btn-outline-primary:hover { background-color: #eff6ff; color: var(--primary-hover); }
+.btn-success { background-color: #10b981; border-color: #10b981; color: white; }
 
-/* ป้องกันตัวหนังสือฟอร์มซ้อนทับกัน */
-.form-label { font-weight: 600; color: var(--text-dark); font-size: 0.95rem; margin-bottom: 0.4rem; }
-.form-control, .form-select { border-radius: var(--radius-sm); border: 1px solid var(--border-input); padding: 0.8rem 1rem; background-color: #f8fafc; color: var(--text-dark); font-weight: 500; transition: all 0.2s ease; }
-.form-control:focus, .form-select:focus { background-color: var(--surface); border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); color: var(--text-dark); }
-.form-control::placeholder { color: #94a3b8; font-weight: 400; }
+.form-label { font-weight: 600; color: var(--text-dark); font-size: 0.9rem; margin-bottom: 0.3rem; }
+.form-control, .form-select { 
+    border-radius: var(--radius-sm); 
+    border: 1px solid var(--border-input); 
+    padding: 0.6rem 0.9rem; 
+    background-color: var(--surface); 
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease; 
+}
+.form-control:focus, .form-select:focus { 
+    border-color: var(--primary); 
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); 
+    outline: none;
+}
+.form-control::placeholder { color: #94a3b8; }
 
-.table-custom { border-collapse: separate; border-spacing: 0 8px; width: 100%; }
-.table-custom thead th { background-color: transparent; color: var(--text-muted); font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 1rem; border-bottom: 2px solid var(--border-light); white-space: nowrap; }
-.table-custom tbody tr { background-color: var(--surface); box-shadow: 0 1px 2px rgba(0,0,0,0.02); border-radius: var(--radius-sm); transition: all 0.2s ease; }
-.table-custom tbody tr:hover { background-color: #f8fafc; transform: scale(1.002); box-shadow: var(--shadow-sm); }
-.table-custom tbody td { padding: 1rem; vertical-align: middle; color: var(--text-main); font-weight: 500; border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); white-space: nowrap; }
-.table-custom tbody td:first-child { border-left: 1px solid var(--border-light); border-top-left-radius: var(--radius-sm); border-bottom-left-radius: var(--radius-sm); }
-.table-custom tbody td:last-child { border-right: 1px solid var(--border-light); border-top-right-radius: var(--radius-sm); border-bottom-right-radius: var(--radius-sm); }
+/* ==========================================
+   5. Clean Tables
+   ========================================== */
+.table-responsive {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    background: var(--surface);
+    overflow-x: auto;
+}
+.table-custom { border-collapse: collapse; width: 100%; margin-bottom: 0; }
+.table-custom thead th { 
+    background-color: #f1f5f9; 
+    color: var(--text-dark); 
+    font-weight: 700; 
+    font-size: 0.9rem; 
+    padding: 1rem; 
+    border-bottom: 2px solid var(--border-light); 
+    white-space: nowrap; 
+}
+.table-custom tbody tr { border-bottom: 1px solid var(--border-light); }
+.table-custom tbody tr:hover { background-color: #f8fafc; }
+.table-custom tbody td { padding: 1rem; vertical-align: middle; color: var(--text-main); font-size: 0.95rem; white-space: nowrap; }
 
-.badge { font-weight: 700; padding: 0.55em 0.9em; border-radius: 30px; letter-spacing: 0.01em; }
-.bg-success-subtle { background-color: #dcfce7 !important; color: #166534 !important; }
-.bg-danger-subtle { background-color: #fee2e2 !important; color: #991b1b !important; }
-.bg-warning-subtle { background-color: #fef3c7 !important; color: #92400e !important; }
-.bg-primary-subtle { background-color: #dbeafe !important; color: #1e40af !important; }
-.bg-info-subtle { background-color: #cffafe !important; color: #155e75 !important; }
-.bg-secondary-subtle { background-color: #f1f5f9 !important; color: #475569 !important; }
+/* ==========================================
+   6. Tabs
+   ========================================== */
+.nav-pills {
+    background-color: var(--surface);
+    padding: 0.4rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-light);
+    display: inline-flex;
+    box-shadow: var(--shadow-sm);
+}
+.nav-pills .nav-link { color: var(--text-muted); font-weight: 600; border-radius: var(--radius-sm); padding: 0.5rem 1.25rem; margin: 0 0.15rem; }
+.nav-pills .nav-link:hover { color: var(--text-dark); background-color: #f8fafc; }
+.nav-pills .nav-link.active { background-color: #eff6ff; color: var(--primary); border: 1px solid #bfdbfe; }
 
-.spa-section { display: none; }
-.spa-section.active { display: block; animation: fadeIn 0.4s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+/* ==========================================
+   7. Badges & Components
+   ========================================== */
+.badge { font-weight: 600; padding: 0.5em 0.75em; border-radius: 6px; font-size: 0.8rem; }
+.bg-success-subtle { background-color: #dcfce7 !important; color: #166534 !important; border: 1px solid #bbf7d0; }
+.bg-danger-subtle { background-color: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fecaca; }
+.bg-warning-subtle { background-color: #fef3c7 !important; color: #92400e !important; border: 1px solid #fde68a; }
+.bg-primary-subtle { background-color: #dbeafe !important; color: #1e40af !important; border: 1px solid #bfdbfe; }
+.bg-info-subtle { background-color: #cffafe !important; color: #0891b2 !important; border: 1px solid #a5f3fc; }
+.bg-secondary-subtle { background-color: #f1f5f9 !important; color: #475569 !important; border: 1px solid #e2e8f0; }
 
-.menu-btn-card { border: 1px solid var(--border-light); border-radius: var(--radius-md); background: var(--surface); cursor: pointer; transition: all 0.3s ease; }
-.menu-btn-card:hover { border-color: #bfdbfe; background-color: #f8fafc; box-shadow: var(--shadow-md); transform: translateY(-4px); }
-.icon-box { width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 16px; font-size: 1.8rem; }
+.menu-btn-card { border: 1px solid var(--border-light); border-radius: var(--radius-md); background: var(--surface); cursor: pointer; transition: all 0.2s ease; }
+.menu-btn-card:hover { border-color: var(--primary); background-color: #eff6ff; }
+.icon-box { width: 56px; height: 56px; display: flex; align-items: center; justify-content: center; border-radius: 12px; font-size: 1.6rem; }
 
-.login-wrapper { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; background-color: var(--border-light); }
-.login-container { display: flex; background: var(--surface); border-radius: var(--radius-lg); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); overflow: hidden; width: 100%; max-width: 1000px; min-height: 550px; }
-.login-left { background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; padding: 4rem; width: 50%; display: flex; flex-direction: column; justify-content: center; position: relative; }
-.login-right { padding: 4rem; width: 50%; display: flex; flex-direction: column; justify-content: center; background-color: var(--surface); }
-@media (max-width: 768px) { .login-left { display: none; } .login-right { width: 100%; padding: 2.5rem; } .card-custom { padding: 1.5rem; } body { font-size: 15px; } }
-.min-vh-25 { min-height: 25vh; }
-.tabular-nums { font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
-.style-07 { font-size: 0.75rem; letter-spacing: 0.03em; }
-
-/* 🌟 ปรับปรุง Swal2 ให้อ่านง่าย */
+/* ==========================================
+   8. Overrides for SweetAlert2
+   ========================================== */
+.swal2-popup { border-radius: var(--radius-md) !important; padding: 2rem !important; }
 .swal2-title { font-family: 'Sarabun', sans-serif !important; font-weight: 700 !important; color: var(--text-dark) !important; }
-.swal2-html-container { font-family: 'Sarabun', sans-serif !important; color: var(--text-main) !important; font-weight: 500 !important; line-height: 1.6 !important; }
+.swal2-html-container { font-family: 'Sarabun', sans-serif !important; color: var(--text-main) !important; font-weight: 400 !important; }
+
+/* ==========================================
+   9. Login Page (เพิ่มกลับเข้ามาแล้ว 🌟)
+   ========================================== */
+.login-wrapper { 
+    min-height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    padding: 2rem; 
+    background-color: var(--background); 
+}
+.login-container { 
+    display: flex; 
+    background: var(--surface); 
+    border-radius: var(--radius-lg); 
+    box-shadow: var(--shadow-md); 
+    border: 1px solid var(--border-light);
+    overflow: hidden; 
+    width: 100%; 
+    max-width: 900px; 
+    min-height: 500px; 
+}
+.login-left { 
+    background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%); 
+    color: white; 
+    padding: 4rem; 
+    width: 50%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    position: relative; 
+}
+.login-right { 
+    padding: 3rem 4rem; 
+    width: 50%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    background-color: var(--surface); 
+}
+
+/* ==========================================
+   Utilities
+   ========================================== */
+.spa-section { display: none; }
+.spa-section.active { display: block; animation: fadeIn 0.3s ease-out forwards; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: #f8fafc; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+.min-vh-25 { min-height: 25vh; }
+.tabular-nums { font-variant-numeric: tabular-nums; }
+.style-07 { font-size: 0.8rem; }
+
+@media (max-width: 768px) { 
+    .login-left { display: none; } 
+    .login-right { width: 100%; padding: 2.5rem; } 
+}
