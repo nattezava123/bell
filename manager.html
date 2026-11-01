@@ -18,7 +18,7 @@
     </nav>
 
     <div class="container-fluid mt-4 mb-5 px-4 px-md-5" style="max-width: 1440px;">
-        <!-- ================= เมนูหลัก (หน้าแรก) ================= -->
+        <!-- ================= เมนูหลัก ================= -->
         <div id="sectionMenu" class="spa-section active">
             <div class="card card-custom text-center py-5 mx-auto" style="max-width: 900px;">
                 <div class="mb-3"><span style="font-size: 3.5rem;">🏢</span></div>
@@ -34,7 +34,7 @@
             </div>
         </div>
 
-        <!-- ================= 1. บันทึกเวลางานส่วนตัว ================= -->
+        <!-- ================= 1. บันทึกเวลางาน ================= -->
         <div id="sectionTime" class="spa-section">
             <div class="d-flex justify-content-between align-items-center mb-4 mx-auto" style="max-width: 1080px;">
                 <h4 class="fw-bold text-dark mb-0">ระบบลงเวลาปฏิบัติงานส่วนตัว</h4>
@@ -66,7 +66,7 @@
             </div>
         </div>
 
-        <!-- 🌟 ================= 2. ประวัติลงเวลาส่วนตัว ================= -->
+        <!-- ================= 2. ประวัติลงเวลา ================= -->
         <div id="sectionTimeHistory" class="spa-section">
             <div class="d-flex justify-content-between align-items-center mb-4 mx-auto" style="max-width: 1080px;">
                 <h4 class="fw-bold text-dark mb-0">ประวัติลงเวลาส่วนตัว</h4>
@@ -118,7 +118,7 @@
                         <div class="card-body pt-0">
                             <div class="table-responsive border-0 min-vh-25">
                                 <table class="table table-custom text-center align-middle mb-0">
-                                    <thead><tr><th>ลำดับ</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>ช่วงวันที่ลา</th><th>ประเภท</th><th>สถานะ</th><th>ตรวจสอบ</th></tr></thead>
+                                    <thead><tr><th>ลำดับ</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>สถานะ</th><th>ตรวจสอบ</th></tr></thead>
                                     <tbody id="managerApprovalTableBody"></tbody>
                                 </table>
                             </div>
@@ -157,64 +157,14 @@
                     <span class="badge bg-light text-primary border shadow-sm px-3 py-2"><i class="bi bi-person-circle me-1"></i>คุณ <span id="empProfileNameLeaveHead"></span></span>
                 </div>
 
-                <!-- 🌟 อัปเดตการ์ดแสดงผลแบบใหม่ (เน้นตัวเลข ตัดแถบโหลดออก) -->
                 <div class="row g-3 mb-4">
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <div class="border rounded-4 p-3 bg-white shadow-sm text-center">
-                            <h6 class="text-muted fw-bold mb-1">ลาป่วย</h6>
-                            <div class="mb-1"><span class="fs-2 fw-bold text-success" id="statSickBal">0</span> <span class="text-muted small">วัน</span></div>
-                            <span class="badge bg-success-subtle text-success mb-3 px-3">คงเหลือ</span>
-                            <div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statSickUsed" class="text-danger fw-bold">0</span> / <span id="statSickTotal">0</span> วัน</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <div class="border rounded-4 p-3 bg-white shadow-sm text-center">
-                            <h6 class="text-muted fw-bold mb-1">ลากิจ</h6>
-                            <div class="mb-1"><span class="fs-2 fw-bold text-primary" id="statPersBal">0</span> <span class="text-muted small">วัน</span></div>
-                            <span class="badge bg-primary-subtle text-primary mb-3 px-3">คงเหลือ</span>
-                            <div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statPersUsed" class="text-danger fw-bold">0</span> / <span id="statPersTotal">0</span> วัน</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <div class="border rounded-4 p-3 bg-white shadow-sm text-center">
-                            <h6 class="text-muted fw-bold mb-1">ลาพักร้อน</h6>
-                            <div class="mb-1"><span class="fs-2 fw-bold text-warning" id="statAnnBal">0</span> <span class="text-muted small">วัน</span></div>
-                            <span class="badge bg-warning-subtle text-warning mb-3 px-3">คงเหลือ</span>
-                            <div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statAnnUsed" class="text-danger fw-bold">0</span> / <span id="statAnnTotal">0</span> วัน</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <div class="border rounded-4 p-3 bg-white shadow-sm text-center">
-                            <h6 class="text-muted fw-bold mb-1">หยุดชดเชย</h6>
-                            <div class="mb-1"><span class="fs-2 fw-bold text-info" id="statCompBal">0</span> <span class="text-muted small">วัน</span></div>
-                            <span class="badge bg-info-subtle text-info mb-3 px-3">คงเหลือ</span>
-                            <div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statCompUsed" class="text-danger fw-bold">0</span> / <span id="statCompTotal">0</span> วัน</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-12">
-                        <div class="border rounded-4 p-3 bg-white shadow-sm text-center">
-                            <h6 class="text-muted fw-bold mb-1">ลาคลอด</h6>
-                            <div class="mb-1"><span class="fs-2 fw-bold text-danger" id="statMatBal">0</span> <span class="text-muted small">วัน</span></div>
-                            <span class="badge bg-danger-subtle text-danger mb-3 px-3">คงเหลือ</span>
-                            <div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statMatUsed" class="text-danger fw-bold">0</span> / <span id="statMatTotal">0</span> วัน</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-6">
-                        <div class="border rounded-4 p-3 bg-white shadow-sm text-center">
-                            <h6 class="text-muted fw-bold mb-1">ลาบวช</h6>
-                            <div class="mb-1"><span class="fs-2 fw-bold text-dark" id="statOrdBal">0</span> <span class="text-muted small">วัน</span></div>
-                            <span class="badge bg-dark-subtle text-dark mb-3 px-3">คงเหลือ</span>
-                            <div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statOrdUsed" class="text-danger fw-bold">0</span> / <span id="statOrdTotal">0</span> วัน</div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-4 col-6">
-                        <div class="border rounded-4 p-3 bg-white shadow-sm text-center">
-                            <h6 class="text-muted fw-bold mb-1">ลาเกณฑ์ทหาร</h6>
-                            <div class="mb-1"><span class="fs-2 fw-bold text-secondary" id="statMilBal">0</span> <span class="text-muted small">วัน</span></div>
-                            <span class="badge bg-secondary-subtle text-secondary mb-3 px-3">คงเหลือ</span>
-                            <div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statMilUsed" class="text-danger fw-bold">0</span> / <span id="statMilTotal">0</span> วัน</div>
-                        </div>
-                    </div>
+                    <div class="col-lg-3 col-md-4 col-6"><div class="border rounded-4 p-3 bg-white shadow-sm text-center"><h6 class="text-muted fw-bold mb-1">ลาป่วย</h6><div class="mb-1"><span class="fs-2 fw-bold text-success" id="statSickBal">0</span> <span class="text-muted small">วัน</span></div><span class="badge bg-success-subtle text-success mb-3 px-3">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statSickUsed" class="text-danger fw-bold">0</span> / <span id="statSickTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-3 col-md-4 col-6"><div class="border rounded-4 p-3 bg-white shadow-sm text-center"><h6 class="text-muted fw-bold mb-1">ลากิจ</h6><div class="mb-1"><span class="fs-2 fw-bold text-primary" id="statPersBal">0</span> <span class="text-muted small">วัน</span></div><span class="badge bg-primary-subtle text-primary mb-3 px-3">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statPersUsed" class="text-danger fw-bold">0</span> / <span id="statPersTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-3 col-md-4 col-6"><div class="border rounded-4 p-3 bg-white shadow-sm text-center"><h6 class="text-muted fw-bold mb-1">ลาพักร้อน</h6><div class="mb-1"><span class="fs-2 fw-bold text-warning" id="statAnnBal">0</span> <span class="text-muted small">วัน</span></div><span class="badge bg-warning-subtle text-warning mb-3 px-3">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statAnnUsed" class="text-danger fw-bold">0</span> / <span id="statAnnTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-3 col-md-4 col-6"><div class="border rounded-4 p-3 bg-white shadow-sm text-center"><h6 class="text-muted fw-bold mb-1">หยุดชดเชย</h6><div class="mb-1"><span class="fs-2 fw-bold text-info" id="statCompBal">0</span> <span class="text-muted small">วัน</span></div><span class="badge bg-info-subtle text-info mb-3 px-3">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statCompUsed" class="text-danger fw-bold">0</span> / <span id="statCompTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-4 col-md-4 col-12"><div class="border rounded-4 p-3 bg-white shadow-sm text-center"><h6 class="text-muted fw-bold mb-1">ลาคลอด</h6><div class="mb-1"><span class="fs-2 fw-bold text-danger" id="statMatBal">0</span> <span class="text-muted small">วัน</span></div><span class="badge bg-danger-subtle text-danger mb-3 px-3">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statMatUsed" class="text-danger fw-bold">0</span> / <span id="statMatTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-4 col-md-4 col-6"><div class="border rounded-4 p-3 bg-white shadow-sm text-center"><h6 class="text-muted fw-bold mb-1">ลาบวช</h6><div class="mb-1"><span class="fs-2 fw-bold text-dark" id="statOrdBal">0</span> <span class="text-muted small">วัน</span></div><span class="badge bg-dark-subtle text-dark mb-3 px-3">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statOrdUsed" class="text-danger fw-bold">0</span> / <span id="statOrdTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-4 col-md-4 col-6"><div class="border rounded-4 p-3 bg-white shadow-sm text-center"><h6 class="text-muted fw-bold mb-1">ลาเกณฑ์ทหาร</h6><div class="mb-1"><span class="fs-2 fw-bold text-secondary" id="statMilBal">0</span> <span class="text-muted small">วัน</span></div><span class="badge bg-secondary-subtle text-secondary mb-3 px-3">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statMilUsed" class="text-danger fw-bold">0</span> / <span id="statMilTotal">0</span> วัน</div></div></div>
                 </div>
 
                 <ul class="nav nav-pills mb-4 nav-justified bg-light p-1 rounded-pill shadow-sm border" id="leaveTabs" role="tablist">
@@ -239,7 +189,7 @@
                         <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold text-dark mb-0"><i class="bi bi-card-list text-primary me-2"></i>รายการประวัติการลาของคุณ <span id="empProfileNameLeaveTable" class="text-primary"></span></h5></div>
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead><tr><th>ลำดับ</th><th>วันที่ยื่น</th><th>ช่วงเวลาที่ลา</th><th>ประเภท</th><th>สถานะ</th><th>ตรวจสอบ</th><th>จัดการ</th></tr></thead>
+                                <thead><tr><th>ลำดับ</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>สถานะ</th><th>ตรวจสอบ</th><th>จัดการ</th></tr></thead>
                                 <tbody id="myLeaveStatusTable"></tbody>
                             </table>
                         </div>

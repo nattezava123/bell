@@ -24,7 +24,6 @@
     </style>
 </head>
 <body class="bg-light">
-    <!-- ================= 1. Top Navbar ================= -->
     <nav class="navbar navbar-expand-md navbar-dark sticky-top shadow-sm" style="background-color: var(--primary);">
         <div class="container-fluid px-4 px-md-5">
             <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
@@ -42,7 +41,6 @@
         </div>
     </nav>
 
-    <!-- ================= 2. Main Content ================= -->
     <div class="container-fluid mt-4 mb-5 px-4 px-md-5" style="max-width: 1440px;">
         
         <div class="text-center mb-4">
@@ -64,7 +62,7 @@
                     <div class="card-body pt-2">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead><tr><th>ลำดับ</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>รายละเอียด</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+                                <thead><tr><th>ลำดับ</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>สถานะ</th><th>ตรวจสอบ</th></tr></thead>
                                 <tbody id="adminApproveManagerTableBody"></tbody>
                             </table>
                         </div>
@@ -100,7 +98,7 @@
                     <div class="card-body pt-0">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead><tr><th>ลำดับ</th><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>ช่วงเวลาลา</th><th>ประเภท</th><th>เอกสาร</th><th>สถานะ</th><th>รายละเอียด</th></tr></thead>
+                                <thead><tr><th>ลำดับ</th><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>รายละเอียด</th><th>สถานะ</th></tr></thead>
                                 <tbody id="adminReportTableBody"></tbody>
                             </table>
                         </div>
@@ -161,7 +159,6 @@
                     <div class="card-body pt-0">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <!-- 🌟 เพิ่มช่องสิทธิ์ "ชดเชย" สำหรับ Admin -->
                                 <thead>
                                     <tr>
                                         <th>ลำดับ</th><th>รหัส</th><th>ชื่อพนักงาน</th>
@@ -210,7 +207,6 @@
                     <div class="mb-4 text-center mt-2"><span class="badge bg-primary bg-opacity-10 text-primary border border-primary-subtle px-3 py-2 fs-6 rounded-pill w-100" id="leaveBalEmpName"></span></div>
                     <div class="bg-light p-3 rounded-4 mb-4 border">
                         <div class="row g-3 text-center">
-                            <!-- 🌟 เพิ่มกล่องปรับสิทธิ์วันหยุดชดเชย -->
                             <div class="col-3"><label class="small text-muted mb-1 fw-bold">ลาป่วย</label><input type="number" class="form-control text-center fw-bold text-primary fs-5 px-1" id="editBalSick"></div>
                             <div class="col-3"><label class="small text-muted mb-1 fw-bold">ลากิจ</label><input type="number" class="form-control text-center fw-bold text-primary fs-5 px-1" id="editBalPers"></div>
                             <div class="col-3"><label class="small text-muted mb-1 fw-bold">พักร้อน</label><input type="number" class="form-control text-center fw-bold text-primary fs-5 px-1" id="editBalAnn"></div>
