@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ผู้ดูแลระบบ | HRMS Enterprise</title>
+    <!-- CSS & Frameworks -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        .form-label { font-size: 0.85rem; margin-bottom: 0.25rem; color: #475569; }
+        .form-control, .form-select { padding: 0.6rem 0.8rem; font-size: 0.95rem; }
         .table-custom td { white-space: nowrap; vertical-align: middle; }
         #adminEmployeeTableBody .btn, #adminReportTableBody .btn, #adminApproveManagerTableBody .btn { padding: 0.25rem 0.6rem; font-size: 0.8rem; }
+        #adminEmployeeTableBody .gap-2 { gap: 0.35rem !important; }
+        .table-responsive::-webkit-scrollbar { height: 6px; }
+        .table-responsive::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+        .table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .table-responsive::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .card-title-icon { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 10px; margin-right: 12px; }
     </style>
 </head>
@@ -33,7 +41,7 @@
         </div>
 
         <div class="tab-content">
-            <!-- 1. อนุมัติ -->
+            <!-- ================= TAB 1: อนุมัติ (Approvals) ================= -->
             <div class="tab-pane fade show active" id="tab-approval">
                 <div class="card card-custom mb-4 border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 pt-4 pb-2 d-flex align-items-center"><h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-warning bg-opacity-10 text-warning"><i class="bi bi-person-fill-exclamation fs-5"></i></div>รายการรอพิจารณาการลา (ระดับผู้จัดการ)</h5></div>
@@ -46,6 +54,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="card card-custom border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 pt-4 pb-2 d-flex align-items-center"><h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-danger bg-opacity-10 text-danger"><i class="bi bi-clock-history fs-5"></i></div>คำขอแก้ไขเวลาลงงาน (ระดับผู้จัดการ)</h5></div>
                     <div class="card-body pt-2">
@@ -59,16 +68,26 @@
                 </div>
             </div>
 
-            <!-- 2. รายงาน -->
+            <!-- ================= TAB 2: รายงาน ================= -->
             <div class="tab-pane fade" id="tab-report">
                 <div class="card card-custom border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
                         <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-file-earmark-bar-graph fs-5"></i></div>รายงานประวัติการลาทั้งหมด</h5>
                         <div class="d-flex flex-wrap gap-2 align-items-center">
                             <div class="input-group input-group-sm shadow-sm"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchReport" class="form-control border-start-0 ps-0" placeholder="ค้นหา ชื่อพนักงาน..." onkeyup="window.filterTable('searchReport', 'adminReportTableBody')" style="width: 150px;"></div>
-                            <input type="date" id="adminReportDateFilter" class="form-control form-control-sm shadow-sm" onchange="window.renderAdminUI()" style="width: 130px;">
+                            
+                            <!-- 🌟 ปรับปรุงปุ่ม Date Picker เป็นภาษาไทยแบบสวยงาม (ตามภาพ) -->
+                            <div class="position-relative d-inline-block shadow-sm" style="width: 140px;">
+                                <input type="date" id="adminReportDateFilter" class="form-control form-control-sm" onchange="document.getElementById('adminReportDateDisplay').innerText = this.value ? window.formatDateShort(this.value) : 'เลือกวันที่...'; document.getElementById('adminReportDateDisplay').classList.remove('text-muted'); window.renderAdminUI();" style="opacity: 0; position: absolute; top: 0; left: 0; width: 100%; height: 100%; cursor: pointer; z-index: 2;">
+                                <div class="form-control form-control-sm bg-white d-flex align-items-center justify-content-between" style="position: relative; z-index: 1;">
+                                    <span id="adminReportDateDisplay" class="text-muted text-truncate fw-medium">เลือกวันที่...</span>
+                                    <i class="bi bi-calendar3 text-muted"></i>
+                                </div>
+                            </div>
+                            
                             <select id="adminFilterStatus" class="form-select form-select-sm shadow-sm fw-medium" style="width: 120px;" onchange="window.renderAdminUI()"><option value="all">สถานะทั้งหมด</option><option value="รอพิจารณา">รอพิจารณา</option><option value="อนุมัติ">อนุมัติ</option><option value="ไม่อนุมัติ">ไม่อนุมัติ</option><option value="ยกเลิก">ยกเลิกแล้ว</option></select>
-                            <button class="btn btn-light btn-sm border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 31px; height: 31px;" onclick="document.getElementById('searchReport').value=''; document.getElementById('adminReportDateFilter').value=''; document.getElementById('adminFilterStatus').value='all'; window.renderAdminUI();" title="ล้างค่า"><i class="bi bi-arrow-counterclockwise"></i></button>
+                            <button class="btn btn-success btn-sm d-flex align-items-center rounded-pill px-3 shadow-sm fw-bold" onclick="window.exportAdminLeaveReport()"><i class="bi bi-file-earmark-excel me-1"></i> Export CSV</button>
+                            <button class="btn btn-light btn-sm border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 31px; height: 31px;" onclick="document.getElementById('searchReport').value=''; document.getElementById('adminReportDateFilter').value=''; document.getElementById('adminReportDateDisplay').innerText='เลือกวันที่...'; document.getElementById('adminReportDateDisplay').classList.add('text-muted'); document.getElementById('adminFilterStatus').value='all'; window.renderAdminUI();" title="ล้างค่า"><i class="bi bi-arrow-counterclockwise"></i></button>
                         </div>
                     </div>
                     <div class="card-body pt-0">
@@ -82,7 +101,7 @@
                 </div>
             </div>
 
-            <!-- 3. จัดการพนักงาน -->
+            <!-- ================= TAB 3: จัดการพนักงาน ================= -->
             <div class="tab-pane fade" id="tab-manage">
                 <div class="row g-4">
                     <div class="col-lg-4 col-md-5">
@@ -100,6 +119,7 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-lg-8 col-md-7">
                         <div class="card card-custom border-0 shadow-sm h-100 p-4">
                             <div class="card-header bg-transparent border-0 p-0 mb-4 d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -119,7 +139,7 @@
                 </div>
             </div>
 
-            <!-- 4. สิทธิ์การลา -->
+            <!-- ================= TAB 4: จัดการสิทธิ์การลา ================= -->
             <div class="tab-pane fade" id="tab-leave-balance">
                 <div class="card card-custom border-0 shadow-sm">
                     <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
@@ -129,7 +149,19 @@
                     <div class="card-body pt-0">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead><tr><th>ลำดับ</th><th>รหัส</th><th>ชื่อพนักงาน</th><th class="text-primary bg-primary bg-opacity-10 rounded-start">ป่วย</th><th class="text-primary bg-primary bg-opacity-10">กิจ</th><th class="text-primary bg-primary bg-opacity-10 rounded-end">พักร้อน</th><th class="text-info bg-info bg-opacity-10 rounded-start rounded-end ms-2">ชดเชย</th><th class="text-secondary bg-secondary bg-opacity-10 rounded-start ms-2">คลอด</th><th class="text-secondary bg-secondary bg-opacity-10">บวช</th><th class="text-secondary bg-secondary bg-opacity-10 rounded-end">ทหาร</th><th>จัดการ</th></tr></thead>
+                                <thead>
+                                    <tr>
+                                        <th>ลำดับ</th><th>รหัส</th><th>ชื่อพนักงาน</th>
+                                        <th class="text-primary bg-primary bg-opacity-10 rounded-start">ป่วย</th>
+                                        <th class="text-primary bg-primary bg-opacity-10">กิจ</th>
+                                        <th class="text-primary bg-primary bg-opacity-10 rounded-end">พักร้อน</th>
+                                        <th class="text-info bg-info bg-opacity-10 rounded-start rounded-end ms-2">ชดเชย</th>
+                                        <th class="text-secondary bg-secondary bg-opacity-10 rounded-start ms-2">คลอด</th>
+                                        <th class="text-secondary bg-secondary bg-opacity-10">บวช</th>
+                                        <th class="text-secondary bg-secondary bg-opacity-10 rounded-end">ทหาร</th>
+                                        <th>จัดการ</th>
+                                    </tr>
+                                </thead>
                                 <tbody id="adminLeaveBalanceTableBody"></tbody>
                             </table>
                         </div>
@@ -188,24 +220,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        window.toggleLegalLeaveMode = function() {
-            const standardBox = document.getElementById('standardLeaveContainer');
-            const legalBox = document.getElementById('legalLeaveContainer');
-            const typeSelect = document.getElementById('leaveType');
-            const legalSelect = document.getElementById('leaveTypeLegal');
-            if (standardBox.style.display !== 'none') {
-                standardBox.style.display = 'none'; legalBox.style.display = 'block';
-                typeSelect.removeAttribute('required'); typeSelect.value = ''; legalSelect.setAttribute('required', 'required');
-                typeSelect.id = 'leaveType_disabled'; legalSelect.id = 'leaveType';
-            } else {
-                legalBox.style.display = 'none'; standardBox.style.display = 'block';
-                legalSelect.removeAttribute('required'); legalSelect.value = ''; typeSelect.setAttribute('required', 'required');
-                legalSelect.id = 'leaveTypeLegal'; typeSelect.id = 'leaveType';
-            }
-            if(typeof window.toggleOtherLeaveType === 'function') window.toggleOtherLeaveType('');
-        };
-    </script>
     <script type="module" src="script.js"></script>
 </body>
 </html>
