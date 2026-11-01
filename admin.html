@@ -90,15 +90,24 @@
                     <div class="card-header bg-transparent border-0 pt-4 pb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
                         <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-primary bg-opacity-10 text-primary"><i class="bi bi-file-earmark-bar-graph fs-5"></i></div>รายงานประวัติการลาทั้งหมด</h5>
                         <div class="d-flex flex-wrap gap-2 align-items-center">
-                            <div class="input-group input-group-sm shadow-sm" style="width: 250px;"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchReport" class="form-control border-start-0 ps-0" placeholder="ค้นหา รหัส, ชื่อ, ประเภท..." onkeyup="window.filterTable('searchReport', 'adminReportTableBody')"></div>
-                            <select id="adminFilterStatus" class="form-select form-select-sm shadow-sm fw-medium" style="width: 150px; color: #475569;" onchange="window.renderAdminUI()"><option value="all">สถานะทั้งหมด</option><option value="รอพิจารณา">รอพิจารณา</option><option value="อนุมัติ">อนุมัติ</option><option value="ไม่อนุมัติ">ไม่อนุมัติ</option><option value="ยกเลิก">ยกเลิกแล้ว</option></select>
+                            <!-- 🌟 อัปเดตช่องค้นหาวันที่ในหน้า Report ของ Admin -->
+                            <div class="input-group input-group-sm shadow-sm">
+                                <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                                <input type="text" id="searchReport" class="form-control border-start-0 ps-0" placeholder="ค้นหา รหัส, ชื่อพนักงาน..." onkeyup="window.filterTable('searchReport', 'adminReportTableBody')" style="width: 150px;">
+                            </div>
+                            <input type="date" id="adminReportDateFilter" class="form-control form-control-sm shadow-sm" onchange="window.renderAdminUI()" style="width: 130px;">
+                            <select id="adminFilterStatus" class="form-select form-select-sm shadow-sm fw-medium" style="width: 120px; color: #475569;" onchange="window.renderAdminUI()">
+                                <option value="all">สถานะทั้งหมด</option><option value="รอพิจารณา">รอพิจารณา</option><option value="อนุมัติ">อนุมัติ</option><option value="ไม่อนุมัติ">ไม่อนุมัติ</option><option value="ยกเลิก">ยกเลิกแล้ว</option>
+                            </select>
                             <button class="btn btn-success btn-sm d-flex align-items-center rounded-pill px-3 shadow-sm fw-bold" onclick="window.exportAdminLeaveReport()"><i class="bi bi-file-earmark-excel me-1"></i> Export CSV</button>
+                            <button class="btn btn-light btn-sm border shadow-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 31px; height: 31px;" onclick="document.getElementById('searchReport').value=''; document.getElementById('adminReportDateFilter').value=''; document.getElementById('adminFilterStatus').value='all'; window.renderAdminUI();" title="ล้างค่า"><i class="bi bi-arrow-counterclockwise"></i></button>
                         </div>
                     </div>
                     <div class="card-body pt-0">
                         <div class="table-responsive border-0 min-vh-25">
                             <table class="table table-custom text-center align-middle mb-0">
-                                <thead><tr><th>ลำดับ</th><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>รายละเอียด</th><th>สถานะ</th></tr></thead>
+                                <!-- 🌟 อัปเดตตาราง: ตัดเอกสารออก, เพิ่มปุ่มตรวจสอบก่อนสถานะ -->
+                                <thead><tr><th>ลำดับ</th><th>รหัสพนักงาน</th><th>ชื่อพนักงาน</th><th>วันที่ยื่น</th><th>วันที่ลา</th><th>ประเภท</th><th>ตรวจสอบ</th><th>สถานะ</th></tr></thead>
                                 <tbody id="adminReportTableBody"></tbody>
                             </table>
                         </div>
@@ -133,7 +142,7 @@
                                 <h5 class="fw-bold text-dark mb-0 d-flex align-items-center"><div class="card-title-icon bg-primary bg-opacity-10 text-primary m-0 me-2"><i class="bi bi-people-fill fs-5"></i></div>รายชื่อพนักงานในระบบ</h5>
                                 <div class="d-flex flex-wrap gap-2">
                                     <div class="input-group input-group-sm shadow-sm" style="width: 230px;"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span><input type="text" id="searchEmp" class="form-control border-start-0 ps-0" placeholder="ค้นหารหัส, ชื่อพนักงาน..." onkeyup="window.filterTable('searchEmp', 'adminEmployeeTableBody')"></div>
-                                    <button class="btn btn-success btn-sm d-flex align-items-center rounded-pill px-3 shadow-sm fw-bold" onclick="window.exportAdminEmployees()"><i class="bi bi-file-earmark-excel me-1"></i> Export CSV</button>
+                                    <!-- 🌟 นำปุ่ม Export ออกตามความต้องการ -->
                                 </div>
                             </div>
                             <div class="card-body p-0">
