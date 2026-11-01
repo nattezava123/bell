@@ -7,6 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <!-- ยังคงดึง style.css มาใช้เพื่อให้หน้าตาสวยงามตรงกันทุกหน้า -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-light">
@@ -33,7 +34,7 @@
             
             <!-- 🌟 ฝั่งขวา: ฟอร์มเข้าสู่ระบบ -->
             <div class="login-right">
-                <!-- 🌟 ส่วนแสดงนาฬิกา Realtime 🌟 -->
+                <!-- ส่วนแสดงนาฬิกา Realtime -->
                 <div class="text-center mb-4 pb-3 border-bottom">
                     <div class="text-muted small fw-bold mb-1" id="loginDate">กำลังโหลดวันที่...</div>
                     <h1 class="fw-bold text-primary mb-0" id="loginClock" style="font-variant-numeric: tabular-nums; letter-spacing: 2px;">--:--:--</h1>
@@ -69,9 +70,11 @@
         </div>
     </div>
 
+    <!-- Scripts Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
+    <!-- 🌟 ฟังก์ชันคำแนะนำ -->
     <script>
         window.showLoginInstructions = (e) => {
             e.preventDefault();
@@ -93,6 +96,114 @@
         };
     </script>
     
-    <script type="module" src="script.js"></script>
+    <!-- 🌟 ฝังสคริปต์ Firebase และระบบ Login ลงในหน้าโดยตรง (Inline Script) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // คอนฟิก Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyDi_YY7DbZoKWo42LDFxe2NYJs8jeIc21E",
+            authDomain: "hr-workspace-b261f.firebaseapp.com",
+            projectId: "hr-workspace-b261f",
+            storageBucket: "hr-workspace-b261f.firebasestorage.app",
+            messagingSenderId: "363256251297",
+            appId: "1:363256251297:web:ec2edb8c0435be516141e0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // ดึงข้อมูล Session
+        let currentUser = null;
+        try {
+            const stored = sessionStorage.getItem('hr_currentUser');
+            if (stored) currentUser = JSON.parse(stored);
+        } catch (e) {
+            sessionStorage.removeItem('hr_currentUser');
+        }
+
+        // ฟังก์ชันแจ้งเตือน
+        window.showSwal = (title, text, icon = 'success') => {
+            if (typeof Swal !== 'undefined') { 
+                Swal.fire({ title, text, icon, confirmButtonText: 'ตกลง', confirmButtonColor: '#2563eb', timer: icon === 'success' ? 2500 : undefined, customClass: { popup: 'rounded-4' } });
+            } else { alert(`${title}\n${text}`); }
+        };
+
+        // ฟังก์ชันตรวจสอบสิทธิ์การเข้าถึง (ทำงานทันทีที่เปิดหน้า)
+        window.checkAuthStatus = (reqRole) => {
+            if (currentUser && reqRole === 'login') { 
+                let targetPage = 'employee.html';
+                if (currentUser.role === 'leader') targetPage = 'manager.html';
+                if (currentUser.role === 'admin') targetPage = 'admin.html';
+                window.location.replace(targetPage); 
+                return false; 
+            }
+            return true;
+        };
+
+        // ฟังก์ชันเข้าสู่ระบบ
+        window.handleLogin = async (e) => {
+            if(e) e.preventDefault();
+            const btn = document.getElementById('btnLoginSubmit');
+            if (btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังตรวจสอบ...'; }
+            
+            const userInp = document.getElementById('loginUsername').value.trim();
+            const passInp = document.getElementById('loginPassword').value.trim();
+            
+            if (!userInp || !passInp) {
+                window.showSwal('ข้อมูลไม่ครบ', 'กรุณากรอกรหัสพนักงานและรหัสผ่าน', 'warning');
+                if (btn) { btn.disabled = false; btn.innerHTML = 'เข้าสู่ระบบ <i class="bi bi-box-arrow-in-right ms-1"></i>'; }
+                return;
+            }
+
+            try {
+                // ค้นหาจากรหัสพนักงาน
+                const userDoc = await getDoc(doc(db, "users", userInp));
+                if (userDoc.exists() && userDoc.data().password === passInp) {
+                    const userData = userDoc.data();
+                    userData.uid = userData.uid || userDoc.id; 
+                    sessionStorage.setItem('hr_currentUser', JSON.stringify(userData));
+                    
+                    let targetPage = 'employee.html';
+                    if (userData.role === 'leader') targetPage = 'manager.html';
+                    if (userData.role === 'admin') targetPage = 'admin.html';
+                    
+                    window.location.replace(targetPage);
+                } else { 
+                    window.showSwal('เข้าสู่ระบบไม่สำเร็จ', 'รหัสผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', 'error'); 
+                    if (btn) { btn.disabled = false; btn.innerHTML = 'เข้าสู่ระบบ <i class="bi bi-box-arrow-in-right ms-1"></i>'; }
+                }
+            } catch (error) { 
+                console.error("Login Error: ", error);
+                window.showSwal('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณาตรวจสอบอินเทอร์เน็ต', 'error'); 
+                if (btn) { btn.disabled = false; btn.innerHTML = 'เข้าสู่ระบบ <i class="bi bi-box-arrow-in-right ms-1"></i>'; }
+            }
+        };
+
+        // ผูก Event เข้ากับฟอร์ม
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) loginForm.addEventListener('submit', window.handleLogin);
+
+        // ระบบนาฬิกาหน้า Login
+        const startRealtimeClock = () => {
+            const loginClockEl = document.getElementById('loginClock');
+            if(loginClockEl) {
+                const now = new Date();
+                loginClockEl.innerText = now.toLocaleTimeString('th-TH', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
+                
+                const loginDateEl = document.getElementById('loginDate');
+                if(loginDateEl && loginDateEl.innerText === 'กำลังโหลดวันที่...') {
+                    loginDateEl.innerText = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+                }
+            }
+        };
+        
+        startRealtimeClock(); 
+        setInterval(startRealtimeClock, 1000);
+
+        // โหลดเสร็จเช็คสถานะทันที (ถ้าเคยล็อกอินแล้วจะเด้งไปหน้าหลักอัตโนมัติ)
+        window.checkAuthStatus('login');
+    </script>
 </body>
 </html>
