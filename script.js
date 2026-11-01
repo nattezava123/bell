@@ -88,14 +88,12 @@ window.previewCertImage = (leaveId) => {
     const base64Data = l.certUrl;
 
     if (base64Data.startsWith('data:application/pdf')) {
-        Swal.fire({
-            title: 'เอกสาร PDF',
-            html: `<iframe src="${base64Data}" width="100%" height="400px" style="border: none; border-radius: 8px;"></iframe>`,
-            width: '800px',
-            showCloseButton: true,
-            showConfirmButton: false,
-            customClass: { popup: 'rounded-4' }
-        });
+        const win = window.open();
+        if(win){
+            win.document.write(`<iframe src="${base64Data}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+        } else {
+            window.showSwal('Pop-up ถูกบล็อก', 'กรุณาอนุญาต Pop-up เพื่อดูไฟล์ PDF', 'warning');
+        }
         return;
     }
 
@@ -160,6 +158,9 @@ window.toggleOtherLeaveType = (val) => {
     } else { div.style.display = 'none'; inp.required = false; inp.value = ''; }
 };
 
+// ==========================================
+// 🌟 4. Work Records (อัปเดตเด้งไปหน้าประวัติ)
+// ==========================================
 window.handleStampTime = async () => {
     const loc = document.getElementById('workLocation').value;
     const det = document.getElementById('workDetails').value;
@@ -179,9 +180,14 @@ window.handleStampTime = async () => {
                 if(btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังบันทึก...'; }
                 try {
                     await addDoc(recordsRef, { empID: currentUser.uid, timestamp: now, workDate: todayStr, timeIn: currentTime, timeOut: "", workHours: 0.0, otHours: 0.0, details: det, location: loc, status: "Working" });
+                    
                     Swal.fire({ title: 'CHECK-IN สำเร็จ', text: `เข้างานเวลา: ${currentTime} น.`, icon: 'success', timer: 2000, showConfirmButton: false });
                     await refreshUI();
-                    window.navigate('sectionMenu'); window.scrollTo(0, 0);
+                    
+                    // 🌟 เด้งไปหน้าประวัติลงเวลาส่วนตัว ทันทีเพื่อความมั่นใจ
+                    window.navigate('sectionTimeHistory'); 
+                    window.scrollTo(0, 0);
+
                 } catch (error) { window.showSwal('ข้อผิดพลาด', 'ไม่สามารถบันทึกเวลาได้', 'error'); if(btn) { btn.disabled = false; btn.innerHTML = 'แสตมป์เวลา'; } }
             }
         });
@@ -190,7 +196,7 @@ window.handleStampTime = async () => {
         const recordData = recordDoc.data();
         if (recordData.timeOut) return window.showSwal('แจ้งเตือน', 'คุณได้บันทึกเวลาออกงานของวันนี้ไปแล้ว', 'warning');
 
-        Swal.fire({ title: 'ยืนยัน CHECK-OUT?', html: `คุณกำลังจะออกงานเวลา <b>${currentTime} น.</b><br><br><span class="text-danger small">*เมื่อบันทึกแล้วระบบจะทำการออกจากระบบอัตโนมัติ</span>`, icon: 'question', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'บันทึกออกงาน', cancelButtonText: 'ยกเลิก' }).then(async (result) => { 
+        Swal.fire({ title: 'ยืนยัน CHECK-OUT?', html: `คุณกำลังจะออกงานเวลา <b>${currentTime} น.</b>`, icon: 'question', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'บันทึกออกงาน', cancelButtonText: 'ยกเลิก' }).then(async (result) => { 
             if (result.isConfirmed) {
                 const btn = document.getElementById('btnStampTime');
                 if(btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังบันทึก...'; }
@@ -205,8 +211,14 @@ window.handleStampTime = async () => {
                     let otHrs = Math.floor(rawOt * 2) / 2;
 
                     await updateDoc(doc(db, "workRecords", recordDoc.id), { timeOut: currentTime, workHours: parseFloat(normalHrs.toFixed(2)), otHours: parseFloat(otHrs.toFixed(2)), details: det, location: loc, status: "Completed" });
-                    Swal.fire({ title: 'บันทึกเวลาสำเร็จ', html: `เวลาทำงาน: <b>${normalHrs.toFixed(2)}</b> ชม.<br>OT: <b>${otHrs.toFixed(2)}</b> ชม.<br><br><span class="text-danger small">กำลังออกจากระบบ...</span>`, icon: 'success', timer: 3000, showConfirmButton: false, allowOutsideClick: false })
-                    .then(() => { sessionStorage.removeItem('hr_currentUser'); window.location.href = 'index.html'; });
+                    
+                    // 🌟 แจ้งเตือนเสร็จ แล้วเด้งไปหน้าประวัติ (ไม่ต้องบังคับ Logout แล้ว)
+                    Swal.fire({ title: 'CHECK-OUT สำเร็จ', html: `เวลาทำงาน: <b>${normalHrs.toFixed(2)}</b> ชม.<br>OT: <b>${otHrs.toFixed(2)}</b> ชม.`, icon: 'success', timer: 3000, showConfirmButton: false });
+                    await refreshUI();
+
+                    window.navigate('sectionTimeHistory'); 
+                    window.scrollTo(0, 0);
+
                 } catch (error) { window.showSwal('ข้อผิดพลาด', 'ไม่สามารถบันทึกเวลาได้', 'error'); if(btn) { btn.disabled = false; btn.innerHTML = 'แสตมป์เวลา'; } }
             }
         });
@@ -310,6 +322,10 @@ window.viewLeaveDetail = async (leaveId) => {
         const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
         const displayTime = l.leaveTime || 'เต็มวัน';
         
+        const certHtml = l.certUrl 
+            ? `<button type="button" class="btn btn-sm btn-outline-primary fw-bold w-100 py-2 rounded-3" onclick="window.previewCertImage('${l.id}')"><i class="bi bi-image me-1"></i>ดูรูปใบรับรองแพทย์/เอกสาร</button>` 
+            : (l.hasCert ? '<span class="badge bg-success-subtle text-success">มีเอกสารแนบ</span>' : '<span class="badge bg-secondary-subtle text-secondary">ไม่มีเอกสารแนบ</span>');
+        
         let actionButtons = '';
         const isOwnLeave = l.empID === currentUser.uid;
         const canApprove = !isOwnLeave && (currentUser.role === 'admin' || (currentUser.role === 'leader' && u.role === 'employee'));
@@ -333,7 +349,7 @@ window.viewLeaveDetail = async (leaveId) => {
             <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">ประเภทการลา</label><div class="fw-bold text-primary fs-6">${displayType} (${l.days || 1} วัน)</div></div>
             <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">วันที่ยื่นเรื่อง</label><div class="text-dark">${l.submittedDate || '-'}</div></div>
             <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">ช่วงวันที่ลา</label><div class="text-dark fw-medium">${displayStart}${displayEnd} <span class="text-primary ms-2">(${displayTime})</span></div></div>
-            ${l.certUrl ? `<div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">เอกสารแนบประกอบ</label><button type="button" class="btn btn-sm btn-outline-primary fw-bold w-100 py-2 rounded-3" onclick="window.previewCertImage('${l.id}')"><i class="bi bi-image me-1"></i>คลิกดูไฟล์เอกสารแนบ</button></div>` : ''}
+            <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">เอกสารแนบประกอบ</label><div>${certHtml}</div></div>
             <div class="mb-4"><label class="small text-muted d-block mb-1 fw-bold">เหตุผลการลา</label><div class="p-3 bg-light rounded-3 text-dark border">${l.reason}</div></div>
             ${actionButtons}
             <button class="btn btn-secondary w-100 fw-bold mt-2 rounded-pill py-2" data-bs-dismiss="offcanvas">ปิดหน้าต่าง</button>
@@ -440,21 +456,15 @@ window.changeRowsPerPage = () => {
     window.renderTimeHistoryPage(1); 
 };
 
-// 🌟 อัปเดตเปลี่ยนจากเลือกเดือน (Month) เป็นเลือกวันที่เจาะจง (Date) 
 window.renderTimeHistoryPage = (page = null) => {
     if(page) window.currentTimePage = page;
     const tbody = document.getElementById('myTimeHistoryTableBody');
     if(!tbody) return;
 
-    // กรองตามวันที่ระบุ (Date Picker)
     const dateFilterStr = document.getElementById('timeHistoryDate') ? document.getElementById('timeHistoryDate').value : '';
     const todayStr = new Date().toLocaleDateString('en-CA');
 
-    let filtered = window.allTimeRecords.filter(r => { 
-        if(!dateFilterStr) return true; 
-        return r.workDate === dateFilterStr; 
-    });
-    
+    let filtered = window.allTimeRecords.filter(r => { if(!dateFilterStr) return true; return r.workDate === dateFilterStr; });
     let sumW = 0, sumO = 0;
     filtered.forEach(r => { sumW += parseFloat(r.workHours || 0); sumO += parseFloat(r.otHours || 0); });
     if(document.getElementById('sumWorkHr')) document.getElementById('sumWorkHr').innerText = sumW.toFixed(2);
@@ -496,6 +506,82 @@ window.renderTimeHistoryPage = (page = null) => {
 };
 
 window.changeTimePage = (step) => { window.currentTimePage += step; window.renderTimeHistoryPage(); };
+
+window.exportTimesheet = () => {
+    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างและรวบรวมข้อมูลเป็นไฟล์ CSV...', 'info');
+    setTimeout(() => {
+        const dateFilterStr = document.getElementById('timeHistoryDate') ? document.getElementById('timeHistoryDate').value : '';
+        let exportData = window.allTimeRecords;
+        if (dateFilterStr) exportData = window.allTimeRecords.filter(r => r.workDate === dateFilterStr);
+        if (exportData.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีประวัติการลงเวลาในวันที่เลือก', 'warning');
+
+        let csvContent = "\uFEFFวันที่,สถานที่,เวลาเข้างาน,เวลาออกงาน,ชั่วโมงทำงานปกติ,OT (ชม.),สถานะ,รายละเอียดงาน\n";
+        exportData.forEach(r => {
+            const wHr = r.workHours ? parseFloat(r.workHours).toFixed(2) : '0.00';
+            const oHr = r.otHours ? parseFloat(r.otHours).toFixed(2) : '0.00';
+            const tIn = r.timeIn || '-'; const tOut = r.timeOut || 'ยังไม่ออกงาน';
+            const loc = r.location ? `"${r.location.replace(/"/g, '""')}"` : '-';
+            const det = r.details ? `"${r.details.replace(/"/g, '""')}"` : '-'; 
+            let statusStr = 'กำลังทำงาน'; if(r.status === 'Completed') statusStr = 'เสร็จสิ้น';
+            if(!r.timeOut && r.workDate < new Date().toLocaleDateString('en-CA')) statusStr = 'ลืมลงเวลาออก';
+            csvContent += `${r.workDate},${loc},${tIn},${tOut},${wHr},${oHr},${statusStr},${det}\n`;
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob); const link = document.createElement("a");
+        link.setAttribute("href", url); link.setAttribute("download", dateFilterStr ? `Timesheet_${currentUser.uid}_${dateFilterStr}.csv` : `Timesheet_${currentUser.uid}_All.csv`);
+        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดแล้ว', 'success');
+    }, 800);
+};
+
+window.exportAdminLeaveReport = () => {
+    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างไฟล์ Report CSV...', 'info');
+    setTimeout(() => {
+        const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
+        let exportData = window.allLeaves;
+        if (filterStatus !== 'all') exportData = window.allLeaves.filter(l => l.status === filterStatus);
+        if (!exportData || exportData.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีประวัติการลาในระบบ', 'warning');
+
+        let csvContent = "\uFEFFรหัสพนักงาน,ชื่อ-นามสกุล,วันที่ยื่น,เริ่มวันที่,ถึงวันที่,ช่วงเวลา,จำนวนวัน,ประเภทการลา,เหตุผล,สถานะ\n";
+        exportData.forEach(l => {
+            const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID);
+            const empName = u ? `${u.Name} ${u.SurName || ''}` : 'ไม่ทราบชื่อ';
+            const dStart = l.startDate || l.date || '-';
+            const dEnd = l.endDate && l.endDate !== dStart ? l.endDate : dStart;
+            const time = l.leaveTime || 'เต็มวัน';
+            const type = l.type === 'other' ? `อื่นๆ (${l.typeOther || '-'})` : (leaveTypesTH[l.type] || l.type);
+            const reason = l.reason ? `"${l.reason.replace(/"/g, '""')}"` : '-';
+            csvContent += `="${l.empID}",${empName},${l.submittedDate || '-'},${dStart},${dEnd},${time},${l.days || 1},${type},${reason},${l.status}\n`;
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob); const link = document.createElement("a");
+        link.setAttribute("href", url); link.setAttribute("download", `Leave_Report_${Date.now()}.csv`);
+        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดเรียบร้อยแล้ว', 'success');
+    }, 800);
+};
+
+window.exportAdminEmployees = () => {
+    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างไฟล์รายชื่อพนักงาน CSV...', 'info');
+    setTimeout(() => {
+        if (!window.allUsers || window.allUsers.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีพนักงานในระบบ', 'warning');
+
+        let csvContent = "\uFEFFรหัสพนักงาน,เลขบัตรประชาชน,ชื่อ-นามสกุล,ระดับสิทธิ์,วันลาป่วย(เหลือ),ลากิจ(เหลือ),พักร้อน(เหลือ),หยุดชดเชย(เหลือ)\n";
+        window.allUsers.forEach(u => {
+            const safeUid = u.uid || u.docId;
+            const idCard = u.idCard ? `="${u.idCard}"` : '-';
+            const empName = `${u.Name || '-'} ${u.SurName || ''}`;
+            const role = u.role === 'admin' ? 'Admin' : (u.role === 'leader' ? 'Manager' : 'Staff');
+            const bal = u.leaveBalances || { sick: 0, personal: 0, annual: 0, compensatory: 0 };
+            csvContent += `="${safeUid}",${idCard},${empName},${role},${bal.sick || 0},${bal.personal || 0},${bal.annual || 0},${bal.compensatory || 0}\n`;
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob); const link = document.createElement("a");
+        link.setAttribute("href", url); link.setAttribute("download", `Employee_List_${Date.now()}.csv`);
+        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดเรียบร้อยแล้ว', 'success');
+    }, 800);
+};
 
 window.viewWorkDetails = (id) => {
     const r = window.allTimeRecords.find(x => x.id === id); if(!r) return;
@@ -593,7 +679,7 @@ window.renderAdminUI = async () => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
             const dStart = l.startDate || l.date || '-'; const dEnd = (l.endDate && l.endDate !== dStart && l.startDate) ? `<br>ถึง ${l.endDate}` : '';
-            reportTbody.innerHTML += `<tr><td>${no++}</td><td><span class="fw-medium text-primary">${l.empID}</span></td><td>${u ? u.Name : '-'}</td><td>${l.submittedDate || '-'}</td><td>${dStart}${dEnd}</td><td>${displayType}</td><td>${getStatusBadge(l.status)}</td><td><button class="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold" onclick="window.viewLeaveDetail('${l.id}')"><i class="bi bi-search me-1"></i> ตรวจสอบ</button></td></tr>`;
+            reportTbody.innerHTML += `<tr><td>${no++}</td><td><span class="fw-medium text-primary">${l.empID}</span></td><td>${u ? u.Name : '-'}</td><td>${l.submittedDate || '-'}</td><td>${dStart}${dEnd}</td><td>${displayType}</td><td>${getStatusBadge(l.status)}</td><td><button class="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold" onclick="window.viewLeaveDetail('${l.id}')"><i class="bi bi-search"></i></button></td></tr>`;
         });
     }
 
@@ -748,82 +834,6 @@ window.renderEmployeeUI = async () => {
         document.getElementById('workLocation').value = ''; document.getElementById('workDetails').value = '';
         btnStamp.disabled = false; btnStamp.className = "btn btn-primary btn-lg w-100 rounded-pill shadow-sm py-3 fw-bold"; btnStamp.innerHTML = 'แสตมป์เข้างาน';
     }
-};
-
-window.exportTimesheet = () => {
-    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างและรวบรวมข้อมูลเป็นไฟล์ CSV...', 'info');
-    setTimeout(() => {
-        const dateFilterStr = document.getElementById('timeHistoryDate') ? document.getElementById('timeHistoryDate').value : '';
-        let exportData = window.allTimeRecords;
-        if (dateFilterStr) exportData = window.allTimeRecords.filter(r => r.workDate === dateFilterStr);
-        if (exportData.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีประวัติการลงเวลาในวันที่เลือก', 'warning');
-
-        let csvContent = "\uFEFFวันที่,สถานที่,เวลาเข้างาน,เวลาออกงาน,ชั่วโมงทำงานปกติ,OT (ชม.),สถานะ,รายละเอียดงาน\n";
-        exportData.forEach(r => {
-            const wHr = r.workHours ? parseFloat(r.workHours).toFixed(2) : '0.00';
-            const oHr = r.otHours ? parseFloat(r.otHours).toFixed(2) : '0.00';
-            const tIn = r.timeIn || '-'; const tOut = r.timeOut || 'ยังไม่ออกงาน';
-            const loc = r.location ? `"${r.location.replace(/"/g, '""')}"` : '-';
-            const det = r.details ? `"${r.details.replace(/"/g, '""')}"` : '-'; 
-            let statusStr = 'กำลังทำงาน'; if(r.status === 'Completed') statusStr = 'เสร็จสิ้น';
-            if(!r.timeOut && r.workDate < new Date().toLocaleDateString('en-CA')) statusStr = 'ลืมลงเวลาออก';
-            csvContent += `${r.workDate},${loc},${tIn},${tOut},${wHr},${oHr},${statusStr},${det}\n`;
-        });
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob); const link = document.createElement("a");
-        link.setAttribute("href", url); link.setAttribute("download", dateFilterStr ? `Timesheet_${currentUser.uid}_${dateFilterStr}.csv` : `Timesheet_${currentUser.uid}_All.csv`);
-        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดแล้ว', 'success');
-    }, 800);
-};
-
-window.exportAdminLeaveReport = () => {
-    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างไฟล์ Report CSV...', 'info');
-    setTimeout(() => {
-        const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
-        let exportData = window.allLeaves;
-        if (filterStatus !== 'all') exportData = window.allLeaves.filter(l => l.status === filterStatus);
-        if (!exportData || exportData.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีประวัติการลาในระบบ', 'warning');
-
-        let csvContent = "\uFEFFรหัสพนักงาน,ชื่อ-นามสกุล,วันที่ยื่น,เริ่มวันที่,ถึงวันที่,ช่วงเวลา,จำนวนวัน,ประเภทการลา,เหตุผล,สถานะ\n";
-        exportData.forEach(l => {
-            const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID);
-            const empName = u ? `${u.Name} ${u.SurName || ''}` : 'ไม่ทราบชื่อ';
-            const dStart = l.startDate || l.date || '-';
-            const dEnd = l.endDate && l.endDate !== dStart ? l.endDate : dStart;
-            const time = l.leaveTime || 'เต็มวัน';
-            const type = l.type === 'other' ? `อื่นๆ (${l.typeOther || '-'})` : (leaveTypesTH[l.type] || l.type);
-            const reason = l.reason ? `"${l.reason.replace(/"/g, '""')}"` : '-';
-            csvContent += `="${l.empID}",${empName},${l.submittedDate || '-'},${dStart},${dEnd},${time},${l.days || 1},${type},${reason},${l.status}\n`;
-        });
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob); const link = document.createElement("a");
-        link.setAttribute("href", url); link.setAttribute("download", `Leave_Report_${Date.now()}.csv`);
-        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดเรียบร้อยแล้ว', 'success');
-    }, 800);
-};
-
-window.exportAdminEmployees = () => {
-    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างไฟล์รายชื่อพนักงาน CSV...', 'info');
-    setTimeout(() => {
-        if (!window.allUsers || window.allUsers.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีพนักงานในระบบ', 'warning');
-
-        let csvContent = "\uFEFFรหัสพนักงาน,เลขบัตรประชาชน,ชื่อ-นามสกุล,ระดับสิทธิ์,วันลาป่วย(เหลือ),ลากิจ(เหลือ),พักร้อน(เหลือ),หยุดชดเชย(เหลือ)\n";
-        window.allUsers.forEach(u => {
-            const safeUid = u.uid || u.docId;
-            const idCard = u.idCard ? `="${u.idCard}"` : '-';
-            const empName = `${u.Name || '-'} ${u.SurName || ''}`;
-            const role = u.role === 'admin' ? 'Admin' : (u.role === 'leader' ? 'Manager' : 'Staff');
-            const bal = u.leaveBalances || { sick: 0, personal: 0, annual: 0, compensatory: 0 };
-            csvContent += `="${safeUid}",${idCard},${empName},${role},${bal.sick || 0},${bal.personal || 0},${bal.annual || 0},${bal.compensatory || 0}\n`;
-        });
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob); const link = document.createElement("a");
-        link.setAttribute("href", url); link.setAttribute("download", `Employee_List_${Date.now()}.csv`);
-        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดเรียบร้อยแล้ว', 'success');
-    }, 800);
 };
 
 setInterval(() => { if(document.getElementById('empCurrentTime')) document.getElementById('empCurrentTime').innerText = new Date().toLocaleTimeString('th-TH'); }, 1000);
