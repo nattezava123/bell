@@ -197,10 +197,12 @@ if (loginForm) {
 
 window.logout = (e) => {
     if(e) e.preventDefault();
+    
+    // ฟังก์ชันรวบยอดคำสั่งล้างข้อมูลและเด้งกลับหน้าล็อกอิน
     const executeLogout = () => {
-        sessionStorage.clear(); 
-        currentUser = null;     
-        window.location.replace('index.html'); 
+        sessionStorage.clear(); // ล้างข้อมูล Session ทั้งหมด
+        currentUser = null;     // รีเซ็ตตัวแปร
+        window.location.replace('index.html'); // ใช้ replace เพื่อห้ามผู้ใช้กดปุ่ม Back กลับมา
     };
 
     if (typeof Swal !== 'undefined') {
@@ -411,6 +413,8 @@ window.handleLeaveSubmit = async (e) => {
         
         e.target.reset(); 
         window.toggleOtherLeaveType(''); 
+        if(document.getElementById('leaveStartDateDisplay')) { document.getElementById('leaveStartDateDisplay').innerText = 'เลือกวันที่...'; document.getElementById('leaveStartDateDisplay').classList.add('text-muted'); }
+        if(document.getElementById('leaveEndDateDisplay')) { document.getElementById('leaveEndDateDisplay').innerText = 'เลือกวันที่...'; document.getElementById('leaveEndDateDisplay').classList.add('text-muted'); }
         
         window.showSwal('ยื่นคำขอสำเร็จ', 'ระบบได้รับคำขออนุมัติเรียบร้อยแล้ว', 'success'); 
         await refreshUI();
@@ -467,7 +471,12 @@ window.viewLeaveDetail = async (leaveId) => {
         
         let actionButtons = '';
         const isOwnLeave = l.empID === currentUser.uid;
-        const canApprove = !isOwnLeave && ((currentUser.role === 'admin' && u.role === 'leader') || (currentUser.role === 'leader' && u.role === 'employee'));
+        
+        const canApprove = !isOwnLeave && (
+            (currentUser.role === 'admin' && u.role === 'leader') || 
+            (currentUser.role === 'leader' && u.role === 'employee')
+        );
+
         const lDays = l.days || 1;
 
         if (canApprove) {
@@ -743,8 +752,6 @@ window.renderAdminUI = async () => {
     });
 
     const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
-    
-    // ดึงค่าวันที่สำหรับกรองในหน้า Report
     const adminDateFilter = document.getElementById('adminReportDateFilter') ? document.getElementById('adminReportDateFilter').value : '';
 
     const reportTbody = document.getElementById('adminReportTableBody');
@@ -752,8 +759,6 @@ window.renderAdminUI = async () => {
         reportTbody.innerHTML = ''; let no = 1;
         window.allLeaves.forEach(l => {
             if(filterStatus !== 'all' && l.status !== filterStatus) return;
-            
-            // 🌟 กรองวันที่แบบเป๊ะๆ
             if(adminDateFilter) {
                 const lDate = l.startDate || l.date || '';
                 if(lDate !== adminDateFilter) return;
@@ -867,6 +872,7 @@ window.renderEmployeeUI = async () => {
 
     const leavesSnap = await getDocs(query(collection(db, "leaves"), where("empID", "==", currentUser.uid)));
     window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
     window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
 
     if(document.getElementById('leaveHistoryBadge')) document.getElementById('leaveHistoryBadge').innerText = window.allLeaves.length;
@@ -915,7 +921,7 @@ window.renderEmployeeUI = async () => {
     }
 };
 
-// 🌟 ตัวจุดชนวนหลักที่ทำให้ระบบรันทันทีโดยไม่ติดบั๊ก
+// 🌟 ตัวจุดชนวนหลัก (Core Initializer)
 const initApp = () => {
     if (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
         window.checkAuthStatus('login');
@@ -930,5 +936,5 @@ const initApp = () => {
     }
 };
 
-// สั่งรันทันทีที่โค้ดโหลดเสร็จ (กันปัญหา window.onload โดนลบล้าง)
+// สั่งรันทันทีที่โค้ดโหลดเสร็จ 
 initApp();
