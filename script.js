@@ -23,61 +23,70 @@ window.currentTimePage = 1;
 window.rowsPerPage = 10;
 
 // ==========================================
-// 🌟 1. ฟังก์ชันจัดการวันที่ (แก้ปัญหา Invalid Date เด็ดขาด)
+// 🌟 1. ฟังก์ชันจัดการวันที่ (Smart Fallback กันพัง 100%)
 // ==========================================
-window.formatDateShort = (dateStr, fallbackTimestamp = null) => {
-    if (!dateStr || dateStr === '-' || dateStr === 'Invalid Date') {
-        if (fallbackTimestamp) { 
-            const d = new Date(fallbackTimestamp);
-            if (!isNaN(d.getTime())) return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }); 
-        }
-        return '-'; 
+window.formatDateShort = (dateStr, fallbackTimestamp = null, fallbackDateStr = null) => {
+    let d = null;
+    if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
+        const p = dateStr.split('-');
+        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
     }
-    if (typeof dateStr === 'string' && dateStr.includes('-')) {
-        const parts = dateStr.split('-');
-        if (parts.length >= 3) {
-            const date = new Date(parts[0], parseInt(parts[1]) - 1, parseInt(parts[2]));
-            if (!isNaN(date.getTime())) return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-        }
+    if ((!d || isNaN(d.getTime())) && fallbackTimestamp) {
+        d = new Date(fallbackTimestamp);
     }
-    return dateStr;
+    if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
+        const p = fallbackDateStr.split('-');
+        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+    }
+    if (!d || isNaN(d.getTime())) d = new Date(); 
+    
+    return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
-window.formatDateFull = (dateStr, fallbackTimestamp = null) => {
-    if (!dateStr || dateStr === '-' || dateStr === 'Invalid Date') {
-        if (fallbackTimestamp) { 
-            const d = new Date(fallbackTimestamp);
-            if (!isNaN(d.getTime())) return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' }); 
-        }
-        return '-';
+window.formatDateFull = (dateStr, fallbackTimestamp = null, fallbackDateStr = null) => {
+    let d = null;
+    if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
+        const p = dateStr.split('-');
+        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
     }
-    if (typeof dateStr === 'string' && dateStr.includes('-')) {
-        const parts = dateStr.split('-');
-        if (parts.length >= 3) {
-            const date = new Date(parts[0], parseInt(parts[1]) - 1, parseInt(parts[2]));
-            if (!isNaN(date.getTime())) return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
-        }
+    if ((!d || isNaN(d.getTime())) && fallbackTimestamp) {
+        d = new Date(fallbackTimestamp);
     }
-    return dateStr;
+    if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
+        const p = fallbackDateStr.split('-');
+        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+    }
+    if (!d || isNaN(d.getTime())) d = new Date(); 
+    
+    return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
-window.formatDateCSV = (dateStr) => {
-    if (!dateStr || dateStr === '-' || dateStr === 'Invalid Date') return '-';
-    if (typeof dateStr === 'string' && dateStr.includes('-')) {
-        const parts = dateStr.split('-');
-        if (parts.length >= 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+window.formatDateCSV = (dateStr, fallbackTimestamp = null, fallbackDateStr = null) => {
+    let d = null;
+    if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
+        const p = dateStr.split('-');
+        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
     }
-    return dateStr;
+    if ((!d || isNaN(d.getTime())) && fallbackTimestamp) {
+        d = new Date(fallbackTimestamp);
+    }
+    if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
+        const p = fallbackDateStr.split('-');
+        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+    }
+    if (!d || isNaN(d.getTime())) d = new Date(); 
+    
+    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
 };
 
-// ==========================================
-// 🌟 2. Helper สร้างวันที่แบบปลอดภัย 100% (กันบั๊กเบราว์เซอร์)
-// ==========================================
 const getSafeTodayString = () => {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
 
+// ==========================================
+// UI Helpers
+// ==========================================
 window.showSwal = (title, text, icon = 'success') => {
     if (typeof Swal !== 'undefined') { Swal.fire({ title, text, icon, confirmButtonText: 'ตกลง', confirmButtonColor: '#2563eb', timer: icon === 'success' ? 2500 : undefined, customClass: { popup: 'rounded-4' } });
     } else { alert(`${title}\n${text}`); }
@@ -144,9 +153,14 @@ window.previewCertImage = (leaveId) => {
     const base64Data = l.certUrl;
 
     if (base64Data.startsWith('data:application/pdf')) {
-        const win = window.open();
-        if(win){ win.document.write(`<iframe src="${base64Data}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
-        } else { window.showSwal('Pop-up ถูกบล็อก', 'กรุณาอนุญาต Pop-up เพื่อดูไฟล์ PDF', 'warning'); }
+        Swal.fire({
+            title: 'เอกสาร PDF',
+            html: `<iframe src="${base64Data}" width="100%" height="400px" style="border: none; border-radius: 8px;"></iframe>`,
+            width: '800px',
+            showCloseButton: true,
+            showConfirmButton: false,
+            customClass: { popup: 'rounded-4' }
+        });
         return;
     }
 
@@ -359,7 +373,8 @@ window.viewLeaveDetail = async (leaveId) => {
         if(!l) return;
         const uDoc = await getDoc(doc(db, "users", l.empID)); const u = uDoc.data();
         
-        const displaySubmit = window.formatDateFull(l.submittedDate, l.timestamp);
+        // 🌟 ใช้วันที่ที่ปลอดภัย 100%
+        const displaySubmit = window.formatDateFull(l.submittedDate, l.timestamp, l.startDate || l.date);
         const displayStart = window.formatDateFull(l.startDate || l.date);
         const displayEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` ถึง ${window.formatDateFull(l.endDate)}` : '';
         const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
@@ -654,7 +669,8 @@ window.renderAdminUI = async () => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
             
-            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
+            // 🌟 แสดงวันที่แบบไม่มีเครื่องหมาย -
+            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? `<br>ถึง ${window.formatDateShort(l.endDate)}` : '';
             
@@ -667,7 +683,7 @@ window.renderAdminUI = async () => {
         approveTbody.innerHTML = ''; let no = 1;
         window.allLeaves.filter(l => (l.status === 'รอพิจารณา' || l.status === 'ขอยกเลิก') && window.allUsers.find(x => (x.uid || x.docId) === l.empID)?.role === 'leader').forEach(l => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
-            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
+            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` - ${window.formatDateShort(l.endDate)}` : '';
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
@@ -701,7 +717,7 @@ window.renderManagerUI = async () => {
         tbody.innerHTML = ''; let no = 1;
         window.allLeaves.filter(l => (l.status === 'รอพิจารณา' || l.status === 'ขอยกเลิก') && window.allUsers.find(u => (u.uid || u.docId) === l.empID)?.role === 'employee').forEach(l => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
-            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
+            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` - ${window.formatDateShort(l.endDate)}` : '';
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
@@ -781,7 +797,6 @@ window.renderEmployeeUI = async () => {
     const leavesSnap = await getDocs(query(collection(db, "leaves"), where("empID", "==", currentUser.uid)));
     window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    // 🌟 จัดเรียงรายการคำขอล่าสุดขึ้นก่อนเสมอ (Newest First)
     window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
 
     if(document.getElementById('leaveHistoryBadge')) document.getElementById('leaveHistoryBadge').innerText = window.allLeaves.length;
@@ -797,7 +812,7 @@ window.renderEmployeeUI = async () => {
             else if (l.status === 'อนุมัติ') cancelBtn = `<button class="btn btn-sm btn-outline-warning" onclick="window.requestCancelLeave('${l.id}')">ขอยกเลิก</button>`;
             else if (l.status === 'ขอยกเลิก') cancelBtn = `<span class="badge bg-warning-subtle text-warning">รออนุมัติยกเลิก</span>`;
             
-            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
+            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` - ${window.formatDateShort(l.endDate)}` : '';
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
@@ -874,7 +889,7 @@ window.exportAdminLeaveReport = () => {
             
             const dStart = window.formatDateCSV(l.startDate || l.date);
             const dEnd = l.endDate && l.endDate !== (l.startDate || l.date) ? window.formatDateCSV(l.endDate) : dStart;
-            const submitted = window.formatDateCSV(l.submittedDate) !== '-' ? window.formatDateCSV(l.submittedDate) : window.formatDateCSV(new Date(l.timestamp).toLocaleDateString('en-CA'));
+            const submitted = window.formatDateCSV(l.submittedDate, l.timestamp, l.startDate || l.date);
             
             const time = l.leaveTime || 'เต็มวัน';
             const type = l.type === 'other' ? `อื่นๆ (${l.typeOther || '-'})` : (leaveTypesTH[l.type] || l.type);
