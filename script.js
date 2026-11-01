@@ -13,7 +13,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// 🌟 ป้องกัน Session Storage พัง
 let currentUser = null;
 try {
     const stored = sessionStorage.getItem('hr_currentUser');
@@ -65,6 +64,49 @@ window.calculateHRWorkHours = (timeInStr, timeOutStr) => {
     } catch (e) {
         return { normal: 0, ot: 0 };
     }
+};
+
+// ==========================================
+// 🌟 2. ฟังก์ชันคำนวณและแสดงสรุปจำนวนวันลา Realtime
+// ==========================================
+window.calculateLeaveDaysPreview = () => {
+    const startInput = document.getElementById('leaveStartDate');
+    const endInput = document.getElementById('leaveEndDate');
+    const summaryBox = document.getElementById('leaveSummaryBox');
+    const daysText = document.getElementById('leaveDaysCalc');
+    const rangeText = document.getElementById('leaveDateRangeText');
+
+    if (!startInput || !summaryBox || !daysText || !rangeText) return;
+
+    const startVal = startInput.value;
+    const endVal = (endInput && endInput.value) ? endInput.value : startVal;
+
+    if (!startVal) {
+        summaryBox.style.display = 'none';
+        return;
+    }
+
+    const start = new Date(startVal);
+    const end = new Date(endVal);
+
+    if (end < start) {
+        summaryBox.style.display = 'none';
+        return;
+    }
+
+    const diffDays = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    daysText.innerText = diffDays;
+
+    const startDisplay = window.formatDateShort(startVal);
+    const endDisplay = window.formatDateShort(endVal);
+
+    if (startVal === endVal) {
+        rangeText.innerText = startDisplay;
+    } else {
+        rangeText.innerText = `${startDisplay} ถึง ${endDisplay}`;
+    }
+
+    summaryBox.style.display = 'block';
 };
 
 // ==========================================
@@ -269,12 +311,13 @@ const compressImage = (file) => {
 };
 
 const getBase64 = (file) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = error => reject(error);
+    const reader = new FileReader(); reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
 });
 
+// ==========================================
+// 🌟 ระบบบันทึกเวลา Check-in / Check-out 
+// ==========================================
 window.handleStampTime = async () => {
     const loc = document.getElementById('workLocation').value;
     const det = document.getElementById('workDetails').value;
@@ -311,6 +354,7 @@ window.handleStampTime = async () => {
                 if(btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังบันทึก...'; }
                 try {
                     const hrCalc = window.calculateHRWorkHours(recordData.timeIn, currentTime);
+
                     await updateDoc(doc(db, "workRecords", recordDoc.id), { timeOut: currentTime, workHours: parseFloat(hrCalc.normal.toFixed(1)), otHours: parseFloat(hrCalc.ot.toFixed(1)), details: det, location: loc, status: "Completed" });
                     Swal.fire({ title: 'บันทึกเวลาสำเร็จ', html: `เวลาทำงาน: <b>${hrCalc.normal.toFixed(1)}</b> ชม.<br>OT: <b>${hrCalc.ot.toFixed(1)}</b> ชม.`, icon: 'success', timer: 3000, showConfirmButton: false, allowOutsideClick: false });
                     await refreshUI();
@@ -378,6 +422,9 @@ window.handleLeaveSubmit = async (e) => {
         e.target.reset(); 
         if(typeof window.toggleOtherLeaveType === 'function') window.toggleOtherLeaveType('');
         
+        const summaryBox = document.getElementById('leaveSummaryBox');
+        if (summaryBox) summaryBox.style.display = 'none';
+
         window.showSwal('ยื่นคำขอสำเร็จ', 'ระบบได้รับคำขออนุมัติเรียบร้อยแล้ว', 'success'); 
         await refreshUI();
         const historyTabBtn = document.getElementById('tab-leave-history-btn'); 
@@ -469,90 +516,6 @@ window.viewLeaveDetail = async (leaveId) => {
             Swal.fire({ title: 'รายละเอียดการลา', html: content, confirmButtonText: 'ปิดหน้าต่าง' });
         }
     } catch (e) { console.error(e); }
-};
-
-window.handleAddEmployee = async (e) => {
-    e.preventDefault();
-    const newId = document.getElementById('regId').value;
-    const idCard = document.getElementById('regIdCard').value;
-    const docSnap = await getDoc(doc(db, "users", newId));
-    if(docSnap.exists()) return window.showSwal('ผิดพลาด', 'รหัสพนักงานซ้ำ', 'error');
-    const autoPassword = idCard.slice(-4); 
-    const initialQuota = { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 };
-    await setDoc(doc(db, "users", newId), { 
-        uid: newId, idCard: idCard, password: autoPassword, Name: document.getElementById('regName').value, SurName: '', role: document.getElementById('regRole').value, 
-        leaveBalances: initialQuota, leaveTotal: initialQuota 
-    });
-    document.getElementById('addEmployeeForm').reset(); window.showSwal('สำเร็จ!', `สร้างบัญชีเรียบร้อย\nรหัสผ่านคือ: ${autoPassword}`, 'success'); refreshUI();
-};
-
-window.deleteEmployee = (id) => { 
-    if(id === 'admin') return window.showSwal('ปฏิเสธ', 'ไม่สามารถลบ Admin ได้', 'error'); 
-    Swal.fire({ title: 'ยืนยันการลบ?', text: 'ข้อมูลจะถูกลบถาวร', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'ลบข้อมูล' }).then(async (result) => { if(result.isConfirmed) { await deleteDoc(doc(db, "users", id)); refreshUI(); } });
-};
-
-window.currentEditEmpId = null;
-window.openEditEmployeeModal = async (uid) => {
-    try {
-        if (!uid || uid === 'undefined') return window.showSwal('ข้อผิดพลาด', 'รหัสพนักงานไม่ถูกต้อง', 'error');
-        const userDoc = await getDoc(doc(db, "users", uid));
-        if (userDoc.exists()) {
-            const u = userDoc.data();
-            window.currentEditEmpId = uid;
-            document.getElementById('editEmpIdDisplay').value = u.uid || uid; document.getElementById('editEmpIdCardInput').value = u.idCard || ''; document.getElementById('editEmpNameInput').value = `${u.Name || ''} ${u.SurName || ''}`.trim(); document.getElementById('editEmpRoleInput').value = u.role || 'employee';
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('editEmpModal')).show();
-        }
-    } catch (error) { window.showSwal('ข้อผิดพลาด', 'ไม่สามารถเข้าถึงข้อมูลได้', 'error'); }
-};
-
-window.saveEditEmployee = async () => {
-    const uid = window.currentEditEmpId;
-    if (!uid) return;
-    const newIdCard = document.getElementById('editEmpIdCardInput').value.trim(); const fullName = document.getElementById('editEmpNameInput').value.trim(); const newRole = document.getElementById('editEmpRoleInput').value;
-    if (!fullName) return window.showSwal('ข้อผิดพลาด', 'กรุณาระบุชื่อพนักงาน', 'warning');
-    const nameParts = fullName.split(' '); const newName = nameParts[0]; const newSurName = nameParts.slice(1).join(' ');
-    const btn = document.getElementById('btnSaveEdit'); if(btn) { btn.disabled = true; btn.innerHTML = 'กำลังบันทึก...'; }
-    try {
-        const userDoc = await getDoc(doc(db, "users", uid)); const u = userDoc.data();
-        await updateDoc(doc(db, "users", uid), { idCard: newIdCard, password: newIdCard ? newIdCard.slice(-4) : u.password, Name: newName, SurName: newSurName, role: newRole });
-        bootstrap.Modal.getInstance(document.getElementById('editEmpModal')).hide(); window.showSwal('สำเร็จ', 'อัปเดตข้อมูลพนักงานเรียบร้อย', 'success'); refreshUI();
-    } catch (error) { window.showSwal('ข้อผิดพลาด', 'บันทึกข้อมูลไม่สำเร็จ', 'error'); } finally { if(btn) { btn.disabled = false; btn.innerHTML = 'บันทึกการเปลี่ยนแปลง'; } }
-};
-
-window.currentEditLeaveBalId = null;
-window.openEditLeaveBalanceModal = async (uid) => {
-    try {
-        if (!uid || uid === 'undefined') return window.showSwal('ข้อผิดพลาด', 'รหัสพนักงานไม่ถูกต้อง', 'error');
-        const userDoc = await getDoc(doc(db, "users", uid));
-        if (userDoc.exists()) {
-            const u = userDoc.data();
-            window.currentEditLeaveBalId = uid;
-            document.getElementById('leaveBalEmpName').innerText = `${u.uid || uid} : ${u.Name || ''} ${u.SurName || ''}`;
-            const total = u.leaveTotal || { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 };
-            document.getElementById('editBalSick').value = total.sick || 0; document.getElementById('editBalPers').value = total.personal || 0; document.getElementById('editBalAnn').value = total.annual || 0; document.getElementById('editBalComp').value = total.compensatory || 0; document.getElementById('editBalMat').value = total.maternity || 0; document.getElementById('editBalOrd').value = total.ordination || 0; document.getElementById('editBalMil').value = total.military || 0;
-            bootstrap.Modal.getOrCreateInstance(document.getElementById('editLeaveBalanceModal')).show();
-        }
-    } catch (error) { window.showSwal('ข้อผิดพลาด', 'ไม่สามารถเข้าถึงข้อมูลได้', 'error'); }
-};
-
-window.saveLeaveBalance = async () => {
-    const uid = window.currentEditLeaveBalId;
-    if (!uid) return;
-    const btn = document.getElementById('btnSaveLeaveBal'); if(btn) { btn.disabled = true; btn.innerHTML = 'กำลังบันทึก...'; }
-    try {
-        const userDoc = await getDoc(doc(db, "users", uid)); const u = userDoc.data();
-        const oldTotal = u.leaveTotal || { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 };
-        const oldBalances = u.leaveBalances || { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 };
-        const newTotal = { sick: parseInt(document.getElementById('editBalSick').value) || 0, personal: parseInt(document.getElementById('editBalPers').value) || 0, annual: parseInt(document.getElementById('editBalAnn').value) || 0, compensatory: parseInt(document.getElementById('editBalComp').value) || 0, maternity: parseInt(document.getElementById('editBalMat').value) || 0, ordination: parseInt(document.getElementById('editBalOrd').value) || 0, military: parseInt(document.getElementById('editBalMil').value) || 0 };
-        const newBalances = {};
-        for(let key in newTotal) {
-            let usedDays = (oldTotal[key] || 0) - (oldBalances[key] || 0); 
-            if(usedDays < 0) usedDays = 0;
-            newBalances[key] = newTotal[key] - usedDays; 
-        }
-        await updateDoc(doc(db, "users", uid), { leaveTotal: newTotal, leaveBalances: newBalances });
-        bootstrap.Modal.getInstance(document.getElementById('editLeaveBalanceModal')).hide(); window.showSwal('สำเร็จ', 'อัปเดตสิทธิ์การลาเรียบร้อย', 'success'); refreshUI();
-    } catch (error) { window.showSwal('ข้อผิดพลาด', 'บันทึกข้อมูลไม่สำเร็จ', 'error'); } finally { if(btn) { btn.disabled = false; btn.innerHTML = 'บันทึกโควตาสิทธิ์การลา'; } }
 };
 
 window.changeRowsPerPage = () => {
@@ -732,6 +695,7 @@ window.renderAdminUI = async () => {
 
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
+            
             const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? `<br>ถึง ${window.formatDateShort(l.endDate)}` : '';
@@ -834,7 +798,6 @@ window.renderEmployeeUI = async () => {
         document.getElementById('statAnnBal').innerText = balances.annual !== undefined ? balances.annual : 0; 
         document.getElementById('statAnnUsed').innerText = calcUsed(total.annual, balances.annual);
 
-        // 🌟 เพิ่มตัวเลขวันสุทธิใน Dropdown แบบมืออาชีพ
         const stdSelect = document.querySelector('#standardLeaveContainer select');
         if (stdSelect) {
             for(let opt of stdSelect.options) {
