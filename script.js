@@ -22,43 +22,60 @@ window.allUsers = [];
 window.currentTimePage = 1;
 window.rowsPerPage = 10;
 
+// ==========================================
+// 🌟 1. ฟังก์ชันจัดการวันที่ (แก้ปัญหา Invalid Date เด็ดขาด)
+// ==========================================
 window.formatDateShort = (dateStr, fallbackTimestamp = null) => {
-    if (!dateStr || dateStr === '-') {
-        if (fallbackTimestamp) { return new Date(fallbackTimestamp).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }); }
-        return new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }); 
+    if (!dateStr || dateStr === '-' || dateStr === 'Invalid Date') {
+        if (fallbackTimestamp) { 
+            const d = new Date(fallbackTimestamp);
+            if (!isNaN(d.getTime())) return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }); 
+        }
+        return '-'; 
     }
-    if (dateStr.includes('-')) {
+    if (typeof dateStr === 'string' && dateStr.includes('-')) {
         const parts = dateStr.split('-');
-        if (parts.length === 3) {
-            const date = new Date(parts[0], parts[1] - 1, parts[2]);
-            return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+        if (parts.length >= 3) {
+            const date = new Date(parts[0], parseInt(parts[1]) - 1, parseInt(parts[2]));
+            if (!isNaN(date.getTime())) return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
         }
     }
     return dateStr;
 };
 
 window.formatDateFull = (dateStr, fallbackTimestamp = null) => {
-    if (!dateStr || dateStr === '-') {
-        if (fallbackTimestamp) { return new Date(fallbackTimestamp).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' }); }
-        return new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+    if (!dateStr || dateStr === '-' || dateStr === 'Invalid Date') {
+        if (fallbackTimestamp) { 
+            const d = new Date(fallbackTimestamp);
+            if (!isNaN(d.getTime())) return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' }); 
+        }
+        return '-';
     }
-    if (dateStr.includes('-')) {
+    if (typeof dateStr === 'string' && dateStr.includes('-')) {
         const parts = dateStr.split('-');
-        if (parts.length === 3) {
-            const date = new Date(parts[0], parts[1] - 1, parts[2]);
-            return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+        if (parts.length >= 3) {
+            const date = new Date(parts[0], parseInt(parts[1]) - 1, parseInt(parts[2]));
+            if (!isNaN(date.getTime())) return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
         }
     }
     return dateStr;
 };
 
 window.formatDateCSV = (dateStr) => {
-    if (!dateStr || dateStr === '-') return '-';
-    if (dateStr.includes('-')) {
+    if (!dateStr || dateStr === '-' || dateStr === 'Invalid Date') return '-';
+    if (typeof dateStr === 'string' && dateStr.includes('-')) {
         const parts = dateStr.split('-');
-        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        if (parts.length >= 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
     return dateStr;
+};
+
+// ==========================================
+// 🌟 2. Helper สร้างวันที่แบบปลอดภัย 100% (กันบั๊กเบราว์เซอร์)
+// ==========================================
+const getSafeTodayString = () => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 };
 
 window.showSwal = (title, text, icon = 'success') => {
@@ -95,7 +112,7 @@ window.filterTable = (inputId, tbodyId) => {
 
 window.checkAuthStatus = (reqRole) => {
     if (!currentUser && reqRole !== 'login') { window.location.href = 'index.html'; return false; }
-    if (currentUser && reqRole === 'login') { window.location.href = currentUser.role === 'leader' ? 'manager.html' : `${userData.role}.html`; return false; }
+    if (currentUser && reqRole === 'login') { window.location.href = currentUser.role === 'leader' ? 'manager.html' : `${currentUser.role}.html`; return false; }
     if (currentUser && document.getElementById('navUserInfo')) { document.getElementById('navUserInfo').innerText = `${currentUser.Name} ${currentUser.SurName || ''} (${currentUser.role.toUpperCase()})`; }
     return true;
 };
@@ -200,7 +217,7 @@ window.handleStampTime = async () => {
     if(!loc || !det.trim()) return window.showSwal('ข้อมูลไม่ครบ', 'กรุณาระบุสถานที่และรายละเอียดงาน', 'warning');
 
     const now = new Date();
-    const todayStr = now.toLocaleDateString('en-CA');
+    const todayStr = getSafeTodayString();
     const currentTime = now.toLocaleTimeString('th-TH', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
     const recordsRef = collection(db, "workRecords");
     const q = query(recordsRef, where("empID", "==", currentUser.uid), where("workDate", "==", todayStr));
@@ -212,7 +229,7 @@ window.handleStampTime = async () => {
                 const btn = document.getElementById('btnStampTime');
                 if(btn) { btn.disabled = true; btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังบันทึก...'; }
                 try {
-                    await addDoc(recordsRef, { empID: currentUser.uid, timestamp: now, workDate: todayStr, timeIn: currentTime, timeOut: "", workHours: 0.0, otHours: 0.0, details: det, location: loc, status: "Working" });
+                    await addDoc(recordsRef, { empID: currentUser.uid, timestamp: now.getTime(), workDate: todayStr, timeIn: currentTime, timeOut: "", workHours: 0.0, otHours: 0.0, details: det, location: loc, status: "Working" });
                     Swal.fire({ title: 'CHECK-IN สำเร็จ', text: `เข้างานเวลา: ${currentTime} น.`, icon: 'success', timer: 2000, showConfirmButton: false });
                     await refreshUI();
                     window.navigate('sectionTimeHistory'); window.scrollTo(0, 0);
@@ -252,7 +269,7 @@ window.saveDailyDetails = async (e) => {
     e.preventDefault();
     const loc = document.getElementById('workLocation').value;
     const det = document.getElementById('workDetails').value;
-    const todayStr = new Date().toLocaleDateString('en-CA');
+    const todayStr = getSafeTodayString();
     const q = query(collection(db, "workRecords"), where("empID", "==", currentUser.uid), where("workDate", "==", todayStr));
     const snapshot = await getDocs(q);
     if (!snapshot.empty) { await updateDoc(doc(db, "workRecords", snapshot.docs[0].id), { location: loc, details: det }); window.showSwal('บันทึกสำเร็จ', 'อัปเดตรายละเอียดงานเรียบร้อย', 'success'); } 
@@ -296,7 +313,7 @@ window.handleLeaveSubmit = async (e) => {
         } catch (error) { return window.showSwal('ข้อผิดพลาด', 'ไม่สามารถอ่านไฟล์ได้ กรุณาลองใหม่อีกครั้ง', 'error'); }
     }
 
-    const todayStr = new Date().toLocaleDateString('en-CA');
+    const todayStr = getSafeTodayString();
     try {
         await addDoc(collection(db, "leaves"), { 
             empID: currentUser.uid, type, typeOther, leaveTime, submittedDate: todayStr, startDate, endDate, days, reason, hasCert, certUrl: fileUrl, status: 'รอพิจารณา', timestamp: new Date().getTime() 
@@ -488,7 +505,7 @@ window.renderTimeHistoryPage = (page = null) => {
     if(!tbody) return;
 
     const dateFilterStr = document.getElementById('timeHistoryDate') ? document.getElementById('timeHistoryDate').value : '';
-    const todayStr = new Date().toLocaleDateString('en-CA');
+    const todayStr = getSafeTodayString();
 
     let filtered = window.allTimeRecords.filter(r => { 
         if(!dateFilterStr) return true; 
@@ -527,7 +544,7 @@ window.renderTimeHistoryPage = (page = null) => {
         let tInClass = 'text-success fw-medium'; if(r.timeIn && r.timeIn > '08:30') tInClass = 'text-danger fw-bold'; 
         const auditIcon = r.isCorrected ? ' <i class="bi bi-info-circle-fill text-primary" title="แก้ไขเวลาโดยผู้จัดการแล้ว"></i>' : '';
 
-        const displayDate = window.formatDateShort(r.workDate);
+        const displayDate = window.formatDateShort(r.workDate, r.timestamp);
 
         let actionBtns = `<button class="btn btn-sm btn-outline-info me-1" onclick="window.viewWorkDetails('${r.id}')" title="ดูรายละเอียดงาน"><i class="bi bi-search"></i></button>`;
         if (r.correctionReq && r.correctionReq.status === 'รอพิจารณา') { actionBtns += `<span class="badge bg-warning-subtle text-warning ms-1">รออนุมัติแก้เวลา</span>`; } 
@@ -541,7 +558,7 @@ window.changeTimePage = (step) => { window.currentTimePage += step; window.rende
 
 window.viewWorkDetails = (id) => {
     const r = window.allTimeRecords.find(x => x.id === id); if(!r) return;
-    const displayDate = window.formatDateFull(r.workDate);
+    const displayDate = window.formatDateFull(r.workDate, r.timestamp);
     Swal.fire({ title: `รายละเอียดงาน<br><span class="fs-6 text-muted">${displayDate}</span>`, html: `<div class="text-start bg-light p-3 rounded border"><b>สถานที่:</b> <span class="text-primary">${r.location}</span><br><b>เวลาทำงาน:</b> ${r.timeIn} - ${r.timeOut || 'ยังไม่ออกงาน'}<br><hr><b>เนื้องานที่บันทึก:</b><br>${r.details || '<span class="text-muted">ไม่มีรายละเอียด</span>'}</div>`, confirmButtonText: 'ปิดหน้าต่าง', confirmButtonColor: '#2563eb' });
 };
 
@@ -721,7 +738,6 @@ window.renderEmployeeUI = async () => {
     if(document.getElementById('empProfileId')) document.getElementById('empProfileId').innerText = currentUser.uid;
     if(document.getElementById('empProfileRole')) document.getElementById('empProfileRole').innerText = currentUser.role === 'leader' ? 'Manager' : 'Staff';
 
-    // 🌟 นำฟังก์ชันหลอด Progress Bar ออก และปรับข้อความใน Card ให้ตรงกับเป้าหมาย
     if(document.getElementById('statPersBal')) {
         const total = currentUser.leaveTotal || { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 }; 
         const balances = currentUser.leaveBalances || { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 };
@@ -764,6 +780,8 @@ window.renderEmployeeUI = async () => {
 
     const leavesSnap = await getDocs(query(collection(db, "leaves"), where("empID", "==", currentUser.uid)));
     window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // 🌟 จัดเรียงรายการคำขอล่าสุดขึ้นก่อนเสมอ (Newest First)
     window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
 
     if(document.getElementById('leaveHistoryBadge')) document.getElementById('leaveHistoryBadge').innerText = window.allLeaves.length;
@@ -788,7 +806,7 @@ window.renderEmployeeUI = async () => {
         });
     }
 
-    const todayStr = new Date().toLocaleDateString('en-CA');
+    const todayStr = getSafeTodayString();
     if(document.getElementById('empCurrentDateDisplay')) document.getElementById('empCurrentDateDisplay').innerText = window.formatDateFull(todayStr);
     
     const timeSnap = await getDocs(query(collection(db, "workRecords"), where("empID", "==", currentUser.uid)));
@@ -828,7 +846,7 @@ window.exportTimesheet = () => {
             const loc = r.location ? `"${r.location.replace(/"/g, '""')}"` : '-';
             const det = r.details ? `"${r.details.replace(/"/g, '""')}"` : '-'; 
             let statusStr = 'กำลังทำงาน'; if(r.status === 'Completed') statusStr = 'เสร็จสิ้น';
-            if(!r.timeOut && r.workDate < new Date().toLocaleDateString('en-CA')) statusStr = 'ลืมลงเวลาออก';
+            if(!r.timeOut && r.workDate < getSafeTodayString()) statusStr = 'ลืมลงเวลาออก';
             
             const csvDate = window.formatDateCSV(r.workDate);
             csvContent += `${csvDate},${loc},${tIn},${tOut},${wHr},${oHr},${statusStr},${det}\n`;
