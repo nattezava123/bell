@@ -129,7 +129,6 @@ window.filterTable = (inputId, tbodyId) => {
     }
 };
 
-// 🌟 อัปเกรดระบบตรวจสอบ Auth ให้อ่าน URL ได้แม่นยำทุกสถานการณ์
 window.checkAuthStatus = (reqRole) => {
     if (!currentUser && reqRole !== 'login') { 
         window.location.replace('index.html'); 
@@ -149,7 +148,7 @@ window.checkAuthStatus = (reqRole) => {
 };
 
 // ==========================================
-// 🌟 อัปเกรดระบบ Login แบบมืออาชีพ (มี Spinner และดักจับ Error แน่นหนา)
+// 🌟 ระบบ Login แบบมืออาชีพ
 // ==========================================
 window.handleLogin = async (e) => {
     if(e) e.preventDefault();
@@ -172,7 +171,6 @@ window.handleLogin = async (e) => {
             userData.uid = userData.uid || userDoc.id; 
             sessionStorage.setItem('hr_currentUser', JSON.stringify(userData));
             
-            // Redirect ตามสิทธิ์
             let targetPage = 'employee.html';
             if (userData.role === 'leader') targetPage = 'manager.html';
             if (userData.role === 'admin') targetPage = 'admin.html';
@@ -189,7 +187,6 @@ window.handleLogin = async (e) => {
     }
 };
 
-// 🌟 ผูก Event ให้ฟอร์ม Login อัตโนมัติเมื่อเอกสารโหลดเสร็จ
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
     loginForm.addEventListener('submit', window.handleLogin);
@@ -197,12 +194,10 @@ if (loginForm) {
 
 window.logout = (e) => {
     if(e) e.preventDefault();
-    
-    // ฟังก์ชันรวบยอดคำสั่งล้างข้อมูลและเด้งกลับหน้าล็อกอิน
     const executeLogout = () => {
-        sessionStorage.clear(); // ล้างข้อมูล Session ทั้งหมด
-        currentUser = null;     // รีเซ็ตตัวแปร
-        window.location.replace('index.html'); // ใช้ replace เพื่อห้ามผู้ใช้กดปุ่ม Back กลับมา
+        sessionStorage.clear(); 
+        currentUser = null;     
+        window.location.replace('index.html'); 
     };
 
     if (typeof Swal !== 'undefined') {
@@ -413,8 +408,6 @@ window.handleLeaveSubmit = async (e) => {
         
         e.target.reset(); 
         window.toggleOtherLeaveType(''); 
-        if(document.getElementById('leaveStartDateDisplay')) { document.getElementById('leaveStartDateDisplay').innerText = 'เลือกวันที่...'; document.getElementById('leaveStartDateDisplay').classList.add('text-muted'); }
-        if(document.getElementById('leaveEndDateDisplay')) { document.getElementById('leaveEndDateDisplay').innerText = 'เลือกวันที่...'; document.getElementById('leaveEndDateDisplay').classList.add('text-muted'); }
         
         window.showSwal('ยื่นคำขอสำเร็จ', 'ระบบได้รับคำขออนุมัติเรียบร้อยแล้ว', 'success'); 
         await refreshUI();
@@ -471,12 +464,7 @@ window.viewLeaveDetail = async (leaveId) => {
         
         let actionButtons = '';
         const isOwnLeave = l.empID === currentUser.uid;
-        
-        const canApprove = !isOwnLeave && (
-            (currentUser.role === 'admin' && u.role === 'leader') || 
-            (currentUser.role === 'leader' && u.role === 'employee')
-        );
-
+        const canApprove = !isOwnLeave && ((currentUser.role === 'admin' && u.role === 'leader') || (currentUser.role === 'leader' && u.role === 'employee'));
         const lDays = l.days || 1;
 
         if (canApprove) {
@@ -872,7 +860,6 @@ window.renderEmployeeUI = async () => {
 
     const leavesSnap = await getDocs(query(collection(db, "leaves"), where("empID", "==", currentUser.uid)));
     window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
     window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
 
     if(document.getElementById('leaveHistoryBadge')) document.getElementById('leaveHistoryBadge').innerText = window.allLeaves.length;
@@ -898,7 +885,11 @@ window.renderEmployeeUI = async () => {
     }
 
     const todayStr = getSafeTodayString();
-    if(document.getElementById('empCurrentDateDisplay')) document.getElementById('empCurrentDateDisplay').innerText = window.formatDateFull(todayStr);
+    
+    // 🌟 ระบบอัปเดตเวลาเรียลไทม์ที่ถูกต้อง
+    if(document.getElementById('empCurrentDateDisplay')) {
+        document.getElementById('empCurrentDateDisplay').innerText = window.formatDateFull(todayStr);
+    }
     
     const timeSnap = await getDocs(query(collection(db, "workRecords"), where("empID", "==", currentUser.uid)));
     window.allTimeRecords = timeSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })); window.allTimeRecords.sort((a, b) => new Date(b.workDate) - new Date(a.workDate)); 
@@ -912,7 +903,7 @@ window.renderEmployeeUI = async () => {
         document.getElementById('displayWorkHr').innerText = todayRecord.workHours ? parseFloat(todayRecord.workHours).toFixed(1) : '0.0'; document.getElementById('displayOtHr').innerText = todayRecord.otHours ? parseFloat(todayRecord.otHours).toFixed(1) : '0.0';
         document.getElementById('workLocation').value = todayRecord.location || ''; document.getElementById('workDetails').value = todayRecord.details || '';
         if (!todayRecord.timeOut) { btnStamp.disabled = false; btnStamp.className = "btn btn-danger btn-lg w-100 rounded-pill shadow-sm py-3 fw-bold"; btnStamp.innerHTML = 'แสตมป์ออกงาน'; } 
-        else { btnStamp.disabled = true; btnStamp.className = "btn btn-outline-secondary btn-lg w-100 rounded-pill py-3 fw-bold"; btnStamp.innerHTML = 'บันทึกเวลาครบแล้ว'; }
+        else { btnStamp.disabled = true; btnStamp.className = "btn btn-outline-secondary btn-lg w-100 rounded-pill py-3 fw-bold"; btnStamp.innerHTML = 'บันึกเวลาครบแล้ว'; }
     } else {
         document.getElementById('displayCheckIn').innerText = '-'; document.getElementById('displayCheckOut').innerText = '-';
         document.getElementById('displayWorkHr').innerText = '0.0'; document.getElementById('displayOtHr').innerText = '0.0';
@@ -921,20 +912,42 @@ window.renderEmployeeUI = async () => {
     }
 };
 
-// 🌟 ตัวจุดชนวนหลัก (Core Initializer)
+// 🌟 ระบบนาฬิกาเรียลไทม์ที่ถูกต้องและไม่ทำระบบค้าง
+const startRealtimeClock = () => {
+    const clockEl = document.getElementById('empCurrentTime');
+    if(clockEl) {
+        clockEl.innerText = new Date().toLocaleTimeString('th-TH', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
+    }
+};
+startRealtimeClock(); // อัปเดตทันทีตอนเปิดหน้า
+setInterval(startRealtimeClock, 1000);
+
+// 🌟 ตัวจุดชนวนหลักที่ทำให้ระบบรันทันทีโดยไม่ติดบั๊ก
 const initApp = () => {
-    if (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
+    const path = window.location.pathname;
+    
+    // ตรวจจับหน้า Login
+    if (path.includes('index.html') || path.endsWith('/') || path === '') {
         window.checkAuthStatus('login');
     } else {
+        // ตรวจจับหน้าอื่นๆ
         if (!currentUser) {
             window.location.replace('index.html');
             return;
         }
-        if (window.location.pathname.includes('employee.html')) { window.checkAuthStatus('employee'); refreshUI(); }
-        else if (window.location.pathname.includes('manager.html')) { window.checkAuthStatus('leader'); refreshUI(); }
-        else if (window.location.pathname.includes('admin.html')) { window.checkAuthStatus('admin'); refreshUI(); }
+        
+        if (path.includes('employee.html')) { 
+            window.checkAuthStatus('employee'); 
+            refreshUI(); 
+        } else if (path.includes('manager.html')) { 
+            window.checkAuthStatus('leader'); 
+            refreshUI(); 
+        } else if (path.includes('admin.html')) { 
+            window.checkAuthStatus('admin'); 
+            refreshUI(); 
+        }
     }
 };
 
-// สั่งรันทันทีที่โค้ดโหลดเสร็จ 
+// สั่งรันทันที
 initApp();
