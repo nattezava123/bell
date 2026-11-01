@@ -142,21 +142,26 @@
                     <h5 class="fw-bold text-dark mb-1"><i class="bi bi-calendar-check me-2 text-primary"></i>สรุปสิทธิ์การลาคงเหลือ</h5>
                     <span class="badge bg-light text-primary border shadow-sm px-3 py-2"><i class="bi bi-person-circle me-1"></i>คุณ <span id="empProfileNameLeaveHead"></span></span>
                 </div>
-                <div class="row justify-content-center g-4 mb-4">
+                
+                <!-- 🌟 สรุปสิทธิ์การลาแบบปกติ (3 กล่อง) -->
+                <div class="row justify-content-center g-4 mb-4" id="standardLeaveStats">
                     <div class="col-md-4 col-sm-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #10b981;"></div><h6 class="text-muted fw-bold mb-2">ลาป่วย</h6><div class="mb-2"><span class="fs-1 fw-bold text-success" id="statSickBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-success-subtle text-success mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statSickUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statSickTotal">0</span> วัน</div></div></div>
                     <div class="col-md-4 col-sm-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #2563eb;"></div><h6 class="text-muted fw-bold mb-2">ลากิจ</h6><div class="mb-2"><span class="fs-1 fw-bold text-primary" id="statPersBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statPersUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statPersTotal">0</span> วัน</div></div></div>
                     <div class="col-md-4 col-sm-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #f59e0b;"></div><h6 class="text-muted fw-bold mb-2">ลาพักร้อน</h6><div class="mb-2"><span class="fs-1 fw-bold text-warning" id="statAnnBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-warning-subtle text-warning mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statAnnUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statAnnTotal">0</span> วัน</div></div></div>
                 </div>
+
+                <!-- 🌟 สถิติวันลาตามกฎหมาย (ซ่อนไว้เป็นค่าเริ่มต้น) -->
+                <div class="row justify-content-center g-4 mb-4 d-none" id="legalLeaveStats">
+                    <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #0891b2;"></div><h6 class="text-muted fw-bold mb-2">หยุดชดเชย</h6><div class="mb-2"><span class="fs-1 fw-bold text-info" id="statCompBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-info-subtle text-info mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statCompUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statCompTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #e11d48;"></div><h6 class="text-muted fw-bold mb-2">ลาคลอด</h6><div class="mb-2"><span class="fs-1 fw-bold text-danger" id="statMatBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-danger-subtle text-danger mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statMatUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statMatTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #475569;"></div><h6 class="text-muted fw-bold mb-2">ลาบวช</h6><div class="mb-2"><span class="fs-1 fw-bold text-dark" id="statOrdBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-dark-subtle text-dark mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statOrdUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statOrdTotal">0</span> วัน</div></div></div>
+                    <div class="col-lg-3 col-md-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #64748b;"></div><h6 class="text-muted fw-bold mb-2">ลาเกณฑ์ทหาร</h6><div class="mb-2"><span class="fs-1 fw-bold text-secondary" id="statMilBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-secondary-subtle text-secondary mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statMilUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statMilTotal">0</span> วัน</div></div></div>
+                </div>
                 
-                <!-- แท็บแบบ Segmented Control สลับสีเรียบร้อย -->
                 <div class="d-flex justify-content-center mb-4 mt-2">
                     <ul class="nav nav-pills" id="leaveTabs" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active" id="tab-leave-form-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-form" type="button" role="tab"><i class="bi bi-file-earmark-plus me-1"></i> ยื่นคำขออนุมัติลาพัก</button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="tab-leave-history-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-history" type="button" role="tab"><i class="bi bi-clock-history me-1"></i> ประวัติการลา <span class="badge bg-primary rounded-pill ms-1" id="leaveHistoryBadge">0</span></button>
-                        </li>
+                        <li class="nav-item" role="presentation"><button class="nav-link active" id="tab-leave-form-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-form" type="button" role="tab"><i class="bi bi-file-earmark-plus me-1"></i> ยื่นคำขออนุมัติลาพัก</button></li>
+                        <li class="nav-item" role="presentation"><button class="nav-link" id="tab-leave-history-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-history" type="button" role="tab"><i class="bi bi-clock-history me-1"></i> ประวัติการลา <span class="badge bg-primary rounded-pill ms-1" id="leaveHistoryBadge">0</span></button></li>
                     </ul>
                 </div>
 
@@ -165,78 +170,24 @@
                         <form onsubmit="window.handleLeaveSubmit(event)" class="row g-3 p-4 bg-white shadow-sm rounded-4 border">
                             <div class="col-md-12 d-flex justify-content-between align-items-center mb-2">
                                 <label class="form-label small fw-bold text-dark mb-0">ประเภทการลา <span class="text-danger">*</span></label>
-                                <button type="button" class="btn btn-outline-info btn-sm rounded-pill fw-bold" onclick="window.toggleLegalLeaveMode()"><i class="bi bi-info-circle me-1"></i> แบบฟอร์มลาตามกฎหมาย</button>
+                                <button type="button" id="btnToggleLegalMode" class="btn btn-outline-info btn-sm rounded-pill fw-bold" onclick="window.toggleLegalLeaveMode()"><i class="bi bi-info-circle me-1"></i> แบบฟอร์มลาตามกฎหมาย</button>
                             </div>
                             
-                            <div class="col-md-3" id="standardLeaveContainer">
-                                <select class="form-select" id="leaveType" required>
-                                    <option value="" disabled selected>เลือกประเภทการลา</option>
-                                    <option value="sick">ลาป่วย</option>
-                                    <option value="personal">ลากิจ</option>
-                                    <option value="annual">ลาพักร้อน</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-3" id="legalLeaveContainer" style="display: none;">
-                                <select class="form-select bg-info bg-opacity-10 border-info text-info fw-bold" id="leaveTypeLegal">
-                                    <option value="" disabled selected>เลือกการลาตามกฎหมาย</option>
-                                    <option value="compensatory">วันหยุดชดเชย</option>
-                                    <option value="maternity">ลาคลอด</option>
-                                    <option value="ordination">ลาบวช</option>
-                                    <option value="military">ลาเกณฑ์ทหาร</option>
-                                    <option value="other">ลาอื่นๆ (ระบุเอง)</option>
-                                </select>
-                            </div>
+                            <div class="col-md-3" id="standardLeaveContainer"><select class="form-select" id="leaveType" required><option value="" disabled selected>เลือกประเภทการลา</option><option value="sick">ลาป่วย</option><option value="personal">ลากิจ</option><option value="annual">ลาพักร้อน</option></select></div>
+                            <div class="col-md-3" id="legalLeaveContainer" style="display: none;"><select class="form-select bg-info bg-opacity-10 border-info text-info fw-bold" id="leaveTypeLegal"><option value="" disabled selected>เลือกการลาตามกฎหมาย</option><option value="compensatory">วันหยุดชดเชย</option><option value="maternity">ลาคลอด</option><option value="ordination">ลาบวช</option><option value="military">ลาเกณฑ์ทหาร</option><option value="other">ลาอื่นๆ (ระบุเอง)</option></select></div>
                             
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-dark">วันที่เริ่มลา <span class="text-danger">*</span></label>
-                                <input type="date" class="form-control" id="leaveStartDate" onchange="window.calculateLeaveDaysPreview()" required>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-dark">ถึงวันที่ <span class="text-muted fw-normal">(ถ้ามี)</span></label>
-                                <input type="date" class="form-control" id="leaveEndDate" onchange="window.calculateLeaveDaysPreview()">
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small fw-bold text-dark">ระบุเวลา <span class="text-muted fw-normal">(ถ้าไม่เต็มวัน)</span></label>
-                                <input type="text" class="form-control" id="leaveTime" placeholder="เช่น ครึ่งเช้า, 13:00-15:00" value="เต็มวัน" required>
-                            </div>
-
-                            <!-- กล่องสรุปจำนวนวันที่ลา Realtime -->
-                            <div class="col-md-12" id="leaveSummaryBox" style="display: none;">
-                                <div class="alert alert-primary bg-primary bg-opacity-10 border-primary border-opacity-25 rounded-3 py-2 px-3 d-flex align-items-center justify-content-between mb-0">
-                                    <div class="d-flex align-items-center">
-                                        <i class="bi bi-calendar2-range-fill text-primary me-2 fs-5"></i>
-                                        <span class="small fw-bold text-dark">สรุปช่วงเวลาที่ลา: <span id="leaveDateRangeText" class="text-primary fw-bold ms-1"></span></span>
-                                    </div>
-                                    <div>
-                                        <span class="badge bg-primary fs-6 px-3 py-2 rounded-pill shadow-sm">จำนวนที่ลา: <b id="leaveDaysCalc" class="fs-5 ms-1">1</b> วัน</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <div class="col-md-3"><label class="form-label small fw-bold text-dark">วันที่เริ่มลา <span class="text-danger">*</span></label><input type="date" class="form-control" id="leaveStartDate" onchange="window.calculateLeaveDaysPreview()" required></div>
+                            <div class="col-md-3"><label class="form-label small fw-bold text-dark">ถึงวันที่ <span class="text-muted fw-normal">(ถ้ามี)</span></label><input type="date" class="form-control" id="leaveEndDate" onchange="window.calculateLeaveDaysPreview()"></div>
+                            <div class="col-md-3"><label class="form-label small fw-bold text-dark">ระบุเวลา <span class="text-muted fw-normal">(ถ้าไม่เต็มวัน)</span></label><input type="text" class="form-control" id="leaveTime" placeholder="เช่น ครึ่งเช้า, 13:00-15:00" value="เต็มวัน" required></div>
                             
-                            <div class="col-md-12" id="leaveTypeOtherDiv" style="display: none;">
-                                <label class="form-label small fw-bold text-dark">ระบุการลาอื่นๆ <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control bg-warning bg-opacity-10 border-warning" id="leaveTypeOther" placeholder="เช่น ลาทำธุระพิเศษ, ลาฌาปนกิจ...">
-                            </div>
+                            <div class="col-md-12" id="leaveSummaryBox" style="display: none;"><div class="alert alert-primary bg-primary bg-opacity-10 border-primary border-opacity-25 rounded-3 py-2 px-3 d-flex align-items-center justify-content-between mb-0"><div class="d-flex align-items-center"><i class="bi bi-calendar2-range-fill text-primary me-2 fs-5"></i><span class="small fw-bold text-dark">สรุปช่วงเวลาที่ลา: <span id="leaveDateRangeText" class="text-primary fw-bold ms-1"></span></span></div><div><span class="badge bg-primary fs-6 px-3 py-2 rounded-pill shadow-sm">จำนวนที่ลา: <b id="leaveDaysCalc" class="fs-5 ms-1">1</b> วัน</span></div></div></div>
                             
-                            <div class="col-md-12">
-                                <label class="form-label small fw-bold text-dark">เหตุผลความจำเป็น <span class="text-danger">*</span></label>
-                                <input type="text" class="form-control" id="leaveReason" placeholder="ระบุเหตุผลให้ชัดเจน..." required>
-                            </div>
-                            
-                            <div class="col-md-12">
-                                <div class="bg-light p-3 rounded-3 border border-secondary-subtle mt-2">
-                                    <label for="leaveCertFile" class="form-label small fw-bold text-dark mb-2"><i class="bi bi-paperclip me-1 text-primary"></i>แนบรูปใบรับรองแพทย์ / เอกสารอ้างอิง <span class="text-muted fw-normal">(รองรับรูปภาพหรือ PDF ไม่เกิน 500KB)</span></label>
-                                    <input class="form-control bg-white" type="file" id="leaveCertFile" accept="image/*,.pdf">
-                                </div>
-                            </div>
-                            
-                            <div class="col-md-12 d-flex justify-content-end mt-4">
-                                <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm py-2"><i class="bi bi-send me-1"></i> ส่งคำขออนุมัติ</button>
-                            </div>
+                            <div class="col-md-12" id="leaveTypeOtherDiv" style="display: none;"><label class="form-label small fw-bold text-dark">ระบุการลาอื่นๆ <span class="text-danger">*</span></label><input type="text" class="form-control bg-warning bg-opacity-10 border-warning" id="leaveTypeOther" placeholder="เช่น ลาทำธุระพิเศษ, ลาฌาปนกิจ..."></div>
+                            <div class="col-md-12"><label class="form-label small fw-bold text-dark">เหตุผลความจำเป็น <span class="text-danger">*</span></label><input type="text" class="form-control" id="leaveReason" placeholder="ระบุเหตุผลให้ชัดเจน..." required></div>
+                            <div class="col-md-12"><div class="bg-light p-3 rounded-3 border border-secondary-subtle mt-2"><label for="leaveCertFile" class="form-label small fw-bold text-dark mb-2"><i class="bi bi-paperclip me-1 text-primary"></i>แนบรูปใบรับรองแพทย์ / เอกสารอ้างอิง <span class="text-muted fw-normal">(รองรับรูปภาพหรือ PDF ไม่เกิน 500KB)</span></label><input class="form-control bg-white" type="file" id="leaveCertFile" accept="image/*,.pdf"></div></div>
+                            <div class="col-md-12 d-flex justify-content-end mt-4"><button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold shadow-sm py-2"><i class="bi bi-send me-1"></i> ส่งคำขออนุมัติ</button></div>
                         </form>
                     </div>
-
                     <div class="tab-pane fade" id="tab-leave-history" role="tabpanel">
                         <div class="d-flex justify-content-between align-items-center mb-3"><h5 class="fw-bold text-dark mb-0"><i class="bi bi-card-list text-primary me-2"></i>รายการประวัติการลาของคุณ <span id="empProfileNameLeaveTable" class="text-primary"></span></h5></div>
                         <div class="table-responsive border-0 min-vh-25">
@@ -252,31 +203,13 @@
     </div>
 
     <!-- Offcanvas -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 480px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 420px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
         <div class="offcanvas-header border-bottom bg-light py-3"><h5 class="offcanvas-title fw-bold text-dark"><i class="bi bi-file-text text-primary me-2"></i>รายละเอียดคำขอการลา</h5><button type="button" class="btn-close bg-white rounded-circle p-2 shadow-sm" data-bs-dismiss="offcanvas"></button></div>
         <div class="offcanvas-body p-4" id="leaveDetailOffcanvasBody"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        window.toggleLegalLeaveMode = function() {
-            const standardBox = document.getElementById('standardLeaveContainer');
-            const legalBox = document.getElementById('legalLeaveContainer');
-            const typeSelect = document.getElementById('leaveType');
-            const legalSelect = document.getElementById('leaveTypeLegal');
-            if (standardBox.style.display !== 'none') {
-                standardBox.style.display = 'none'; legalBox.style.display = 'block';
-                typeSelect.removeAttribute('required'); typeSelect.value = ''; legalSelect.setAttribute('required', 'required');
-                typeSelect.id = 'leaveType_disabled'; legalSelect.id = 'leaveType';
-            } else {
-                legalBox.style.display = 'none'; standardBox.style.display = 'block';
-                legalSelect.removeAttribute('required'); legalSelect.value = ''; typeSelect.setAttribute('required', 'required');
-                legalSelect.id = 'leaveTypeLegal'; typeSelect.id = 'leaveType';
-            }
-            if(typeof window.toggleOtherLeaveType === 'function') window.toggleOtherLeaveType('');
-        };
-    </script>
     <script type="module" src="script.js"></script>
 </body>
 </html>

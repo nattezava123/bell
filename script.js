@@ -31,7 +31,7 @@ window.currentTimePage = 1;
 window.rowsPerPage = 10;
 
 // ==========================================
-// 🌟 1. ฟังก์ชันคำนวณเวลาแบบมาตรฐาน HR (ปัดเศษ 30 นาที)
+// 🌟 ฟังก์ชันคำนวณเวลาแบบมาตรฐาน HR
 // ==========================================
 window.calculateHRWorkHours = (timeInStr, timeOutStr) => {
     if (!timeInStr || !timeOutStr || timeInStr === '-' || timeOutStr === '-') {
@@ -67,8 +67,58 @@ window.calculateHRWorkHours = (timeInStr, timeOutStr) => {
 };
 
 // ==========================================
-// 🌟 2. ฟังก์ชันคำนวณและแสดงสรุปจำนวนวันลา Realtime
+// 🌟 สลับฟอร์มการลา & ปรับตัวเลขวันสุทธิอัตโนมัติ
 // ==========================================
+window.toggleLegalLeaveMode = () => {
+    const standardBox = document.getElementById('standardLeaveContainer');
+    const legalBox = document.getElementById('legalLeaveContainer');
+    const typeSelect = document.getElementById('leaveType');
+    const legalSelect = document.getElementById('leaveTypeLegal');
+    
+    const stdStats = document.getElementById('standardLeaveStats');
+    const legalStats = document.getElementById('legalLeaveStats');
+    const toggleBtn = document.getElementById('btnToggleLegalMode');
+    
+    if (standardBox.style.display !== 'none') {
+        standardBox.style.display = 'none'; 
+        legalBox.style.display = 'block';
+        
+        if (stdStats) stdStats.classList.add('d-none');
+        if (legalStats) legalStats.classList.remove('d-none');
+        
+        if (toggleBtn) {
+            toggleBtn.innerHTML = '<i class="bi bi-arrow-left-circle me-1"></i> กลับไปฟอร์มลาปกติ';
+            toggleBtn.classList.replace('btn-outline-info', 'btn-info');
+            toggleBtn.classList.add('text-white');
+        }
+        
+        typeSelect.removeAttribute('required'); 
+        typeSelect.value = ''; 
+        legalSelect.setAttribute('required', 'required');
+        typeSelect.id = 'leaveType_disabled'; 
+        legalSelect.id = 'leaveType';
+    } else {
+        legalBox.style.display = 'none'; 
+        standardBox.style.display = 'block';
+        
+        if (legalStats) legalStats.classList.add('d-none');
+        if (stdStats) stdStats.classList.remove('d-none');
+        
+        if (toggleBtn) {
+            toggleBtn.innerHTML = '<i class="bi bi-info-circle me-1"></i> แบบฟอร์มลาตามกฎหมาย';
+            toggleBtn.classList.replace('btn-info', 'btn-outline-info');
+            toggleBtn.classList.remove('text-white');
+        }
+
+        legalSelect.removeAttribute('required'); 
+        legalSelect.value = ''; 
+        typeSelect.setAttribute('required', 'required');
+        legalSelect.id = 'leaveTypeLegal'; 
+        typeSelect.id = 'leaveType';
+    }
+    if(typeof window.toggleOtherLeaveType === 'function') window.toggleOtherLeaveType('');
+};
+
 window.calculateLeaveDaysPreview = () => {
     const startInput = document.getElementById('leaveStartDate');
     const endInput = document.getElementById('leaveEndDate');
@@ -315,9 +365,14 @@ const getBase64 = (file) => new Promise((resolve, reject) => {
     reader.onload = () => resolve(reader.result); reader.onerror = error => reject(error);
 });
 
-// ==========================================
-// 🌟 ระบบบันทึกเวลา Check-in / Check-out 
-// ==========================================
+window.toggleOtherLeaveType = (val) => {
+    const div = document.getElementById('leaveTypeOtherDiv');
+    const inp = document.getElementById('leaveTypeOther');
+    if(!div || !inp) return;
+    if(val === 'other') { div.style.display = 'block'; inp.required = true;
+    } else { div.style.display = 'none'; inp.required = false; inp.value = ''; }
+};
+
 window.handleStampTime = async () => {
     const loc = document.getElementById('workLocation').value;
     const det = document.getElementById('workDetails').value;
@@ -378,7 +433,11 @@ window.saveDailyDetails = async (e) => {
 
 window.handleLeaveSubmit = async (e) => {
     e.preventDefault();
-    const type = document.getElementById('leaveType').value;
+    
+    // ตรวจสอบว่าฟอร์มปัจจุบันคือโหมดอะไร แล้วไปหยิบ Value จาก Select ให้ถูกต้อง
+    const isLegalMode = document.getElementById('standardLeaveContainer').style.display === 'none';
+    const type = isLegalMode ? document.getElementById('leaveTypeLegal').value : document.getElementById('leaveType').value;
+    
     const typeOther = document.getElementById('leaveTypeOther') ? document.getElementById('leaveTypeOther').value : '';
     const leaveTime = document.getElementById('leaveTime') ? document.getElementById('leaveTime').value : 'เต็มวัน';
     
@@ -387,7 +446,7 @@ window.handleLeaveSubmit = async (e) => {
     const reason = document.getElementById('leaveReason').value;
     const fileInput = document.getElementById('leaveCertFile');
     
-    if(!type || !startDate) return window.showSwal('ข้อมูลไม่ครบ', 'กรุณาระบุประเภทและวันที่', 'warning');
+    if(!type || !startDate) return window.showSwal('ข้อมูลไม่ครบ', 'กรุณาระบุประเภทและวันที่ให้ครบถ้วน', 'warning');
     if(type === 'other' && !typeOther.trim()) return window.showSwal('ข้อมูลไม่ครบ', 'กรุณาระบุประเภทการลาอื่นๆ', 'warning');
 
     const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1;
@@ -590,14 +649,6 @@ window.renderTimeHistoryPage = (page = null) => {
     });
 };
 
-window.changeTimePage = (step) => { window.currentTimePage += step; window.renderTimeHistoryPage(); };
-
-window.viewWorkDetails = (id) => {
-    const r = window.allTimeRecords.find(x => x.id === id); if(!r) return;
-    const displayDate = window.formatDateFull(r.workDate, r.timestamp);
-    Swal.fire({ title: `รายละเอียดงาน<br><span class="fs-6 text-muted">${displayDate}</span>`, html: `<div class="text-start bg-light p-3 rounded border"><b>สถานที่:</b> <span class="text-primary">${r.location}</span><br><b>เวลาทำงาน:</b> ${r.timeIn} - ${r.timeOut || 'ยังไม่ออกงาน'}<br><hr><b>เนื้องานที่บันทึก:</b><br>${r.details || '<span class="text-muted">ไม่มีรายละเอียด</span>'}</div>`, confirmButtonText: 'ปิดหน้าต่าง', confirmButtonColor: '#2563eb' });
-};
-
 window.requestTimeCorrection = (id, date, curIn, curOut) => {
     const displayDate = window.formatDateFull(date);
     Swal.fire({
@@ -615,156 +666,6 @@ window.requestTimeCorrection = (id, date, curIn, curOut) => {
             window.showSwal('ส่งคำร้องสำเร็จ', 'ระบบส่งคำขอไปยังหัวหน้างานแล้ว', 'success'); refreshUI();
         }
     });
-};
-
-window.approveTimeCorrection = async (recordId, isApprove) => {
-    const docRef = doc(db, "workRecords", recordId);
-    const snap = await getDoc(docRef); if(!snap.exists()) return;
-    const data = snap.data();
-    if(isApprove) {
-        const req = data.correctionReq;
-        const hrCalc = window.calculateHRWorkHours(req.timeIn, req.timeOut);
-        await updateDoc(docRef, { timeIn: req.timeIn, timeOut: req.timeOut, workHours: parseFloat(hrCalc.normal.toFixed(1)), otHours: parseFloat(hrCalc.ot.toFixed(1)), isCorrected: true, status: "Completed", correctionReq: null });
-        window.showSwal('อนุมัติสำเร็จ', 'อัปเดตเวลาให้พนักงานเรียบร้อยแล้ว', 'success');
-    } else {
-        await updateDoc(docRef, { correctionReq: null }); window.showSwal('ปฏิเสธคำร้อง', 'ยกเลิกคำขอแก้ไขเวลาแล้ว', 'info');
-    }
-    refreshUI();
-};
-
-const refreshUI = async () => {
-    if (!currentUser) return; 
-    try {
-        if (currentUser.role === 'employee' && typeof window.renderEmployeeUI === 'function') await window.renderEmployeeUI();
-        if (currentUser.role === 'leader' && typeof window.renderManagerUI === 'function') await window.renderManagerUI();
-        if (currentUser.role === 'admin' && typeof window.renderAdminUI === 'function') await window.renderAdminUI();
-    } catch (err) { console.error("Rendering Error: ", err); }
-};
-
-window.renderAdminUI = async () => {
-    if(!document.getElementById('adminEmployeeTableBody')) return;
-    ['adminEmployeeTableBody', 'adminLeaveBalanceTableBody', 'adminReportTableBody', 'adminApproveManagerTableBody', 'adminApproveTimeTableBody'].forEach(id => {
-        if(document.getElementById(id)) document.getElementById(id).innerHTML = '<tr><td colspan="10" class="text-center py-4"><div class="spinner-border text-primary"></div></td></tr>';
-    });
-
-    const usersSnap = await getDocs(collection(db, "users")); 
-    window.allUsers = usersSnap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
-    
-    const leavesSnap = await getDocs(collection(db, "leaves")); 
-    window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })); 
-    window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-    
-    const workSnap = await getDocs(collection(db, "workRecords")); 
-    const allWork = workSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    const empTbody = document.getElementById('adminEmployeeTableBody'); empTbody.innerHTML = '';
-    const leaveBalTbody = document.getElementById('adminLeaveBalanceTableBody'); if(leaveBalTbody) leaveBalTbody.innerHTML = '';
-
-    window.allUsers.forEach((u, index) => {
-        const safeUid = u.uid || u.docId; 
-        const displayIdCard = u.idCard ? 'x-xxxx-xxxxx-xx-x' : '-';
-        empTbody.innerHTML += `<tr><td>${index+1}</td><td><span class="fw-bold text-primary">${safeUid}</span></td><td><span class="text-muted fw-bold">${displayIdCard}</span></td><td><span class="fw-medium">${u.Name || '-'} ${u.SurName || ''}</span></td><td>${getRoleBadge(u.role)}</td><td><div class="d-flex justify-content-center gap-2"><button class="btn btn-sm btn-outline-secondary" onclick="window.openEditEmployeeModal('${safeUid}')"><i class="bi bi-pencil"></i> แก้ไข</button><button class="btn btn-sm btn-outline-danger" onclick="window.deleteEmployee('${safeUid}')"><i class="bi bi-trash"></i> ลบ</button></div></td></tr>`;
-        
-        if(leaveBalTbody) {
-            const bal = u.leaveBalances || { sick: 0, personal: 0, annual: 0, compensatory: 0, maternity: 0, ordination: 0, military: 0 };
-            const tot = u.leaveTotal || { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 };
-            leaveBalTbody.innerHTML += `<tr><td>${index+1}</td><td><span class="fw-bold text-dark">${safeUid}</span></td><td><span class="fw-medium">${u.Name || '-'} ${u.SurName || ''}</span></td>
-                <td class="text-primary fw-bold">${bal.sick||0} <span class="text-muted small">/ ${tot.sick||0}</span></td>
-                <td class="text-primary fw-bold">${bal.personal||0} <span class="text-muted small">/ ${tot.personal||0}</span></td>
-                <td class="text-primary fw-bold">${bal.annual||0} <span class="text-muted small">/ ${tot.annual||0}</span></td>
-                <td class="text-info fw-bold">${bal.compensatory||0} <span class="text-muted small">/ ${tot.compensatory||0}</span></td>
-                <td class="text-secondary">${bal.maternity||0} <span class="text-muted small">/ ${tot.maternity||0}</span></td>
-                <td class="text-secondary">${bal.ordination||0} <span class="text-muted small">/ ${tot.ordination||0}</span></td>
-                <td class="text-secondary">${bal.military||0} <span class="text-muted small">/ ${tot.military||0}</span></td>
-                <td><button class="btn btn-sm btn-outline-primary fw-bold rounded-pill px-3" onclick="window.openEditLeaveBalanceModal('${safeUid}')"><i class="bi bi-sliders"></i> ปรับสิทธิ์</button></td></tr>`;
-        }
-    });
-
-    const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
-    const adminDateFilter = document.getElementById('adminReportDateFilter') ? document.getElementById('adminReportDateFilter').value : '';
-
-    const reportTbody = document.getElementById('adminReportTableBody');
-    if(reportTbody) {
-        reportTbody.innerHTML = ''; let no = 1;
-        window.allLeaves.forEach(l => {
-            if(filterStatus !== 'all' && l.status !== filterStatus) return;
-            if(adminDateFilter) {
-                const lDate = l.startDate || l.date || '';
-                if(lDate !== adminDateFilter) return;
-            }
-
-            const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
-            const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
-            
-            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
-            const dStart = window.formatDateShort(l.startDate || l.date); 
-            const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? `<br>ถึง ${window.formatDateShort(l.endDate)}` : '';
-            
-            reportTbody.innerHTML += `<tr><td>${no++}</td><td><span class="fw-medium text-primary">${l.empID}</span></td><td>${u ? u.Name : '-'}</td><td>${displaySubmit}</td><td>${dStart}${dEnd}</td><td>${displayType}</td><td><button class="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold" onclick="window.viewLeaveDetail('${l.id}')"><i class="bi bi-search me-1"></i> ตรวจสอบ</button></td><td>${getStatusBadge(l.status)}</td></tr>`;
-        });
-        if(no === 1) reportTbody.innerHTML = '<tr><td colspan="8" class="text-muted py-4">ไม่พบข้อมูลการลาที่ค้นหา</td></tr>';
-    }
-
-    const approveTbody = document.getElementById('adminApproveManagerTableBody');
-    if(approveTbody) {
-        approveTbody.innerHTML = ''; let no = 1;
-        window.allLeaves.filter(l => (l.status === 'รอพิจารณา' || l.status === 'ขอยกเลิก') && window.allUsers.find(x => (x.uid || x.docId) === l.empID)?.role === 'leader').forEach(l => {
-            const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
-            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
-            const dStart = window.formatDateShort(l.startDate || l.date); 
-            const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` - ${window.formatDateShort(l.endDate)}` : '';
-            const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
-            
-            approveTbody.innerHTML += `<tr><td>${no++}</td><td><span class="fw-medium">${u ? u.Name : '-'}</span></td><td>${displaySubmit}</td><td>${dStart}${dEnd}</td><td>${displayType}</td><td>${getStatusBadge(l.status)}</td><td><button class="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold" onclick="window.viewLeaveDetail('${l.id}')"><i class="bi bi-search me-1"></i> ตรวจสอบ</button></td></tr>`;
-        });
-    }
-
-    const adminTimeTbody = document.getElementById('adminApproveTimeTableBody');
-    if(adminTimeTbody) {
-        adminTimeTbody.innerHTML = '';
-        const adminTimeReqs = allWork.filter(w => w.correctionReq && w.correctionReq.status === 'รอพิจารณา' && window.allUsers.find(u => (u.uid || u.docId) === w.empID)?.role === 'leader');
-        adminTimeReqs.forEach(r => {
-            const u = window.allUsers.find(x => (x.uid || x.docId) === r.empID); 
-            const displayDate = window.formatDateShort(r.workDate);
-            const curTime = `${r.timeIn||'-'} - ${r.timeOut||'-'}`; 
-            const reqTime = `<span class="text-primary fw-bold">${r.correctionReq.timeIn} - ${r.correctionReq.timeOut}</span>`;
-            adminTimeTbody.innerHTML += `<tr><td><span class="fw-medium">${u ? u.Name : '-'}</span></td><td>${displayDate}</td><td>${curTime}</td><td>${reqTime}</td><td>${r.correctionReq.reason}</td><td><button class="btn btn-sm btn-primary me-1" onclick="window.approveTimeCorrection('${r.id}', true)">อนุมัติ</button><button class="btn btn-sm btn-outline-danger" onclick="window.approveTimeCorrection('${r.id}', false)">ไม่อนุมัติ</button></td></tr>`;
-        });
-    }
-};
-
-window.renderManagerUI = async () => {
-    await window.renderEmployeeUI(); 
-    const usersSnap = await getDocs(collection(db, "users")); window.allUsers = usersSnap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
-    const leavesSnap = await getDocs(collection(db, "leaves")); window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })); window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-    const workSnap = await getDocs(collection(db, "workRecords")); const allWork = workSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-
-    const tbody = document.getElementById('managerApprovalTableBody');
-    if(tbody) {
-        tbody.innerHTML = ''; let no = 1;
-        window.allLeaves.filter(l => (l.status === 'รอพิจารณา' || l.status === 'ขอยกเลิก') && window.allUsers.find(u => (u.uid || u.docId) === l.empID)?.role === 'employee').forEach(l => {
-            const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
-            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
-            const dStart = window.formatDateShort(l.startDate || l.date); 
-            const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` - ${window.formatDateShort(l.endDate)}` : '';
-            const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
-            
-            tbody.innerHTML += `<tr><td>${no++}</td><td><span class="fw-medium">${u ? u.Name : '-'}</span></td><td>${displaySubmit}</td><td>${dStart}${dEnd}</td><td>${displayType}</td><td>${getStatusBadge(l.status)}</td><td><button class="btn btn-sm btn-outline-info rounded-pill px-3 fw-bold" onclick="window.viewLeaveDetail('${l.id}')"><i class="bi bi-search me-1"></i> ตรวจสอบ</button></td></tr>`;
-        });
-    }
-
-    const mgrTimeTbody = document.getElementById('managerApproveTimeTableBody');
-    if(mgrTimeTbody) {
-        mgrTimeTbody.innerHTML = '';
-        const mgrTimeReqs = allWork.filter(w => w.correctionReq && w.correctionReq.status === 'รอพิจารณา' && window.allUsers.find(u => (u.uid || u.docId) === w.empID)?.role === 'employee');
-        mgrTimeReqs.forEach(r => {
-            const u = window.allUsers.find(x => (x.uid || x.docId) === r.empID); 
-            const displayDate = window.formatDateShort(r.workDate);
-            const curTime = `${r.timeIn||'-'} - ${r.timeOut||'-'}`; 
-            const reqTime = `<span class="text-primary fw-bold">${r.correctionReq.timeIn} - ${r.correctionReq.timeOut}</span>`;
-            mgrTimeTbody.innerHTML += `<tr><td><span class="fw-medium">${u ? u.Name : '-'}</span></td><td>${displayDate}</td><td>${curTime}</td><td>${reqTime}</td><td>${r.correctionReq.reason}</td><td><button class="btn btn-sm btn-primary me-1 mb-1" onclick="window.approveTimeCorrection('${r.id}', true)">อนุมัติ</button><button class="btn btn-sm btn-outline-danger me-1 mb-1" onclick="window.approveTimeCorrection('${r.id}', false)">ไม่อนุมัติ</button></td></tr>`;
-        });
-    }
 };
 
 window.renderEmployeeUI = async () => {
@@ -798,6 +699,7 @@ window.renderEmployeeUI = async () => {
         document.getElementById('statAnnBal').innerText = balances.annual !== undefined ? balances.annual : 0; 
         document.getElementById('statAnnUsed').innerText = calcUsed(total.annual, balances.annual);
 
+        // 🌟 อัปเดต Dropdown ฟอร์มลา ให้แสดงวันคงเหลือแบบ Realtime
         const stdSelect = document.querySelector('#standardLeaveContainer select');
         if (stdSelect) {
             for(let opt of stdSelect.options) {
@@ -903,9 +805,9 @@ const initApp = () => {
             return;
         }
         
-        if (path.includes('employee.html')) { window.checkAuthStatus('employee'); refreshUI(); } 
-        else if (path.includes('manager.html')) { window.checkAuthStatus('leader'); refreshUI(); } 
-        else if (path.includes('admin.html')) { window.checkAuthStatus('admin'); refreshUI(); }
+        if (path.includes('employee.html')) { window.checkAuthStatus('employee'); window.renderEmployeeUI(); } 
+        else if (path.includes('manager.html')) { window.checkAuthStatus('leader'); window.renderManagerUI(); } 
+        else if (path.includes('admin.html')) { window.checkAuthStatus('admin'); window.renderAdminUI(); }
     }
 };
 
