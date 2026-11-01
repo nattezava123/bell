@@ -23,29 +23,53 @@ window.currentTimePage = 1;
 window.rowsPerPage = 10;
 
 // ==========================================
-// 🌟 ฟังก์ชันจัดการวันที่ (Date Formatters) แบบมืออาชีพ
+// 🌟 1. ฟังก์ชันจัดการวันที่ (ฉลาดขึ้น ป้องกันค่าว่าง -)
 // ==========================================
-window.formatDateShort = (dateStr) => {
-    if (!dateStr || dateStr === '-') return '-';
-    const parts = dateStr.split('-');
-    if (parts.length !== 3) return dateStr;
-    const date = new Date(parts[0], parts[1] - 1, parts[2]);
-    return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+window.formatDateShort = (dateStr, fallbackTimestamp = null) => {
+    // ถ้าไม่มี dateStr (เป็นค่าว่าง หรือ '-') ให้พยายามดึงจาก Timestamp
+    if (!dateStr || dateStr === '-') {
+        if (fallbackTimestamp) {
+            return new Date(fallbackTimestamp).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+        return new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }); // กันเหนียวกรณีไม่มีทั้งคู่
+    }
+    
+    // ถ้ามี dateStr (เช่น 2024-11-25)
+    if (dateStr.includes('-')) {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+            const date = new Date(parts[0], parts[1] - 1, parts[2]);
+            return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+    }
+    return dateStr;
 };
 
-window.formatDateFull = (dateStr) => {
-    if (!dateStr || dateStr === '-') return '-';
-    const parts = dateStr.split('-');
-    if (parts.length !== 3) return dateStr;
-    const date = new Date(parts[0], parts[1] - 1, parts[2]);
-    return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+window.formatDateFull = (dateStr, fallbackTimestamp = null) => {
+    if (!dateStr || dateStr === '-') {
+        if (fallbackTimestamp) {
+            return new Date(fallbackTimestamp).toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        return new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    
+    if (dateStr.includes('-')) {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) {
+            const date = new Date(parts[0], parts[1] - 1, parts[2]);
+            return date.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+    }
+    return dateStr;
 };
 
 window.formatDateCSV = (dateStr) => {
     if (!dateStr || dateStr === '-') return '-';
-    const parts = dateStr.split('-');
-    if (parts.length !== 3) return dateStr;
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    if (dateStr.includes('-')) {
+        const parts = dateStr.split('-');
+        if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    return dateStr;
 };
 
 // ==========================================
@@ -205,7 +229,7 @@ window.handleStampTime = async () => {
                     await addDoc(recordsRef, { empID: currentUser.uid, timestamp: now, workDate: todayStr, timeIn: currentTime, timeOut: "", workHours: 0.0, otHours: 0.0, details: det, location: loc, status: "Working" });
                     Swal.fire({ title: 'CHECK-IN สำเร็จ', text: `เข้างานเวลา: ${currentTime} น.`, icon: 'success', timer: 2000, showConfirmButton: false });
                     await refreshUI();
-                    window.navigate('sectionMenu'); window.scrollTo(0, 0);
+                    window.navigate('sectionTimeHistory'); window.scrollTo(0, 0);
                 } catch (error) { window.showSwal('ข้อผิดพลาด', 'ไม่สามารถบันทึกเวลาได้', 'error'); if(btn) { btn.disabled = false; btn.innerHTML = 'แสตมป์เวลา'; } }
             }
         });
@@ -265,7 +289,6 @@ window.handleLeaveSubmit = async (e) => {
 
     const days = Math.ceil((new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1;
     if(days <= 0) return window.showSwal('ข้อผิดพลาด', 'วันที่สิ้นสุดต้องไม่ก่อนวันที่เริ่มต้น', 'error');
-    
     if(type !== 'other' && currentUser.leaveBalances && currentUser.leaveBalances[type] !== undefined && currentUser.leaveBalances[type] < days) { 
         return window.showSwal('สิทธิหมด', `สิทธิคงเหลือไม่พอสำหรับการลา ${days} วัน`, 'error'); 
     }
@@ -332,11 +355,10 @@ window.viewLeaveDetail = async (leaveId) => {
         if(!l) return;
         const uDoc = await getDoc(doc(db, "users", l.empID)); const u = uDoc.data();
         
-        // 🌟 ปรับวันที่ให้เป็นภาษาไทยแบบเต็ม
+        // 🌟 แสดงวันที่แบบไม่มีเครื่องหมาย - ด้วยฟังก์ชันที่สร้างใหม่
+        const displaySubmit = window.formatDateFull(l.submittedDate, l.timestamp);
         const displayStart = window.formatDateFull(l.startDate || l.date);
         const displayEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` ถึง ${window.formatDateFull(l.endDate)}` : '';
-        const displaySubmit = window.formatDateFull(l.submittedDate);
-
         const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
         const displayTime = l.leaveTime || 'เต็มวัน';
         
@@ -519,7 +541,6 @@ window.renderTimeHistoryPage = (page = null) => {
         let tInClass = 'text-success fw-medium'; if(r.timeIn && r.timeIn > '08:30') tInClass = 'text-danger fw-bold'; 
         const auditIcon = r.isCorrected ? ' <i class="bi bi-info-circle-fill text-primary" title="แก้ไขเวลาโดยผู้จัดการแล้ว"></i>' : '';
 
-        // 🌟 ปรับวันที่ในตารางให้เป็นภาษาไทยแบบสั้น
         const displayDate = window.formatDateShort(r.workDate);
 
         let actionBtns = `<button class="btn btn-sm btn-outline-info me-1" onclick="window.viewWorkDetails('${r.id}')" title="ดูรายละเอียดงาน"><i class="bi bi-search"></i></button>`;
@@ -630,8 +651,8 @@ window.renderAdminUI = async () => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
             
-            // 🌟 ปรับวันที่ให้เป็นภาษาไทยแบบสั้น
-            const displaySubmit = window.formatDateShort(l.submittedDate);
+            // 🌟 แสดงวันที่แบบไม่มีเครื่องหมาย -
+            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? `<br>ถึง ${window.formatDateShort(l.endDate)}` : '';
             
@@ -644,7 +665,7 @@ window.renderAdminUI = async () => {
         approveTbody.innerHTML = ''; let no = 1;
         window.allLeaves.filter(l => (l.status === 'รอพิจารณา' || l.status === 'ขอยกเลิก') && window.allUsers.find(x => (x.uid || x.docId) === l.empID)?.role === 'leader').forEach(l => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
-            const displaySubmit = window.formatDateShort(l.submittedDate);
+            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` - ${window.formatDateShort(l.endDate)}` : '';
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
@@ -678,7 +699,7 @@ window.renderManagerUI = async () => {
         tbody.innerHTML = ''; let no = 1;
         window.allLeaves.filter(l => (l.status === 'รอพิจารณา' || l.status === 'ขอยกเลิก') && window.allUsers.find(u => (u.uid || u.docId) === l.empID)?.role === 'employee').forEach(l => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
-            const displaySubmit = window.formatDateShort(l.submittedDate);
+            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` - ${window.formatDateShort(l.endDate)}` : '';
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
@@ -759,7 +780,9 @@ window.renderEmployeeUI = async () => {
 
     const leavesSnap = await getDocs(query(collection(db, "leaves"), where("empID", "==", currentUser.uid)));
     window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    window.allLeaves.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0)); 
+    
+    // 🌟 2. เรียงลำดับคำขอล่าสุดขึ้นก่อน (Newest First) ตามมาตรฐาน Enterprise
+    window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
 
     if(document.getElementById('leaveHistoryBadge')) document.getElementById('leaveHistoryBadge').innerText = window.allLeaves.length;
 
@@ -774,7 +797,8 @@ window.renderEmployeeUI = async () => {
             else if (l.status === 'อนุมัติ') cancelBtn = `<button class="btn btn-sm btn-outline-warning" onclick="window.requestCancelLeave('${l.id}')">ขอยกเลิก</button>`;
             else if (l.status === 'ขอยกเลิก') cancelBtn = `<span class="badge bg-warning-subtle text-warning">รออนุมัติยกเลิก</span>`;
             
-            const displaySubmit = window.formatDateShort(l.submittedDate);
+            // 🌟 ใช้วันที่ภาษาไทยแบบไม่มีขีด -
+            const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? ` - ${window.formatDateShort(l.endDate)}` : '';
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
@@ -784,8 +808,6 @@ window.renderEmployeeUI = async () => {
     }
 
     const todayStr = new Date().toLocaleDateString('en-CA');
-    
-    // 🌟 แสดงวันที่บนหน้าแสตมป์เป็นภาษาไทย
     if(document.getElementById('empCurrentDateDisplay')) document.getElementById('empCurrentDateDisplay').innerText = window.formatDateFull(todayStr);
     
     const timeSnap = await getDocs(query(collection(db, "workRecords"), where("empID", "==", currentUser.uid)));
