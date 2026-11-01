@@ -150,11 +150,10 @@ window.handleLogin = async (e) => {
 window.logout = (e) => {
     if(e) e.preventDefault();
     
-    // ฟังก์ชันรวบยอดคำสั่งล้างข้อมูลและเด้งกลับหน้าล็อกอิน
     const executeLogout = () => {
-        sessionStorage.clear(); // ล้างข้อมูล Session ทั้งหมด
-        currentUser = null;     // รีเซ็ตตัวแปร
-        window.location.replace('index.html'); // ใช้ replace เพื่อห้ามผู้ใช้กดปุ่ม Back กลับมา
+        sessionStorage.clear(); 
+        currentUser = null;     
+        window.location.replace('index.html'); 
     };
 
     if (typeof Swal !== 'undefined') {
@@ -414,7 +413,13 @@ window.viewLeaveDetail = async (leaveId) => {
         
         let actionButtons = '';
         const isOwnLeave = l.empID === currentUser.uid;
-        const canApprove = !isOwnLeave && ((currentUser.role === 'admin' && u.role === 'leader') || (currentUser.role === 'leader' && u.role === 'employee'));
+        
+        // 🌟 แก้ไข: Admin อนุมัติได้เฉพาะ Leader 🌟
+        const canApprove = !isOwnLeave && (
+            (currentUser.role === 'admin' && u.role === 'leader') || 
+            (currentUser.role === 'leader' && u.role === 'employee')
+        );
+
         const lDays = l.days || 1;
 
         if (canApprove) {
@@ -642,7 +647,7 @@ window.approveTimeCorrection = async (recordId, isApprove) => {
 };
 
 const refreshUI = async () => {
-    if (!currentUser) return;
+    if (!currentUser) return; 
     try {
         if (currentUser.role === 'employee' && typeof window.renderEmployeeUI === 'function') await window.renderEmployeeUI();
         if (currentUser.role === 'leader' && typeof window.renderManagerUI === 'function') await window.renderManagerUI();
@@ -650,6 +655,9 @@ const refreshUI = async () => {
     } catch (err) { console.error("Rendering Error: ", err); }
 };
 
+// ==========================================
+// 🌟 4. หน้า Admin
+// ==========================================
 window.renderAdminUI = async () => {
     if(!document.getElementById('adminEmployeeTableBody')) return;
     ['adminEmployeeTableBody', 'adminLeaveBalanceTableBody', 'adminReportTableBody', 'adminApproveManagerTableBody', 'adminApproveTimeTableBody'].forEach(id => {
@@ -688,6 +696,7 @@ window.renderAdminUI = async () => {
         }
     });
 
+    // 🌟 ตารางรายงาน (ลบคอลัมน์เอกสารออก ย้ายปุ่มตรวจสอบไปหน้าสถานะ) 🌟
     const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
     const reportTbody = document.getElementById('adminReportTableBody');
     if(reportTbody) {
@@ -733,6 +742,9 @@ window.renderAdminUI = async () => {
     }
 };
 
+// ==========================================
+// 🌟 5. หน้า Manager
+// ==========================================
 window.renderManagerUI = async () => {
     await window.renderEmployeeUI(); 
     const usersSnap = await getDocs(collection(db, "users")); window.allUsers = usersSnap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
@@ -823,7 +835,6 @@ window.renderEmployeeUI = async () => {
 
     const leavesSnap = await getDocs(query(collection(db, "leaves"), where("empID", "==", currentUser.uid)));
     window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
     window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
 
     if(document.getElementById('leaveHistoryBadge')) document.getElementById('leaveHistoryBadge').innerText = window.allLeaves.length;
@@ -872,9 +883,97 @@ window.renderEmployeeUI = async () => {
     }
 };
 
+window.exportTimesheet = () => {
+    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างและรวบรวมข้อมูลเป็นไฟล์ CSV...', 'info');
+    setTimeout(() => {
+        const dateFilterStr = document.getElementById('timeHistoryDate') ? document.getElementById('timeHistoryDate').value : '';
+        let exportData = window.allTimeRecords;
+        if (dateFilterStr) exportData = window.allTimeRecords.filter(r => r.workDate === dateFilterStr);
+        if (exportData.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีประวัติการลงเวลาในวันที่เลือก', 'warning');
+
+        let csvContent = "\uFEFFวันที่,สถานที่,เวลาเข้างาน,เวลาออกงาน,ชั่วโมงทำงานปกติ,OT (ชม.),สถานะ,รายละเอียดงาน\n";
+        exportData.forEach(r => {
+            const wHr = r.workHours ? parseFloat(r.workHours).toFixed(2) : '0.00';
+            const oHr = r.otHours ? parseFloat(r.otHours).toFixed(2) : '0.00';
+            const tIn = r.timeIn || '-'; const tOut = r.timeOut || 'ยังไม่ออกงาน';
+            const loc = r.location ? `"${r.location.replace(/"/g, '""')}"` : '-';
+            const det = r.details ? `"${r.details.replace(/"/g, '""')}"` : '-'; 
+            let statusStr = 'กำลังทำงาน'; if(r.status === 'Completed') statusStr = 'เสร็จสิ้น';
+            if(!r.timeOut && r.workDate < getSafeTodayString()) statusStr = 'ลืมลงเวลาออก';
+            
+            const csvDate = window.formatDateCSV(r.workDate);
+            csvContent += `${csvDate},${loc},${tIn},${tOut},${wHr},${oHr},${statusStr},${det}\n`;
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob); const link = document.createElement("a");
+        link.setAttribute("href", url); link.setAttribute("download", dateFilterStr ? `Timesheet_${currentUser.uid}_${dateFilterStr}.csv` : `Timesheet_${currentUser.uid}_All.csv`);
+        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดแล้ว', 'success');
+    }, 800);
+};
+
+window.exportAdminLeaveReport = () => {
+    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างไฟล์ Report CSV...', 'info');
+    setTimeout(() => {
+        const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
+        let exportData = window.allLeaves;
+        if (filterStatus !== 'all') exportData = window.allLeaves.filter(l => l.status === filterStatus);
+        if (!exportData || exportData.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีประวัติการลาในระบบ', 'warning');
+
+        let csvContent = "\uFEFFรหัสพนักงาน,ชื่อ-นามสกุล,วันที่ยื่น,เริ่มวันที่,ถึงวันที่,ช่วงเวลา,จำนวนวัน,ประเภทการลา,เหตุผล,สถานะ\n";
+        exportData.forEach(l => {
+            const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID);
+            const empName = u ? `${u.Name} ${u.SurName || ''}` : 'ไม่ทราบชื่อ';
+            
+            const dStart = window.formatDateCSV(l.startDate || l.date);
+            const dEnd = l.endDate && l.endDate !== (l.startDate || l.date) ? window.formatDateCSV(l.endDate) : dStart;
+            const submitted = window.formatDateCSV(l.submittedDate, l.timestamp, l.startDate || l.date);
+            
+            const time = l.leaveTime || 'เต็มวัน';
+            const type = l.type === 'other' ? `อื่นๆ (${l.typeOther || '-'})` : (leaveTypesTH[l.type] || l.type);
+            const reason = l.reason ? `"${l.reason.replace(/"/g, '""')}"` : '-';
+            csvContent += `="${l.empID}",${empName},${submitted},${dStart},${dEnd},${time},${l.days || 1},${type},${reason},${l.status}\n`;
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob); const link = document.createElement("a");
+        link.setAttribute("href", url); link.setAttribute("download", `Leave_Report_${Date.now()}.csv`);
+        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดเรียบร้อยแล้ว', 'success');
+    }, 800);
+};
+
+window.exportAdminEmployees = () => {
+    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างไฟล์รายชื่อพนักงาน CSV...', 'info');
+    setTimeout(() => {
+        if (!window.allUsers || window.allUsers.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีพนักงานในระบบ', 'warning');
+
+        let csvContent = "\uFEFFรหัสพนักงาน,เลขบัตรประชาชน,ชื่อ-นามสกุล,ระดับสิทธิ์,วันลาป่วย(เหลือ),ลากิจ(เหลือ),พักร้อน(เหลือ),หยุดชดเชย(เหลือ)\n";
+        window.allUsers.forEach(u => {
+            const safeUid = u.uid || u.docId;
+            const idCard = u.idCard ? `="${u.idCard}"` : '-';
+            const empName = `${u.Name || '-'} ${u.SurName || ''}`;
+            const role = u.role === 'admin' ? 'Admin' : (u.role === 'leader' ? 'Manager' : 'Staff');
+            const bal = u.leaveBalances || { sick: 0, personal: 0, annual: 0, compensatory: 0 };
+            csvContent += `="${safeUid}",${idCard},${empName},${role},${bal.sick || 0},${bal.personal || 0},${bal.annual || 0},${bal.compensatory || 0}\n`;
+        });
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob); const link = document.createElement("a");
+        link.setAttribute("href", url); link.setAttribute("download", `Employee_List_${Date.now()}.csv`);
+        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดเรียบร้อยแล้ว', 'success');
+    }, 800);
+};
+
 window.onload = () => {
-    if(window.location.pathname.includes('employee.html')) { window.checkAuthStatus('employee'); refreshUI(); }
-    else if(window.location.pathname.includes('manager.html')) { window.checkAuthStatus('leader'); refreshUI(); }
-    else if(window.location.pathname.includes('admin.html')) { window.checkAuthStatus('admin'); refreshUI(); }
-    else { window.checkAuthStatus('login'); }
+    if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+        window.checkAuthStatus('login');
+    } else {
+        if (!currentUser) {
+            window.location.replace('index.html');
+            return;
+        }
+        if (window.location.pathname.includes('employee.html')) { window.checkAuthStatus('employee'); refreshUI(); }
+        else if (window.location.pathname.includes('manager.html')) { window.checkAuthStatus('leader'); refreshUI(); }
+        else if (window.location.pathname.includes('admin.html')) { window.checkAuthStatus('admin'); refreshUI(); }
+    }
 };
