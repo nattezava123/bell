@@ -129,6 +129,7 @@ window.filterTable = (inputId, tbodyId) => {
     }
 };
 
+// 🌟 อัปเกรดระบบตรวจสอบ Auth ให้อ่าน URL ได้แม่นยำทุกสถานการณ์
 window.checkAuthStatus = (reqRole) => {
     if (!currentUser && reqRole !== 'login') { 
         window.location.replace('index.html'); 
@@ -148,7 +149,7 @@ window.checkAuthStatus = (reqRole) => {
 };
 
 // ==========================================
-// 🌟 ระบบ Login แบบมืออาชีพ
+// 🌟 อัปเกรดระบบ Login แบบมืออาชีพ (มี Spinner และดักจับ Error แน่นหนา)
 // ==========================================
 window.handleLogin = async (e) => {
     if(e) e.preventDefault();
@@ -171,6 +172,7 @@ window.handleLogin = async (e) => {
             userData.uid = userData.uid || userDoc.id; 
             sessionStorage.setItem('hr_currentUser', JSON.stringify(userData));
             
+            // Redirect ตามสิทธิ์
             let targetPage = 'employee.html';
             if (userData.role === 'leader') targetPage = 'manager.html';
             if (userData.role === 'admin') targetPage = 'admin.html';
@@ -187,6 +189,7 @@ window.handleLogin = async (e) => {
     }
 };
 
+// 🌟 ผูก Event ให้ฟอร์ม Login อัตโนมัติเมื่อเอกสารโหลดเสร็จ
 const loginForm = document.getElementById('loginForm');
 if (loginForm) {
     loginForm.addEventListener('submit', window.handleLogin);
@@ -740,6 +743,8 @@ window.renderAdminUI = async () => {
     });
 
     const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
+    
+    // ดึงค่าวันที่สำหรับกรองในหน้า Report
     const adminDateFilter = document.getElementById('adminReportDateFilter') ? document.getElementById('adminReportDateFilter').value : '';
 
     const reportTbody = document.getElementById('adminReportTableBody');
@@ -747,6 +752,8 @@ window.renderAdminUI = async () => {
         reportTbody.innerHTML = ''; let no = 1;
         window.allLeaves.forEach(l => {
             if(filterStatus !== 'all' && l.status !== filterStatus) return;
+            
+            // 🌟 กรองวันที่แบบเป๊ะๆ
             if(adminDateFilter) {
                 const lDate = l.startDate || l.date || '';
                 if(lDate !== adminDateFilter) return;
@@ -885,11 +892,7 @@ window.renderEmployeeUI = async () => {
     }
 
     const todayStr = getSafeTodayString();
-    
-    // 🌟 ระบบอัปเดตเวลาเรียลไทม์ที่ถูกต้อง
-    if(document.getElementById('empCurrentDateDisplay')) {
-        document.getElementById('empCurrentDateDisplay').innerText = window.formatDateFull(todayStr);
-    }
+    if(document.getElementById('empCurrentDateDisplay')) document.getElementById('empCurrentDateDisplay').innerText = window.formatDateFull(todayStr);
     
     const timeSnap = await getDocs(query(collection(db, "workRecords"), where("empID", "==", currentUser.uid)));
     window.allTimeRecords = timeSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })); window.allTimeRecords.sort((a, b) => new Date(b.workDate) - new Date(a.workDate)); 
@@ -903,7 +906,7 @@ window.renderEmployeeUI = async () => {
         document.getElementById('displayWorkHr').innerText = todayRecord.workHours ? parseFloat(todayRecord.workHours).toFixed(1) : '0.0'; document.getElementById('displayOtHr').innerText = todayRecord.otHours ? parseFloat(todayRecord.otHours).toFixed(1) : '0.0';
         document.getElementById('workLocation').value = todayRecord.location || ''; document.getElementById('workDetails').value = todayRecord.details || '';
         if (!todayRecord.timeOut) { btnStamp.disabled = false; btnStamp.className = "btn btn-danger btn-lg w-100 rounded-pill shadow-sm py-3 fw-bold"; btnStamp.innerHTML = 'แสตมป์ออกงาน'; } 
-        else { btnStamp.disabled = true; btnStamp.className = "btn btn-outline-secondary btn-lg w-100 rounded-pill py-3 fw-bold"; btnStamp.innerHTML = 'บันึกเวลาครบแล้ว'; }
+        else { btnStamp.disabled = true; btnStamp.className = "btn btn-outline-secondary btn-lg w-100 rounded-pill py-3 fw-bold"; btnStamp.innerHTML = 'บันทึกเวลาครบแล้ว'; }
     } else {
         document.getElementById('displayCheckIn').innerText = '-'; document.getElementById('displayCheckOut').innerText = '-';
         document.getElementById('displayWorkHr').innerText = '0.0'; document.getElementById('displayOtHr').innerText = '0.0';
@@ -912,42 +915,20 @@ window.renderEmployeeUI = async () => {
     }
 };
 
-// 🌟 ระบบนาฬิกาเรียลไทม์ที่ถูกต้องและไม่ทำระบบค้าง
-const startRealtimeClock = () => {
-    const clockEl = document.getElementById('empCurrentTime');
-    if(clockEl) {
-        clockEl.innerText = new Date().toLocaleTimeString('th-TH', { hour12: false, hour: '2-digit', minute:'2-digit', second:'2-digit' });
-    }
-};
-startRealtimeClock(); // อัปเดตทันทีตอนเปิดหน้า
-setInterval(startRealtimeClock, 1000);
-
 // 🌟 ตัวจุดชนวนหลักที่ทำให้ระบบรันทันทีโดยไม่ติดบั๊ก
 const initApp = () => {
-    const path = window.location.pathname;
-    
-    // ตรวจจับหน้า Login
-    if (path.includes('index.html') || path.endsWith('/') || path === '') {
+    if (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname === '') {
         window.checkAuthStatus('login');
     } else {
-        // ตรวจจับหน้าอื่นๆ
         if (!currentUser) {
             window.location.replace('index.html');
             return;
         }
-        
-        if (path.includes('employee.html')) { 
-            window.checkAuthStatus('employee'); 
-            refreshUI(); 
-        } else if (path.includes('manager.html')) { 
-            window.checkAuthStatus('leader'); 
-            refreshUI(); 
-        } else if (path.includes('admin.html')) { 
-            window.checkAuthStatus('admin'); 
-            refreshUI(); 
-        }
+        if (window.location.pathname.includes('employee.html')) { window.checkAuthStatus('employee'); refreshUI(); }
+        else if (window.location.pathname.includes('manager.html')) { window.checkAuthStatus('leader'); refreshUI(); }
+        else if (window.location.pathname.includes('admin.html')) { window.checkAuthStatus('admin'); refreshUI(); }
     }
 };
 
-// สั่งรันทันที
+// สั่งรันทันทีที่โค้ดโหลดเสร็จ (กันปัญหา window.onload โดนลบล้าง)
 initApp();

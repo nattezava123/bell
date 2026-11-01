@@ -147,10 +147,19 @@
                     <div class="col-md-4 col-sm-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #2563eb;"></div><h6 class="text-muted fw-bold mb-2">ลากิจ</h6><div class="mb-2"><span class="fs-1 fw-bold text-primary" id="statPersBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-primary-subtle text-primary mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statPersUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statPersTotal">0</span> วัน</div></div></div>
                     <div class="col-md-4 col-sm-6"><div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100"><div class="position-absolute top-0 start-0 w-100" style="height: 4px; background-color: #f59e0b;"></div><h6 class="text-muted fw-bold mb-2">ลาพักร้อน</h6><div class="mb-2"><span class="fs-1 fw-bold text-warning" id="statAnnBal">0</span> <span class="text-muted fw-medium">วัน</span></div><span class="badge bg-warning-subtle text-warning mb-3 px-3 py-2">คงเหลือ</span><div class="bg-light rounded-3 py-2 small fw-medium text-dark border">ใช้ไป <span id="statAnnUsed" class="text-danger fw-bold fs-6">0</span> / <span id="statAnnTotal">0</span> วัน</div></div></div>
                 </div>
-                <ul class="nav nav-tabs-custom mb-4 border-0 d-flex justify-content-center gap-2" id="leaveTabs" role="tablist">
-                    <li class="nav-item"><button class="nav-link active rounded-pill px-4 py-2 fw-bold" id="tab-leave-form-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-form" type="button"><i class="bi bi-file-earmark-plus me-1"></i> ยื่นคำขออนุมัติลาพัก</button></li>
-                    <li class="nav-item"><button class="nav-link rounded-pill px-4 py-2 fw-bold text-secondary" id="tab-leave-history-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-history" type="button"><i class="bi bi-clock-history me-1"></i> ประวัติการลา <span class="badge bg-primary rounded-pill ms-1 shadow-sm" id="leaveHistoryBadge">0</span></button></li>
-                </ul>
+                
+                <!-- 🌟 แก้ไข Tabs ให้สลับสีได้ 100% -->
+                <div class="d-flex justify-content-center mb-4 mt-2">
+                    <ul class="nav nav-pills" id="leaveTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="tab-leave-form-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-form" type="button" role="tab"><i class="bi bi-file-earmark-plus me-1"></i> ยื่นคำขออนุมัติลาพัก</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tab-leave-history-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-history" type="button" role="tab"><i class="bi bi-clock-history me-1"></i> ประวัติการลา <span class="badge bg-primary rounded-pill ms-1" id="leaveHistoryBadge">0</span></button>
+                        </li>
+                    </ul>
+                </div>
+
                 <div class="tab-content" id="leaveTabsContent">
                     <div class="tab-pane fade show active" id="tab-leave-form" role="tabpanel">
                         <form onsubmit="window.handleLeaveSubmit(event)" class="row g-3 p-4 bg-white shadow-sm rounded-4 border">
@@ -181,13 +190,14 @@
     </div>
 
     <!-- Offcanvas -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 480px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="leaveDetailOffcanvas" style="width: 420px; border-left: none; box-shadow: -5px 0 25px rgba(0,0,0,0.05);">
         <div class="offcanvas-header border-bottom bg-light py-3"><h5 class="offcanvas-title fw-bold text-dark"><i class="bi bi-file-text text-primary me-2"></i>รายละเอียดคำขอการลา</h5><button type="button" class="btn-close bg-white rounded-circle p-2 shadow-sm" data-bs-dismiss="offcanvas"></button></div>
         <div class="offcanvas-body p-4" id="leaveDetailOffcanvasBody"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module" src="script.js"></script>
     <script>
         window.toggleLegalLeaveMode = function() {
             const standardBox = document.getElementById('standardLeaveContainer');
@@ -206,6 +216,5 @@
             if(typeof window.toggleOtherLeaveType === 'function') window.toggleOtherLeaveType('');
         };
     </script>
-    <script type="module" src="script.js"></script>
 </body>
 </html>
