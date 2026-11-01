@@ -95,7 +95,7 @@ window.filterTable = (inputId, tbodyId) => {
 
 window.checkAuthStatus = (reqRole) => {
     if (!currentUser && reqRole !== 'login') { window.location.href = 'index.html'; return false; }
-    if (currentUser && reqRole === 'login') { window.location.href = currentUser.role === 'leader' ? 'manager.html' : `${currentUser.role}.html`; return false; }
+    if (currentUser && reqRole === 'login') { window.location.href = currentUser.role === 'leader' ? 'manager.html' : `${userData.role}.html`; return false; }
     if (currentUser && document.getElementById('navUserInfo')) { document.getElementById('navUserInfo').innerText = `${currentUser.Name} ${currentUser.SurName || ''} (${currentUser.role.toUpperCase()})`; }
     return true;
 };
@@ -637,7 +637,6 @@ window.renderAdminUI = async () => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
             
-            // 🌟 ใช้งานฟังก์ชันวันที่แบบไทยตัวใหม่
             const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? `<br>ถึง ${window.formatDateShort(l.endDate)}` : '';
@@ -722,12 +721,12 @@ window.renderEmployeeUI = async () => {
     if(document.getElementById('empProfileId')) document.getElementById('empProfileId').innerText = currentUser.uid;
     if(document.getElementById('empProfileRole')) document.getElementById('empProfileRole').innerText = currentUser.role === 'leader' ? 'Manager' : 'Staff';
 
+    // 🌟 นำฟังก์ชันหลอด Progress Bar ออก และปรับข้อความใน Card ให้ตรงกับเป้าหมาย
     if(document.getElementById('statPersBal')) {
         const total = currentUser.leaveTotal || { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 }; 
         const balances = currentUser.leaveBalances || { sick: 30, personal: 3, annual: 6, compensatory: 0, maternity: 90, ordination: 15, military: 30 };
         
         const calcUsed = (t, b) => Math.max(0, (t || 0) - (b || 0));
-        const calcPercent = (t, b) => Math.min(100, (calcUsed(t, b) / (t || 1)) * 100);
 
         if(document.getElementById('statPersTotal')) document.getElementById('statPersTotal').innerText = total.personal || 0;
         document.getElementById('statPersBal').innerText = balances.personal !== undefined ? balances.personal : 0; 
@@ -761,20 +760,10 @@ window.renderEmployeeUI = async () => {
             document.getElementById('statMilBal').innerText = balances.military !== undefined ? balances.military : 0; 
             document.getElementById('statMilUsed').innerText = calcUsed(total.military, balances.military);
         }
-
-        if(document.getElementById('barPers')) document.getElementById('barPers').style.width = `${calcPercent(total.personal, balances.personal)}%`;
-        if(document.getElementById('barSick')) document.getElementById('barSick').style.width = `${calcPercent(total.sick, balances.sick)}%`;
-        if(document.getElementById('barAnn')) document.getElementById('barAnn').style.width = `${calcPercent(total.annual, balances.annual)}%`;
-        if(document.getElementById('barComp') && (total.compensatory||0) > 0) document.getElementById('barComp').style.width = `${calcPercent(total.compensatory, balances.compensatory)}%`;
-        if(document.getElementById('barMat') && (total.maternity||0) > 0) document.getElementById('barMat').style.width = `${calcPercent(total.maternity, balances.maternity)}%`;
-        if(document.getElementById('barOrd') && (total.ordination||0) > 0) document.getElementById('barOrd').style.width = `${calcPercent(total.ordination, balances.ordination)}%`;
-        if(document.getElementById('barMil') && (total.military||0) > 0) document.getElementById('barMil').style.width = `${calcPercent(total.military, balances.military)}%`;
     }
 
     const leavesSnap = await getDocs(query(collection(db, "leaves"), where("empID", "==", currentUser.uid)));
     window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    
-    // 🌟 จัดเรียงรายการคำขอล่าสุดขึ้นก่อนเสมอ
     window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
 
     if(document.getElementById('leaveHistoryBadge')) document.getElementById('leaveHistoryBadge').innerText = window.allLeaves.length;
@@ -841,7 +830,6 @@ window.exportTimesheet = () => {
             let statusStr = 'กำลังทำงาน'; if(r.status === 'Completed') statusStr = 'เสร็จสิ้น';
             if(!r.timeOut && r.workDate < new Date().toLocaleDateString('en-CA')) statusStr = 'ลืมลงเวลาออก';
             
-            // ใช้รูปแบบวันที่ภาษาไทยในไฟล์ CSV
             const csvDate = window.formatDateCSV(r.workDate);
             csvContent += `${csvDate},${loc},${tIn},${tOut},${wHr},${oHr},${statusStr},${det}\n`;
         });
@@ -866,7 +854,6 @@ window.exportAdminLeaveReport = () => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID);
             const empName = u ? `${u.Name} ${u.SurName || ''}` : 'ไม่ทราบชื่อ';
             
-            // 🌟 ใช้วันที่ภาษาไทยใน CSV
             const dStart = window.formatDateCSV(l.startDate || l.date);
             const dEnd = l.endDate && l.endDate !== (l.startDate || l.date) ? window.formatDateCSV(l.endDate) : dStart;
             const submitted = window.formatDateCSV(l.submittedDate) !== '-' ? window.formatDateCSV(l.submittedDate) : window.formatDateCSV(new Date(l.timestamp).toLocaleDateString('en-CA'));
