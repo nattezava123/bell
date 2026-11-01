@@ -13,7 +13,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-let currentUser = JSON.parse(sessionStorage.getItem('hr_currentUser'));
+let currentUser = null;
+try {
+    currentUser = JSON.parse(sessionStorage.getItem('hr_currentUser'));
+} catch (e) {
+    console.error("Session Storage Error:", e);
+}
+
 const leaveTypesTH = { sick: 'ลาป่วย', personal: 'ลากิจ', annual: 'ลาพักร้อน', compensatory: 'วันหยุดชดเชย', maternity: 'ลาคลอด', ordination: 'ลาบวช', military: 'ลาเกณฑ์ทหาร', other: 'อื่นๆ' };
 
 window.allTimeRecords = [];
@@ -23,51 +29,57 @@ window.currentTimePage = 1;
 window.rowsPerPage = 10;
 
 // ==========================================
-// 🌟 ฟังก์ชันจัดการวันที่ (Smart Fallback กันพัง 100%)
+// 🌟 ฟังก์ชันจัดการวันที่
 // ==========================================
 window.formatDateShort = (dateStr, fallbackTimestamp = null, fallbackDateStr = null) => {
-    let d = null;
-    if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
-        const p = dateStr.split('-');
-        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
-    }
-    if ((!d || isNaN(d.getTime())) && fallbackTimestamp) d = new Date(fallbackTimestamp);
-    if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
-        const p = fallbackDateStr.split('-');
-        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
-    }
-    if (!d || isNaN(d.getTime())) d = new Date(); 
-    return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+    try {
+        let d = null;
+        if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
+            const p = dateStr.split('-');
+            if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+        }
+        if ((!d || isNaN(d.getTime())) && fallbackTimestamp) { d = new Date(fallbackTimestamp); }
+        if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
+            const p = fallbackDateStr.split('-');
+            if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+        }
+        if (!d || isNaN(d.getTime())) d = new Date(); 
+        return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
+    } catch (e) { return '-'; }
 };
 
 window.formatDateFull = (dateStr, fallbackTimestamp = null, fallbackDateStr = null) => {
-    let d = null;
-    if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
-        const p = dateStr.split('-');
-        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
-    }
-    if ((!d || isNaN(d.getTime())) && fallbackTimestamp) d = new Date(fallbackTimestamp);
-    if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
-        const p = fallbackDateStr.split('-');
-        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
-    }
-    if (!d || isNaN(d.getTime())) d = new Date(); 
-    return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+    try {
+        let d = null;
+        if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
+            const p = dateStr.split('-');
+            if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+        }
+        if ((!d || isNaN(d.getTime())) && fallbackTimestamp) { d = new Date(fallbackTimestamp); }
+        if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
+            const p = fallbackDateStr.split('-');
+            if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+        }
+        if (!d || isNaN(d.getTime())) d = new Date(); 
+        return d.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+    } catch (e) { return '-'; }
 };
 
 window.formatDateCSV = (dateStr, fallbackTimestamp = null, fallbackDateStr = null) => {
-    let d = null;
-    if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
-        const p = dateStr.split('-');
-        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
-    }
-    if ((!d || isNaN(d.getTime())) && fallbackTimestamp) d = new Date(fallbackTimestamp);
-    if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
-        const p = fallbackDateStr.split('-');
-        if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
-    }
-    if (!d || isNaN(d.getTime())) d = new Date(); 
-    return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    try {
+        let d = null;
+        if (dateStr && dateStr !== '-' && dateStr !== 'Invalid Date' && typeof dateStr === 'string' && dateStr.includes('-')) {
+            const p = dateStr.split('-');
+            if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+        }
+        if ((!d || isNaN(d.getTime())) && fallbackTimestamp) { d = new Date(fallbackTimestamp); }
+        if ((!d || isNaN(d.getTime())) && fallbackDateStr && typeof fallbackDateStr === 'string' && fallbackDateStr.includes('-')) {
+            const p = fallbackDateStr.split('-');
+            if (p.length >= 3) d = new Date(p[0], parseInt(p[1]) - 1, parseInt(p[2]));
+        }
+        if (!d || isNaN(d.getTime())) d = new Date(); 
+        return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+    } catch (e) { return '-'; }
 };
 
 const getSafeTodayString = () => {
@@ -111,14 +123,17 @@ window.filterTable = (inputId, tbodyId) => {
 };
 
 window.checkAuthStatus = (reqRole) => {
-    if (!currentUser && reqRole !== 'login') { window.location.href = 'index.html'; return false; }
-    if (currentUser && reqRole === 'login') { window.location.href = currentUser.role === 'leader' ? 'manager.html' : `${currentUser.role}.html`; return false; }
+    if (!currentUser && reqRole !== 'login') { window.location.replace('index.html'); return false; }
+    if (currentUser && reqRole === 'login') { window.location.replace(currentUser.role === 'leader' ? 'manager.html' : `${currentUser.role}.html`); return false; }
     if (currentUser && document.getElementById('navUserInfo')) { document.getElementById('navUserInfo').innerText = `${currentUser.Name} ${currentUser.SurName || ''} (${currentUser.role.toUpperCase()})`; }
     return true;
 };
 
+// ==========================================
+// 🌟 อัปเกรดระบบ Login & Logout
+// ==========================================
 window.handleLogin = async (e) => {
-    e.preventDefault();
+    if(e) e.preventDefault();
     const userInp = document.getElementById('loginUsername').value;
     const passInp = document.getElementById('loginPassword').value;
     try {
@@ -127,20 +142,43 @@ window.handleLogin = async (e) => {
             const userData = userDoc.data();
             userData.uid = userData.uid || userDoc.id; 
             sessionStorage.setItem('hr_currentUser', JSON.stringify(userData));
-            window.location.href = userData.role === 'leader' ? 'manager.html' : `${userData.role}.html`;
+            window.location.replace(userData.role === 'leader' ? 'manager.html' : `${userData.role}.html`);
         } else { window.showSwal('เข้าสู่ระบบไม่สำเร็จ', 'รหัสผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง', 'error'); }
     } catch (error) { window.showSwal('ข้อผิดพลาด', 'ไม่สามารถเชื่อมต่อฐานข้อมูลได้', 'error'); }
 };
 
-window.logout = () => {
-    Swal.fire({ title: 'ออกจากระบบ?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#ef4444', confirmButtonText: 'ออกจากระบบ', cancelButtonText: 'ยกเลิก' })
-    .then((result) => { if (result.isConfirmed) { sessionStorage.removeItem('hr_currentUser'); window.location.href = 'index.html'; } });
+window.logout = (e) => {
+    if(e) e.preventDefault();
+    
+    // ฟังก์ชันรวบยอดคำสั่งล้างข้อมูลและเด้งกลับหน้าล็อกอิน
+    const executeLogout = () => {
+        sessionStorage.clear(); // ล้างข้อมูล Session ทั้งหมด
+        currentUser = null;     // รีเซ็ตตัวแปร
+        window.location.replace('index.html'); // ใช้ replace เพื่อห้ามผู้ใช้กดปุ่ม Back กลับมา
+    };
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({ 
+            title: 'ออกจากระบบ?', 
+            text: 'คุณต้องการออกจากระบบใช่หรือไม่?',
+            icon: 'warning', 
+            showCancelButton: true, 
+            confirmButtonColor: '#ef4444', 
+            cancelButtonColor: '#94a3b8',
+            confirmButtonText: 'ออกจากระบบ', 
+            cancelButtonText: 'ยกเลิก',
+            reverseButtons: true
+        }).then((result) => { 
+            if (result.isConfirmed) { executeLogout(); } 
+        });
+    } else {
+        if(confirm('ต้องการออกจากระบบหรือไม่?')) { executeLogout(); }
+    }
 };
 
 window.previewCertImage = (leaveId) => {
     const l = window.allLeaves.find(x => x.id === leaveId);
     if (!l || !l.certUrl) return window.showSwal('ไม่พบไฟล์', 'ไม่มีไฟล์เอกสารแนบในรายการนี้', 'warning');
-
     const base64Data = l.certUrl;
 
     if (base64Data.startsWith('data:application/pdf')) {
@@ -358,7 +396,6 @@ window.updateLeaveStatus = async (leaveId, newStatus, empID, type, days = 1, cur
     refreshUI();
 };
 
-// 🌟 3. ปรับสิทธิ์พิจารณาการลา (Admin อนุมัติได้เฉพาะ Leader)
 window.viewLeaveDetail = async (leaveId) => {
     try {
         const l = window.allLeaves.find(x => x.id === leaveId);
@@ -377,14 +414,7 @@ window.viewLeaveDetail = async (leaveId) => {
         
         let actionButtons = '';
         const isOwnLeave = l.empID === currentUser.uid;
-        
-        // กฎเหล็ก: Admin อนุมัติได้แค่ Leader, Leader อนุมัติได้แค่ Employee
-        const canApprove = !isOwnLeave && 
-            (
-                (currentUser.role === 'admin' && u.role === 'leader') || 
-                (currentUser.role === 'leader' && u.role === 'employee')
-            );
-            
+        const canApprove = !isOwnLeave && ((currentUser.role === 'admin' && u.role === 'leader') || (currentUser.role === 'leader' && u.role === 'employee'));
         const lDays = l.days || 1;
 
         if (canApprove) {
@@ -404,7 +434,7 @@ window.viewLeaveDetail = async (leaveId) => {
             <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">สถานะคำขอ</label><div>${getStatusBadge(l.status)}</div></div>
             <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">ประเภทการลา</label><div class="fw-bold text-primary fs-6">${displayType} (${l.days || 1} วัน)</div></div>
             <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">วันที่ยื่นเรื่อง</label><div class="text-dark">${displaySubmit}</div></div>
-            <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">วันที่ลา</label><div class="text-dark fw-medium">${displayStart}${displayEnd} <span class="text-primary ms-2">(${displayTime})</span></div></div>
+            <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">ช่วงวันที่ลา</label><div class="text-dark fw-medium">${displayStart}${displayEnd} <span class="text-primary ms-2">(${displayTime})</span></div></div>
             <div class="mb-3"><label class="small text-muted d-block mb-1 fw-bold">เอกสารแนบประกอบ</label><div>${certHtml}</div></div>
             <div class="mb-4"><label class="small text-muted d-block mb-1 fw-bold">เหตุผลการลา</label><div class="p-3 bg-light rounded-3 text-dark border">${l.reason}</div></div>
             ${actionButtons}
@@ -612,17 +642,14 @@ window.approveTimeCorrection = async (recordId, isApprove) => {
 };
 
 const refreshUI = async () => {
-    if(!checkAuthStatus(currentUser ? currentUser.role : 'login')) return;
+    if (!currentUser) return;
     try {
-        if (currentUser.role === 'employee' && typeof renderEmployeeUI === 'function') await window.renderEmployeeUI();
-        if (currentUser.role === 'leader' && typeof renderManagerUI === 'function') await window.renderManagerUI();
-        if (currentUser.role === 'admin' && typeof renderAdminUI === 'function') await window.renderAdminUI();
+        if (currentUser.role === 'employee' && typeof window.renderEmployeeUI === 'function') await window.renderEmployeeUI();
+        if (currentUser.role === 'leader' && typeof window.renderManagerUI === 'function') await window.renderManagerUI();
+        if (currentUser.role === 'admin' && typeof window.renderAdminUI === 'function') await window.renderAdminUI();
     } catch (err) { console.error("Rendering Error: ", err); }
 };
 
-// ==========================================
-// 🌟 4. หน้า Admin (อัปเดตตารางให้ตรงสเปก)
-// ==========================================
 window.renderAdminUI = async () => {
     if(!document.getElementById('adminEmployeeTableBody')) return;
     ['adminEmployeeTableBody', 'adminLeaveBalanceTableBody', 'adminReportTableBody', 'adminApproveManagerTableBody', 'adminApproveTimeTableBody'].forEach(id => {
@@ -661,7 +688,6 @@ window.renderAdminUI = async () => {
         }
     });
 
-    // 🌟 ตารางรายงาน (ย้ายปุ่มตรวจสอบไปหน้าสถานะ)
     const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
     const reportTbody = document.getElementById('adminReportTableBody');
     if(reportTbody) {
@@ -670,6 +696,7 @@ window.renderAdminUI = async () => {
             if(filterStatus !== 'all' && l.status !== filterStatus) return;
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
             const displayType = l.type === 'other' ? `ลาอื่นๆ (${l.typeOther || '-'})` : leaveTypesTH[l.type];
+            
             const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
             const dStart = window.formatDateShort(l.startDate || l.date); 
             const dEnd = (l.endDate && l.endDate !== (l.startDate || l.date)) ? `<br>ถึง ${window.formatDateShort(l.endDate)}` : '';
@@ -678,11 +705,9 @@ window.renderAdminUI = async () => {
         });
     }
 
-    // 🌟 ตารางอนุมัติ Admin อนุมัติได้แค่ Leader
     const approveTbody = document.getElementById('adminApproveManagerTableBody');
     if(approveTbody) {
         approveTbody.innerHTML = ''; let no = 1;
-        // กรองมาเฉพาะคนที่เป็น leader
         window.allLeaves.filter(l => (l.status === 'รอพิจารณา' || l.status === 'ขอยกเลิก') && window.allUsers.find(x => (x.uid || x.docId) === l.empID)?.role === 'leader').forEach(l => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
             const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
@@ -708,9 +733,6 @@ window.renderAdminUI = async () => {
     }
 };
 
-// ==========================================
-// 🌟 5. หน้า Manager (Manager อนุมัติได้แค่ Employee)
-// ==========================================
 window.renderManagerUI = async () => {
     await window.renderEmployeeUI(); 
     const usersSnap = await getDocs(collection(db, "users")); window.allUsers = usersSnap.docs.map(doc => ({ docId: doc.id, ...doc.data() }));
@@ -720,7 +742,6 @@ window.renderManagerUI = async () => {
     const tbody = document.getElementById('managerApprovalTableBody');
     if(tbody) {
         tbody.innerHTML = ''; let no = 1;
-        // กรองมาเฉพาะ Employee
         window.allLeaves.filter(l => (l.status === 'รอพิจารณา' || l.status === 'ขอยกเลิก') && window.allUsers.find(u => (u.uid || u.docId) === l.empID)?.role === 'employee').forEach(l => {
             const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID); 
             const displaySubmit = window.formatDateShort(l.submittedDate, l.timestamp, l.startDate || l.date);
@@ -802,6 +823,7 @@ window.renderEmployeeUI = async () => {
 
     const leavesSnap = await getDocs(query(collection(db, "leaves"), where("empID", "==", currentUser.uid)));
     window.allLeaves = leavesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
     window.allLeaves.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0)); 
 
     if(document.getElementById('leaveHistoryBadge')) document.getElementById('leaveHistoryBadge').innerText = window.allLeaves.length;
@@ -850,90 +872,9 @@ window.renderEmployeeUI = async () => {
     }
 };
 
-window.exportTimesheet = () => {
-    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างและรวบรวมข้อมูลเป็นไฟล์ CSV...', 'info');
-    setTimeout(() => {
-        const dateFilterStr = document.getElementById('timeHistoryDate') ? document.getElementById('timeHistoryDate').value : '';
-        let exportData = window.allTimeRecords;
-        if (dateFilterStr) exportData = window.allTimeRecords.filter(r => r.workDate === dateFilterStr);
-        if (exportData.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีประวัติการลงเวลาในวันที่เลือก', 'warning');
-
-        let csvContent = "\uFEFFวันที่,สถานที่,เวลาเข้างาน,เวลาออกงาน,ชั่วโมงทำงานปกติ,OT (ชม.),สถานะ,รายละเอียดงาน\n";
-        exportData.forEach(r => {
-            const wHr = r.workHours ? parseFloat(r.workHours).toFixed(2) : '0.00';
-            const oHr = r.otHours ? parseFloat(r.otHours).toFixed(2) : '0.00';
-            const tIn = r.timeIn || '-'; const tOut = r.timeOut || 'ยังไม่ออกงาน';
-            const loc = r.location ? `"${r.location.replace(/"/g, '""')}"` : '-';
-            const det = r.details ? `"${r.details.replace(/"/g, '""')}"` : '-'; 
-            let statusStr = 'กำลังทำงาน'; if(r.status === 'Completed') statusStr = 'เสร็จสิ้น';
-            if(!r.timeOut && r.workDate < getSafeTodayString()) statusStr = 'ลืมลงเวลาออก';
-            
-            const csvDate = window.formatDateCSV(r.workDate);
-            csvContent += `${csvDate},${loc},${tIn},${tOut},${wHr},${oHr},${statusStr},${det}\n`;
-        });
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob); const link = document.createElement("a");
-        link.setAttribute("href", url); link.setAttribute("download", dateFilterStr ? `Timesheet_${currentUser.uid}_${dateFilterStr}.csv` : `Timesheet_${currentUser.uid}_All.csv`);
-        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดแล้ว', 'success');
-    }, 800);
+window.onload = () => {
+    if(window.location.pathname.includes('employee.html')) { window.checkAuthStatus('employee'); refreshUI(); }
+    else if(window.location.pathname.includes('manager.html')) { window.checkAuthStatus('leader'); refreshUI(); }
+    else if(window.location.pathname.includes('admin.html')) { window.checkAuthStatus('admin'); refreshUI(); }
+    else { window.checkAuthStatus('login'); }
 };
-
-window.exportAdminLeaveReport = () => {
-    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างไฟล์ Report CSV...', 'info');
-    setTimeout(() => {
-        const filterStatus = document.getElementById('adminFilterStatus') ? document.getElementById('adminFilterStatus').value : 'all';
-        let exportData = window.allLeaves;
-        if (filterStatus !== 'all') exportData = window.allLeaves.filter(l => l.status === filterStatus);
-        if (!exportData || exportData.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีประวัติการลาในระบบ', 'warning');
-
-        let csvContent = "\uFEFFรหัสพนักงาน,ชื่อ-นามสกุล,วันที่ยื่น,เริ่มวันที่,ถึงวันที่,ช่วงเวลา,จำนวนวัน,ประเภทการลา,เหตุผล,สถานะ\n";
-        exportData.forEach(l => {
-            const u = window.allUsers.find(x => (x.uid || x.docId) === l.empID);
-            const empName = u ? `${u.Name} ${u.SurName || ''}` : 'ไม่ทราบชื่อ';
-            
-            const dStart = window.formatDateCSV(l.startDate || l.date);
-            const dEnd = l.endDate && l.endDate !== (l.startDate || l.date) ? window.formatDateCSV(l.endDate) : dStart;
-            const submitted = window.formatDateCSV(l.submittedDate) !== '-' ? window.formatDateCSV(l.submittedDate) : window.formatDateCSV(new Date(l.timestamp).toLocaleDateString('en-CA'));
-            
-            const time = l.leaveTime || 'เต็มวัน';
-            const type = l.type === 'other' ? `อื่นๆ (${l.typeOther || '-'})` : (leaveTypesTH[l.type] || l.type);
-            const reason = l.reason ? `"${l.reason.replace(/"/g, '""')}"` : '-';
-            csvContent += `="${l.empID}",${empName},${submitted},${dStart},${dEnd},${time},${l.days || 1},${type},${reason},${l.status}\n`;
-        });
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob); const link = document.createElement("a");
-        link.setAttribute("href", url); link.setAttribute("download", `Leave_Report_${Date.now()}.csv`);
-        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดเรียบร้อยแล้ว', 'success');
-    }, 800);
-};
-
-window.exportAdminEmployees = () => {
-    window.showSwal('กำลังเตรียมไฟล์', 'ระบบกำลังสร้างไฟล์รายชื่อพนักงาน CSV...', 'info');
-    setTimeout(() => {
-        if (!window.allUsers || window.allUsers.length === 0) return window.showSwal('ไม่พบข้อมูล', 'ไม่มีพนักงานในระบบ', 'warning');
-
-        let csvContent = "\uFEFFรหัสพนักงาน,เลขบัตรประชาชน,ชื่อ-นามสกุล,ระดับสิทธิ์,วันลาป่วย(เหลือ),ลากิจ(เหลือ),พักร้อน(เหลือ),หยุดชดเชย(เหลือ)\n";
-        window.allUsers.forEach(u => {
-            const safeUid = u.uid || u.docId;
-            const idCard = u.idCard ? `="${u.idCard}"` : '-';
-            const empName = `${u.Name || '-'} ${u.SurName || ''}`;
-            const role = u.role === 'admin' ? 'Admin' : (u.role === 'leader' ? 'Manager' : 'Staff');
-            const bal = u.leaveBalances || { sick: 0, personal: 0, annual: 0, compensatory: 0 };
-            csvContent += `="${safeUid}",${idCard},${empName},${role},${bal.sick || 0},${bal.personal || 0},${bal.annual || 0},${bal.compensatory || 0}\n`;
-        });
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob); const link = document.createElement("a");
-        link.setAttribute("href", url); link.setAttribute("download", `Employee_List_${Date.now()}.csv`);
-        link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link);
-        window.showSwal('ดาวน์โหลดสำเร็จ', 'ไฟล์ถูกดาวน์โหลดเรียบร้อยแล้ว', 'success');
-    }, 800);
-};
-
-setInterval(() => { if(document.getElementById('empCurrentTime')) document.getElementById('empCurrentTime').innerText = new Date().toLocaleTimeString('th-TH'); }, 1000);
-
-if(window.location.pathname.includes('employee.html')) { window.checkAuthStatus('employee'); refreshUI(); }
-if(window.location.pathname.includes('manager.html')) { window.checkAuthStatus('leader'); refreshUI(); }
-if(window.location.pathname.includes('admin.html')) { window.checkAuthStatus('admin'); refreshUI(); }
-if(window.location.pathname.includes('index.html') || window.location.pathname === '/') { window.checkAuthStatus('login'); }
