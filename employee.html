@@ -84,7 +84,8 @@
                 
                 <div class="table-responsive border-0 min-vh-25">
                     <table class="table table-custom text-center align-middle mb-0">
-                        <thead><tr><th>วันที่</th><th>สถานที่</th><th>เวลาเข้า</th><th>เวลาออก</th><th>ชม.ปกติ</th><th>OT</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+                        <!-- 🌟 ตัดคอลัมน์ "จัดการ" ออกแล้ว -->
+                        <thead><tr><th>วันที่</th><th>สถานที่</th><th>เวลาเข้า</th><th>เวลาออก</th><th>ชม.ปกติ</th><th>OT</th><th>สถานะ</th></tr></thead>
                         <tbody id="myTimeHistoryTableBody"></tbody>
                     </table>
                 </div>
@@ -109,7 +110,6 @@
                     <span class="badge bg-light text-primary border shadow-sm px-3 py-2"><i class="bi bi-person-circle me-1"></i>คุณ <span id="empProfileNameLeaveHead"></span></span>
                 </div>
 
-                <!-- 🌟 สรุปสิทธิ์การลาแบบปกติ (3 กล่อง) -->
                 <div class="row justify-content-center g-4 mb-4" id="standardLeaveStats">
                     <div class="col-md-4 col-sm-6">
                         <div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100">
@@ -140,7 +140,6 @@
                     </div>
                 </div>
 
-                <!-- 🌟 สถิติวันลาตามกฎหมาย (ซ่อนไว้เป็นค่าเริ่มต้น) -->
                 <div class="row justify-content-center g-4 mb-4 d-none" id="legalLeaveStats">
                     <div class="col-lg-3 col-md-6">
                         <div class="border rounded-4 p-4 bg-white shadow-sm text-center position-relative overflow-hidden h-100">
@@ -186,7 +185,7 @@
                             <button class="nav-link active" id="tab-leave-form-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-form" type="button" role="tab"><i class="bi bi-file-earmark-plus me-1"></i> ยื่นคำขออนุมัติลาพัก</button>
                         </li>
                         <li class="nav-item" role="presentation">
-                            <button class="nav-link" id="tab-leave-history-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-history" type="button" role="tab"><i class="bi bi-clock-history me-1"></i> ประวัติการลา <span class="badge bg-primary rounded-pill ms-1 shadow-sm" id="leaveHistoryBadge">0</span></button>
+                            <button class="nav-link" id="tab-leave-history-btn" data-bs-toggle="pill" data-bs-target="#tab-leave-history" type="button" role="tab"><i class="bi bi-clock-history me-1"></i> ประวัติการลา <span class="badge bg-primary rounded-pill ms-1" id="leaveHistoryBadge">0</span></button>
                         </li>
                     </ul>
                 </div>
@@ -194,7 +193,6 @@
                 <div class="tab-content" id="leaveTabsContent">
                     <div class="tab-pane fade show active" id="tab-leave-form" role="tabpanel">
                         <form onsubmit="window.handleLeaveSubmit(event)" class="row g-3 p-4 bg-white shadow-sm rounded-4 border">
-                            
                             <div class="col-md-12 d-flex justify-content-between align-items-center mb-2">
                                 <label class="form-label small fw-bold text-dark mb-0">ประเภทการลา <span class="text-danger">*</span></label>
                                 <button type="button" id="btnToggleLegalMode" class="btn btn-outline-info btn-sm rounded-pill fw-bold" onclick="window.toggleLegalLeaveMode()"><i class="bi bi-info-circle me-1"></i> แบบฟอร์มลาตามกฎหมาย</button>

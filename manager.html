@@ -84,7 +84,8 @@
                 </div>
                 <div class="table-responsive border-0 min-vh-25">
                     <table class="table table-custom text-center align-middle mb-0">
-                        <thead><tr><th>วันที่</th><th>สถานที่</th><th>เวลาเข้า</th><th>เวลาออก</th><th>ชม.ปกติ</th><th>OT</th><th>สถานะ</th><th>จัดการ</th></tr></thead>
+                        <!-- 🌟 ตัดคอลัมน์ "จัดการ" ออกแล้ว -->
+                        <thead><tr><th>วันที่</th><th>สถานที่</th><th>เวลาเข้า</th><th>เวลาออก</th><th>ชม.ปกติ</th><th>OT</th><th>สถานะ</th></tr></thead>
                         <tbody id="myTimeHistoryTableBody"></tbody>
                     </table>
                 </div>
@@ -180,6 +181,7 @@
                             <div class="col-md-3"><label class="form-label small fw-bold text-dark">ถึงวันที่ <span class="text-muted fw-normal">(ถ้ามี)</span></label><input type="date" class="form-control" id="leaveEndDate" onchange="window.calculateLeaveDaysPreview()"></div>
                             <div class="col-md-3"><label class="form-label small fw-bold text-dark">ระบุเวลา <span class="text-muted fw-normal">(ถ้าไม่เต็มวัน)</span></label><input type="text" class="form-control" id="leaveTime" placeholder="เช่น ครึ่งเช้า, 13:00-15:00" value="เต็มวัน" required></div>
                             
+                            <!-- 🌟 กล่องสรุปจำนวนวันที่ลา Realtime -->
                             <div class="col-md-12" id="leaveSummaryBox" style="display: none;"><div class="alert alert-primary bg-primary bg-opacity-10 border-primary border-opacity-25 rounded-3 py-2 px-3 d-flex align-items-center justify-content-between mb-0"><div class="d-flex align-items-center"><i class="bi bi-calendar2-range-fill text-primary me-2 fs-5"></i><span class="small fw-bold text-dark">สรุปช่วงเวลาที่ลา: <span id="leaveDateRangeText" class="text-primary fw-bold ms-1"></span></span></div><div><span class="badge bg-primary fs-6 px-3 py-2 rounded-pill shadow-sm">จำนวนที่ลา: <b id="leaveDaysCalc" class="fs-5 ms-1">1</b> วัน</span></div></div></div>
                             
                             <div class="col-md-12" id="leaveTypeOtherDiv" style="display: none;"><label class="form-label small fw-bold text-dark">ระบุการลาอื่นๆ <span class="text-danger">*</span></label><input type="text" class="form-control bg-warning bg-opacity-10 border-warning" id="leaveTypeOther" placeholder="เช่น ลาทำธุระพิเศษ, ลาฌาปนกิจ..."></div>
