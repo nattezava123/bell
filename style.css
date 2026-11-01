@@ -48,12 +48,13 @@ h1, h2, h3, h4, h5, h6 { color: var(--text-dark); font-weight: 700; margin-botto
 .table-custom tbody tr:hover { background-color: #f8fafc; }
 .table-custom tbody td { padding: 1rem; vertical-align: middle; color: var(--text-main); font-size: 0.95rem; white-space: nowrap; }
 
-/* Components */
-.nav-pills { background-color: var(--surface); padding: 0.4rem; border-radius: var(--radius-md); border: 1px solid var(--border-light); display: inline-flex; box-shadow: var(--shadow-sm); }
-.nav-pills .nav-link { color: var(--text-muted); font-weight: 600; border-radius: var(--radius-sm); padding: 0.5rem 1.25rem; margin: 0 0.15rem; }
-.nav-pills .nav-link:hover { color: var(--text-dark); background-color: #f8fafc; }
-.nav-pills .nav-link.active { background-color: #eff6ff; color: var(--primary); border: 1px solid #bfdbfe; }
+/* 🌟 แก้ไข Tabs ให้สลับสีได้ถูกต้องและดูเป็นมืออาชีพ */
+.nav-pills { background-color: #f1f5f9 !important; padding: 0.35rem !important; border-radius: 99px !important; border: 1px solid var(--border-light) !important; display: inline-flex !important; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important; }
+.nav-pills .nav-link { color: var(--text-muted) !important; font-weight: 600 !important; border-radius: 99px !important; padding: 0.6rem 1.5rem !important; margin: 0 !important; transition: all 0.3s ease !important; background: transparent !important; border: none !important; }
+.nav-pills .nav-link:hover { color: var(--text-dark) !important; }
+.nav-pills .nav-link.active { background-color: var(--surface) !important; color: var(--primary) !important; box-shadow: var(--shadow-sm) !important; }
 
+/* Components */
 .badge { font-weight: 600; padding: 0.5em 0.75em; border-radius: 6px; font-size: 0.8rem; }
 .bg-success-subtle { background-color: #dcfce7 !important; color: #166534 !important; border: 1px solid #bbf7d0; }
 .bg-danger-subtle { background-color: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fecaca; }
